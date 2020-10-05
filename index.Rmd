@@ -10,7 +10,7 @@ link-citations: true
 site: bookdown::bookdown_site
 ---
 
-# Input Libraries {-}
+# Input {-}
 
 ```{r Load libraries, message = FALSE}
 library(gtools)
@@ -299,6 +299,170 @@ corrplot::corrplot(corr = M, type = "upper", p.mat = res$p, sig.level = c(.001, 
 - Lower `AND-NOT` TD values highly correlate with *higher* number of inhibitors
 - Higher `OR-NOT` TD values highly correlate with *higher* number of activators
 :::
+
+
+# CASCADE 1.0 Data Analysis {-}
+
+## Data {-}
+
+Using [abmlog](https://github.com/druglogics/abmlog) we generated all $2^{23} = 8388608$ possible link operator mutated models for the CASCADE 1.0 topology ($23$ nodes have at least one regulator from each category, i.e. an activator and an inhibitor).
+The models are stored in both `.gitsbe` and `.bnet` files in the Zenodo dataset [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4022783.svg)](https://doi.org/10.5281/zenodo.4022783) (the `gitsbe` files include also the fixpoint attractors).
+
+:::{.blue-box}
+The dataset includes models with $0,1$ or $2$ stable states.
+We used the [get_ss_data.R](https://github.com/bblodfon/brf-bias/blob/master/scripts/get_ss_data.R) script to get the **1 stable state data** from the models and it's this data we are going to analyze in the next section.
+:::
+
+## Parameterization vs Activity {-}
+
+We calculate the `node_stats` object using the [get_node_stats.R](https://github.com/bblodfon/brf-bias/blob/master/scripts/get_node_stats.R) script.
+This object includes the **agreement statistics information** for each link-operator node (i.e. one that is targeted by both activators and inhibitors).
+
+Load the `node_stats`:
+```{r load_node_stats}
+node_stats = readRDS(file = "data/node_stats.rds")
+```
+
+:::{.note}
+We are interested in two variables of interest:
+
+- **Parameterization** of a link operator node: `AND-NOT` (0) vs `OR-NOT` (1)
+- **Stable State** of a node: *inhibited* (0) vs *active* (1)
+
+There exist are 4 different possibilities related to 2 cases:
+
+1. `0-0`, `1-1` => parameterization and stable state match (e.g. node was parameterized with `AND-NOT` and it's state was inhibited or it had `OR-NOT` and its state was active)
+2. `1-0`, `0-1` => parameterization and stable state differ (e.g. node had `OR-NOT` and its state was inhibited, or `AND-NOT` and it's state was active)
+:::
+
+In the next Figure we show the **total observed proportionate agreement** for each node, which is the number of models for which parameterization and stable state matched (case 1 above) divided by the total amount of models:
+```{r ss-lo-agreement-prop, fig.align='center', dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement"}
+node_stats %>% mutate(node = forcats::fct_reorder(node, desc(num_reg))) %>% 
+  ggplot(aes(x = node, y = obs_prop_agreement, fill = as.factor(num_reg))) +
+    geom_bar(stat = "identity") +
+    scale_y_continuous(labels=scales::percent) +
+    labs(title = "Agreement between Link Operator Parameterization and Stable State Activity", x = "Target Nodes with both activating and inhibiting regulators", y = "Observed Proportionate Agreement") +
+    theme_classic() + theme(axis.text.x = element_text(angle = 90)) +
+    scale_fill_brewer(guide = guide_legend(reverse=TRUE, title = "#Regulators"), palette = "Set1") +
+    geom_hline(yintercept = 0.5, linetype = 'dashed')
+```
+
+:::{.green-box}
+The total barplot area covered (i.e. the **total agreement score** so to speak) is **`r node_stats %>% summarise(100 * sum(obs_prop_agreement)/n()) %>% pull()`%**.
+
+The above score means that the is a higher probability than chance to assign a node the `AND-NOT` (resp. `OR-NOT`) link operator in its respective boolean equation and that node at the same time having an inhibited (resp. activated) stable state of 0 (.resp 1) in any CASCADE 1.0 link operator parameterized model.
+**This suggests that the corresponding boolean formula used is biased** and the previous analysis in this report showed that for larger networks this behavior will become statistically more prevalent.
+
+As such, even though the number of regulators are **less than 6**, we find that there is **strong agreement** between *link operator* and *stable state activity* across all the nodes that have both types of regulators (activators and inhibitors).
+This agreement is stronger for some nodes than others.
+:::
+
+Next, we calculate per node, the proportion of link operator assignments that retained their expected (i.e. keeping the same digit) stable state activity (e.g. the proportion of models corresponding to the cases `0-0`/(`0-0` + `0-1`) for the `AND-NOT` link operator - similar for `OR-NOT`):
+```{r ss-comp-agreement-props, fig.align='center', dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement 2"}
+node_stats %>% 
+  mutate(and_not_0ss_prop = and_not_0ss_agreement/(and_not_0ss_agreement + and_not_1ss_disagreement)) %>% 
+  mutate(or_not_1ss_prop  = or_not_1ss_agreement/(or_not_1ss_agreement + or_not_0ss_disagreement)) %>%
+  select(node, num_reg, and_not_0ss_prop, or_not_1ss_prop, active_prop) %>%
+  rename(`AND-NOT` = and_not_0ss_prop, `OR-NOT` = or_not_1ss_prop) %>%
+  mutate(node = forcats::fct_reorder(node, desc(num_reg))) %>%
+  pivot_longer(cols = c(`AND-NOT`, `OR-NOT`)) %>%
+  ggplot(aes(x = node, y = value, fill = name)) +
+    geom_bar(position = "dodge", stat = "identity") +
+    scale_y_continuous(labels=scales::percent) +
+    labs(title = "Link Operator Parameterization Agreement with Stable State Activity", 
+      x = "Target Nodes with both activating and inhibiting regulators", 
+      y = "Observed Proportionate Agreement") +
+    theme_classic() + theme(axis.text.x = element_text(angle = 90)) + 
+    scale_fill_brewer(guide = guide_legend(title = "Link Operator"), palette = "Set1") + 
+    geom_line(aes(y = active_prop, color = active_prop), group = 1, size = 1.2) +
+    scale_color_gradient(labels=scales::percent, low="grey", high="green", 
+      name = "%Models:active node", limits = c(0,1)) + 
+    theme(legend.title = element_text(size = 10))
+```
+
+:::{.green-box}
+- Higher proportional activity for a node correlates with higher `OR-NOT`-activated state agreement.
+- `LRP_f` has 4 activators and 1 inhibitor and from the previous statistical analysis with found that $TD_{AND-NOT,4+1}=0.469$, $TD_{OR-NOT,4+1}=0.969$, numbers which correspond really well with the proportionate agreement scores found across all the CASCADE 1.0 models.
+- `TSC_f` has 1 activator and 4 inhibitors (which corresponds well to it's total inhibition profile in all the models).
+- `TSC_f` and `mTORC2_c` are always found inhibited and thus the agreement with the `AND-NOT`-inhibited state is perfect and the `OR-NOT`-activated state agreement zero.
+:::
+
+In the above Figure, wherever there is less than **0.5 disagreement**, we can always explain it with the *activity* proportion value and the number of activators being more (or less resp.) than the number of inhibitors - see following table:
+
+```{r lo-stats-table}
+caption.title = "Link Operator Statistics"
+DT::datatable(data = node_stats %>% select(node, num_reg, num_act, num_inh), 
+  caption = htmltools::tags$caption(caption.title, style="color:#dd4814; font-size: 18px"),
+  options = list(order = list(list(2, "desc")))) %>% 
+  formatRound(5:6, digits = 3)
+```
+
+```{r ss-lo-agreement-kappa, include=FALSE, eval=FALSE}
+node_stats %>% mutate(node = forcats::fct_reorder(node, desc(num_reg))) %>% 
+  ggplot(aes(x = node, y = cohen_k, fill = as.factor(num_reg))) +
+    geom_bar(stat = "identity") +
+    labs(title = "Agreement between Link Operator Parameterization and Stable State Activity", x = "Target Nodes with both activating and inhibiting regulators", y = "Cohen's kappa statistic") +
+    theme_classic() + theme(axis.text.x = element_text(angle = 90)) +
+    scale_fill_brewer(guide = guide_legend(reverse=TRUE, title = "#Regulators"), palette = "Set1") +
+    geom_hline(yintercept = 0.5, linetype = 'dashed')
+
+# node_stats %>% summarise(100 * sum(cohen_k)/n()) %>% pull()
+# 54% Cohen's kappa Statistic
+```
+
+# CASCADE 2.0 Data Analysis {-}
+
+:::{.blue-box}
+We will perform the same analysis as in the previous section, only now for a **randomly selected sample of models from the CASCADE 2.0 topology**.
+
+CASCADE 2.0 represents a larger topology/network and as such we expect to see even more agreement between stable state activity and link operator assignment (which leads us to link operator bias).
+:::
+
+## Data {-}
+
+:::{.note}
+The dataset used was generated for [another analysis](https://bblodfon.github.io/gitsbe-model-analysis/cascade/random-model-ss/main.html) and we are going to use part of it, i.e. the **models that had 1 stable state** (see [get_node_stats_cascade_2.R](https://github.com/bblodfon/brf-bias/blob/master/scripts/get_node_stats_cascade_2.R) script).
+The dataset is stored in Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3932382.svg)](https://doi.org/10.5281/zenodo.3932382)
+:::
+
+Load the CASCADE 2.0 `node_stats`:
+```{r load-node-stats-cascade2}
+node_stats = readRDS(file = "data/node_stats_cascade2.rds")
+```
+
+## Parameterization vs Activity {-}
+
+The next Figure shows the **total observed proportionate agreement** for each link operator node in CASCADE 2.0 (a total of $52$ nodes), which is the number of models for which parameterization and stable state matched divided by the total amount of models ($20672$):
+```{r ss-lo-prop-aggreement-cascade2, fig.align='center', dpi=300, cache=TRUE, fig.cap='Parameterization and Stable State activity agreement (CASCADE 2.0)'}
+node_stats %>% mutate(node = forcats::fct_reorder(node, desc(num_reg))) %>% 
+  ggplot(aes(x = node, y = obs_prop_agreement, fill = as.factor(num_reg))) +
+    geom_bar(stat = "identity") +
+    scale_y_continuous(labels=scales::percent) +
+    labs(title = "Agreement between Link Operator Parameterization and Stable State Activity", x = "Target Nodes with both activating and inhibiting regulators", y = "Observed Proportionate Agreement") +
+    theme_classic() + theme(axis.text.x = element_text(angle = 90)) +
+    scale_fill_brewer(guide = guide_legend(reverse=TRUE, title = "#Regulators"), palette = "Spectral") +
+    geom_hline(yintercept = 0.5, linetype = 'dashed')
+```
+
+:::{.green-box}
+The total barplot area covered (i.e. the **total agreement score** so to speak) is **`r node_stats %>% summarise(100 * sum(obs_prop_agreement)/n()) %>% pull()`%**.
+
+The nodes with number of regulators $>5$ have always an observed agreement $\geq 70\%$ between stable state activity and link operator parameterization.
+The above results provide evidence that the statistics-based conclusion we reached in a [previous section](#stand-eq-bias) is correct, i.e. that the **standardized boolean formula is biased for larger number of regulators**.
+:::
+
+```{r ss-lo-agreement-kappa-cascade2, include=FALSE, eval=FALSE}
+node_stats %>% mutate(node = forcats::fct_reorder(node, desc(num_reg))) %>% 
+  ggplot(aes(x = node, y = cohen_k, fill = as.factor(num_reg))) +
+    geom_bar(stat = "identity") +
+    labs(title = "Agreement between Link Operator Parameterization and Stable State Activity", x = "Target Nodes with both activating and inhibiting regulators", y = "Cohen's kappa statistic") +
+    theme_classic() + theme(axis.text.x = element_text(angle = 90)) +
+    scale_fill_brewer(guide = guide_legend(reverse=TRUE, title = "#Regulators"), palette = "Spectral") +
+    geom_hline(yintercept = 0.5, linetype = 'dashed')
+
+# node_stats %>% summarise(100 * sum(cohen_k)/n()) %>% pull()
+# 56% Cohen's kappa Statistic
+```
 
 # R session info {-}
 
