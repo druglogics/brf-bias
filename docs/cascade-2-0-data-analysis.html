@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>References | Standaridized Boolean Regulatory Function Bias</title>
+  <title>CASCADE 2.0 Data Analysis | Standaridized Boolean Regulatory Function Bias</title>
   <meta name="description" content="Data analyses related to Truth Density bias in standardized boolean regulatory functions" />
   <meta name="generator" content="bookdown 0.20 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="References | Standaridized Boolean Regulatory Function Bias" />
+  <meta property="og:title" content="CASCADE 2.0 Data Analysis | Standaridized Boolean Regulatory Function Bias" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://bblodfon.github.io/brf-bias/" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="bblodfon/brf-bias" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="References | Standaridized Boolean Regulatory Function Bias" />
+  <meta name="twitter:title" content="CASCADE 2.0 Data Analysis | Standaridized Boolean Regulatory Function Bias" />
   
   <meta name="twitter:description" content="Data analyses related to Truth Density bias in standardized boolean regulatory functions" />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="r-session-info.html"/>
-
+<link rel="prev" href="cascade-1-0-data-analysis.html"/>
+<link rel="next" href="r-session-info.html"/>
 <script src="libs/header-attrs-2.3/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -910,15 +910,42 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="references" class="section level1 unnumbered" number="">
-<h1>References</h1>
-
-<div id="refs" class="references hanging-indent">
-<div id="ref-Cury2019">
-<p>Cury, José E. R., Pedro T. Monteiro, and Claudine Chaouiya. 2019. “Partial Order on the set of Boolean Regulatory Functions,” January. <a href="http://arxiv.org/abs/1901.07623">http://arxiv.org/abs/1901.07623</a>.</p>
+<div id="cascade-2.0-data-analysis" class="section level1 unnumbered" number="">
+<h1>CASCADE 2.0 Data Analysis</h1>
+<div class="blue-box">
+<p>We will perform the same analysis as in the previous section, only now for a <strong>randomly selected sample of models from the CASCADE 2.0 topology</strong>.</p>
+<p>CASCADE 2.0 represents a larger topology/network and as such we expect to see even more agreement between stable state activity and link operator assignment (which leads us to link operator bias).</p>
 </div>
-<div id="ref-Mendoza2006">
-<p>Mendoza, Luis, and Ioannis Xenarios. 2006. “A method for the generation of standardized qualitative dynamical systems of regulatory networks.” <em>Theoretical Biology and Medical Modelling</em> 3 (1): 13. <a href="https://doi.org/10.1186/1742-4682-3-13">https://doi.org/10.1186/1742-4682-3-13</a>.</p>
+<div id="data-2" class="section level2 unnumbered" number="">
+<h2>Data</h2>
+<div class="note">
+<p>The dataset used was generated for <a href="https://bblodfon.github.io/gitsbe-model-analysis/cascade/random-model-ss/main.html">another analysis</a> and we are going to use part of it, i.e. the <strong>models that had 1 stable state</strong> (see <a href="https://github.com/bblodfon/brf-bias/blob/master/scripts/get_node_stats_cascade_2.R">get_node_stats_cascade_2.R</a> script).
+The dataset is stored in Zenodo <a href="https://doi.org/10.5281/zenodo.3932382"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.3932382.svg" alt="DOI" /></a></p>
+</div>
+<p>Load the CASCADE 2.0 <code>node_stats</code>:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="cascade-2-0-data-analysis.html#cb21-1"></a>node_stats =<span class="st"> </span><span class="kw">readRDS</span>(<span class="dt">file =</span> <span class="st">&quot;data/node_stats_cascade2.rds&quot;</span>)</span></code></pre></div>
+</div>
+<div id="parameterization-vs-activity-1" class="section level2 unnumbered" number="">
+<h2>Parameterization vs Activity</h2>
+<p>The next Figure shows the <strong>total observed proportionate agreement</strong> for each link operator node in CASCADE 2.0 (a total of <span class="math inline">\(52\)</span> nodes), which is the number of models for which parameterization and stable state matched divided by the total amount of models (<span class="math inline">\(20672\)</span>):</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="cascade-2-0-data-analysis.html#cb22-1"></a>node_stats <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">mutate</span>(<span class="dt">node =</span> forcats<span class="op">::</span><span class="kw">fct_reorder</span>(node, <span class="kw">desc</span>(num_reg))) <span class="op">%&gt;%</span><span class="st"> </span></span>
+<span id="cb22-2"><a href="cascade-2-0-data-analysis.html#cb22-2"></a><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> node, <span class="dt">y =</span> obs_prop_agreement, <span class="dt">fill =</span> <span class="kw">as.factor</span>(num_reg))) <span class="op">+</span></span>
+<span id="cb22-3"><a href="cascade-2-0-data-analysis.html#cb22-3"></a><span class="st">    </span><span class="kw">geom_bar</span>(<span class="dt">stat =</span> <span class="st">&quot;identity&quot;</span>) <span class="op">+</span></span>
+<span id="cb22-4"><a href="cascade-2-0-data-analysis.html#cb22-4"></a><span class="st">    </span><span class="kw">scale_y_continuous</span>(<span class="dt">labels=</span>scales<span class="op">::</span>percent) <span class="op">+</span></span>
+<span id="cb22-5"><a href="cascade-2-0-data-analysis.html#cb22-5"></a><span class="st">    </span><span class="kw">labs</span>(<span class="dt">title =</span> <span class="st">&quot;Agreement between Link Operator Parameterization and Stable State Activity&quot;</span>, <span class="dt">x =</span> <span class="st">&quot;Target Nodes with both activating and inhibiting regulators&quot;</span>, <span class="dt">y =</span> <span class="st">&quot;Observed Proportionate Agreement&quot;</span>) <span class="op">+</span></span>
+<span id="cb22-6"><a href="cascade-2-0-data-analysis.html#cb22-6"></a><span class="st">    </span><span class="kw">theme_classic</span>() <span class="op">+</span><span class="st"> </span><span class="kw">theme</span>(<span class="dt">axis.text.x =</span> <span class="kw">element_text</span>(<span class="dt">angle =</span> <span class="dv">90</span>)) <span class="op">+</span></span>
+<span id="cb22-7"><a href="cascade-2-0-data-analysis.html#cb22-7"></a><span class="st">    </span><span class="kw">scale_fill_brewer</span>(<span class="dt">guide =</span> <span class="kw">guide_legend</span>(<span class="dt">reverse=</span><span class="ot">TRUE</span>, <span class="dt">title =</span> <span class="st">&quot;#Regulators&quot;</span>), <span class="dt">palette =</span> <span class="st">&quot;Spectral&quot;</span>) <span class="op">+</span></span>
+<span id="cb22-8"><a href="cascade-2-0-data-analysis.html#cb22-8"></a><span class="st">    </span><span class="kw">geom_hline</span>(<span class="dt">yintercept =</span> <span class="fl">0.5</span>, <span class="dt">linetype =</span> <span class="st">&#39;dashed&#39;</span>)</span></code></pre></div>
+<div class="figure" style="text-align: center"><span id="fig:ss-lo-prop-aggreement-cascade2"></span>
+<img src="index_files/figure-html/ss-lo-prop-aggreement-cascade2-1.png" alt="Parameterization and Stable State activity agreement (CASCADE 2.0)" width="2100" />
+<p class="caption">
+Figure 10: Parameterization and Stable State activity agreement (CASCADE 2.0)
+</p>
+</div>
+<div class="green-box">
+<p>The total barplot area covered (i.e. the <strong>total agreement score</strong> so to speak) is <strong>78.6334916%</strong>.</p>
+<p>The nodes with number of regulators <span class="math inline">\(&gt;5\)</span> have always an observed agreement <span class="math inline">\(\geq 70\%\)</span> between stable state activity and link operator parameterization.
+The above results provide evidence that the statistics-based conclusion we reached in a <a href="truth-density-data-analysis.html#stand-eq-bias">previous section</a> is correct, i.e. that the <strong>standardized boolean formula is biased for larger number of regulators</strong>.</p>
 </div>
 </div>
 </div>
@@ -927,8 +954,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="r-session-info.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="cascade-1-0-data-analysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="r-session-info.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
