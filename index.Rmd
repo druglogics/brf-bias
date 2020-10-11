@@ -75,14 +75,16 @@ Somewhat similar function notations and definitions have been used in the work b
 ## Data {-}
 
 :::{.blue-box}
-*Truth Density (TD)* of a boolean equation/expression, given it's equivalent truth table, is the **number of rows that the expression is active** divided to **the total number of rows** $(2^n)$.
+*Truth Density (TD)* of a boolean equation/expression/function, given it's equivalent truth table, is the **number of rows that the function is active** divided by **the total number of rows** $(2^n)$.
 :::
 
 I created every possible truth table for up to $20$ variables (variables here means *regulators* for us) and calculated the `AND-NOT`, `OR-NOT`, `BalanceOp1`, `exp_act_win`, `exp_inh_win` boolean function results for every possible configuration of the number of activators and inhibitors that added up to the number of regulators.
 Then, from the truth tables I calculated the **truth density** of each operator for each particular configuration.
 For more details see the script [get_stats.R](get_stats.R)
 
+:::{#tr-data}
 See part of the data below:
+:::
 ```{r load-data}
 stats = readRDS(file = "data/td_stats.rds")
 
@@ -94,19 +96,64 @@ DT::datatable(data = stats,
 
 ## Truth Density formulas {-}
 
-Also, I have proved the exact formulas for the truth densities in the case of the `AND-NOT` and `OR-NOT` link operators (see [here](http://tiny.cc/link-proofs) for a proof sketch).
-I write them here explicitly, as well as their long-term behavior (for large number of regulators $n$):
+Here we prove the exact formulas for the truth densities in the case of the `AND-NOT` and `OR-NOT` link operator boolean functions.
+For both propositions presented, we assume that $f$ is a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with a total of $n$ regulators/input variables.
+We also assume that these regulators are uniquely separated to two distinct groups: $m$ **activators** (positive regulators) $x=\{x_i\}_{i=1}^{m}$ and $k$ **inhibitors** (negative regulators) $y=\{y_i\}_{i=1}^{k}$, with $n = m + k$.
 
-- `AND-NOT`: $$TD_{AND-NOT}=\frac{2^m-1}{2^n} \xrightarrow{n \text{ large}} \frac{1}{2^k}$$
-- `OR-NOT`:  $$TD_{OR-NOT}=\frac{2^n-2^k}{2^n} \xrightarrow{n \text{ large}} 1-\frac{1}{2^m}$$
+```{proposition, name="AND-NOT Truth Density Formula"}
+When a boolean regulatory function $f$ has the form of an `AND-NOT` link-operator boolean function:
+$f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{i=1}^{k} y_i\right)$ with $m \ge 1$ activators and $k \ge 1$ inhibitors, its truth density is $TD_{AND-NOT}=\frac{2^m-1}{2^n} = \frac{1}{2^k}-\frac{1}{2^n}$.
+```
 
-:::{green-box}
+```{proof}
+Using the distributivity property and De Morgan's law we can re-write $f_{AND-NOT}$ in a DNF form as:
+\begin{equation}
+\begin{split}
+f_{AND-NOT}(x,y) & = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{i=1}^{k} y_i\right) \\
+& = \bigvee_{i=1}^{m} \left( x_i \land \lnot \left( \bigvee_{i=1}^{k} y_i \right) \right) \\ 
+& = \bigvee_{i=1}^{m} (x_i \land \bigwedge_{j=1}^{k} \lnot y_j) \\ 
+& = \bigvee_{i=1}^{m} (x_i \land \lnot y_1 ... \land \lnot y_k)
+\end{split}
+\end{equation}
+
+To calculate the $TD_{AND-NOT}$, we need to find the number of rows of the $f_{AND-NOT}$ truth table that result in a *TRUE* output result and divide that by the total number of rows, which is $2^n$ ($n$ regulators/inputs).
+Note that $f_{AND-NOT}$, written in it's equivalent DNF form, has exactly $m$ clauses.
+Each clause has a unique *TRUE/FALSE* assignment of regulators that makes it *TRUE*.
+This happens when the activator of the clause is *TRUE* and all of the inhibitors *FALSE*.
+Since the condition for the inhibitors is the same regardless of the clause we are looking at and $f$ is expressed in a DNF form, the *TRUE* outcomes of the function $f$ are defined by all logical assignment combinations of the $m$ activators that have at least one of them being *TRUE* and all inhibitors assigned as *FALSE*.
+There are a total of $2^m$ possible $TRUE/FALSE$ logical assignments of the $m$ activators (from all *FALSE* to all *TRUE*) and $f_{AND-NOT}$ becomes *TRUE* on all except one of them (i.e. when all activators are *FALSE*) and the corresponding $2^m-1$ truth table rows have all inhibitors assigned as *FALSE*.
+Thus $TD_{AND-NOT}=\frac{2^m-1}{2^n}$.
+```
+
+<br>
+
+
+```{proposition, name="OR-NOT Truth Density Formula"}
+When a boolean regulatory function $f$ has the form of an `OR-NOT` link-operator boolean function:
+$f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{i=1}^{k} y_i\right)$ with $m \ge 1$ activators and $k \ge 1$ inhibitors, its truth density is $TD_{OR-NOT}=\frac{2^n-(2^k-1)}{2^n} = 1 + \frac{1}{2^n} - \frac{1}{2^m}$.
+```
+
+```{proof}
+mpl mapl $f$
+```
+
+
+### Asymptotic behavior {-}
+
+For a large number of regulators $n$, the truth density become:
+
+- `AND-NOT`: $$TD_{AND-NOT} = \frac{1}{2^k}-\frac{1}{2^n} \xrightarrow{n \text{ large}} \frac{1}{2^k}$$
+- `OR-NOT`:  $$TD_{OR-NOT} = 1 + \frac{1}{2^n} - \frac{1}{2^m} \xrightarrow{n \text{ large}} 1-\frac{1}{2^m}$$
+
+:::{.green-box}
 For large $n$, the $TD_{AND-NOT}$ depends only **on the number of inhibitors** while the $TD_{OR-NOT}$ depends only **on the number of activators**.
 :::
 
-Also, again for large $n$, the extreme case of having a TD value equal to $0.5$ is a result of having **only one of the regulators being an inhibitor (activator)** of the `AND-NOT` (`OR-NOT`) equation.
+Also, again for large $n$, the extreme case of having a TD value equal to $1/2$ is a result of having **only one of the regulators being an inhibitor (resp. activator)** of the `AND-NOT` (resp. `OR-NOT`) equation.
 
-We can use the data above to validate the formulas from the proof (up to $n=20$):
+### Validation {-}
+
+We can use the [data above](#tr-data) to validate the [TD formulas](#truth-density-formulas) (up to $n=20$):
 ```{r validate-formulas, comment=""}
 # Validate AND-NOT Truth Density formula
 formula_td_and_not = stats %>% 
