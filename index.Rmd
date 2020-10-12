@@ -410,18 +410,26 @@ node_stats %>% mutate(node = forcats::fct_reorder(node, desc(num_reg))) %>%
     scale_fill_brewer(guide = guide_legend(reverse=TRUE, title = "#Regulators"), palette = "Set1") +
     geom_hline(yintercept = 0.5, linetype = 'dashed')
 ```
-
 :::{.green-box}
 The total barplot area covered (i.e. the **total agreement score** so to speak) is **`r node_stats %>% summarise(100 * sum(obs_prop_agreement)/n()) %>% pull()`%**.
 
-The above score means that the is a higher probability than chance to assign a node the `AND-NOT` (resp. `OR-NOT`) link operator in its respective boolean equation and that node at the same time having an inhibited (resp. activated) stable state of 0 (.resp 1) in any CASCADE 1.0 link operator parameterized model.
-**This suggests that the corresponding boolean formula used is biased** and the previous analysis in this report showed that for larger networks this behavior will become statistically more prevalent.
-
-As such, even though the number of regulators are **less than 6**, we find that there is **strong agreement** between *link operator* and *stable state activity* across all the nodes that have both types of regulators (activators and inhibitors).
-This agreement is stronger for some nodes than others.
+The above score means that the is a higher probability than chance to assign a node the `AND-NOT` (resp. `OR-NOT`) link operator in its respective boolean equation and that node at the same time having an inhibited (resp. activated) stable state of $0$ (.resp $1$) in any CASCADE 1.0 link operator parameterized model.
+**This suggests that the corresponding boolean formula used is biased**.
 :::
 
-Next, we calculate per node, the proportion of link operator assignments that retained their expected (i.e. keeping the same digit) stable state activity (e.g. the proportion of models corresponding to the cases `0-0`/(`0-0` + `0-1`) for the `AND-NOT` link operator - similar for `OR-NOT`):
+In the next figure, where we have grouped the agreement results of the nodes with **the same number of regulators**, we observe that even for a small number of regulators, the agreement score is higher than $0.5$:
+```{r ss-lo-agreement-prop-grouped, fig.align='center', dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement. CASCADE 1.0 nodes are grouped based on their respective number of regulators"}
+node_stats %>% 
+  ggplot(aes(x = as.factor(num_reg), y = obs_prop_agreement, fill = as.factor(num_reg))) + 
+    geom_boxplot(show.legend = FALSE) +
+    ylim(c(0,1)) + 
+    labs(title = "Agreement between parameterization and stable state activity", x = "Number of Regulators", y = "Observed Proportionate Agreement") +
+    geom_hline(yintercept = 0.5, linetype = 'dashed', color = "red") +
+    theme_classic(base_size = 14) + 
+    theme(plot.title = element_text(size = 12))
+```
+
+Next, we calculate per node, the proportion of link operator assignments that retained their expected (i.e. keeping the same digit) stable state activity (e.g. the proportion of models corresponding to the cases `0-0`/(`0-0` + `0-1`) for the `AND-NOT` link operator - and `1-1`/(`1-1` + `1-o`) for `OR-NOT`):
 ```{r ss-comp-agreement-props, fig.align='center', dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement 2"}
 node_stats %>% 
   mutate(and_not_0ss_prop = and_not_0ss_agreement/(and_not_0ss_agreement + and_not_1ss_disagreement)) %>% 
@@ -446,9 +454,11 @@ node_stats %>%
 
 :::{.green-box}
 - Higher proportional activity for a node correlates with higher `OR-NOT`-activated state agreement.
-- `LRP_f` has 4 activators and 1 inhibitor and from the previous statistical analysis with found that $TD_{AND-NOT,4+1}=0.469$, $TD_{OR-NOT,4+1}=0.969$, numbers which correspond really well with the proportionate agreement scores found across all the CASCADE 1.0 models.
-- `TSC_f` has 1 activator and 4 inhibitors (which corresponds well to it's total inhibition profile in all the models).
+- `LRP_f` has 4 activators and 1 inhibitor and from the previous [TD data table](#tr-data) we have that: $TD_{AND-NOT,4+1}=0.469$, $TD_{OR-NOT,4+1}=0.969$, numbers which correspond really well with the proportionate agreement scores found across all the CASCADE 1.0 models.
 - `TSC_f` and `mTORC2_c` are always found inhibited and thus the agreement with the `AND-NOT`-inhibited state is perfect and the `OR-NOT`-activated state agreement zero.
+- `TSC_f` has 1 activator and 4 inhibitors, which corresponds well to it's total inhibition profile in all the models (with significantly more inhibitors, there is a higher probability of the target node being inhibited).
+The TD values are $TD_{AND-NOT,1+4}=0.03$, $TD_{OR-NOT,1+4}=0.53$ and so the agreement between the `AND-NOT` parameterization and the resulting $0$ stable state activity is justified, but for the `OR-NOT` cases we would expect around half of them to be in agreement (have a value of $1$ in the stable state) - which was not the case (all of them had $0$).
+Probably the network dynamical configuration may have something to do with that.
 :::
 
 In the above Figure, wherever there is less than **0.5 disagreement**, we can always explain it with the *activity* proportion value and the number of activators being more (or less resp.) than the number of inhibitors - see following table:
