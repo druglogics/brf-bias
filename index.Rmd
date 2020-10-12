@@ -10,8 +10,9 @@ link-citations: true
 site: bookdown::bookdown_site
 ---
 
-# Input {-}
+# Input Libraries {-}
 
+Libraries used:
 ```{r Load libraries, message = FALSE}
 library(gtools)
 library(dplyr)
@@ -26,29 +27,37 @@ library(ggpubr)
 library(corrplot)
 ```
 
-# Balance Boolean Regulatory Functions (BBRs) {-#bbrs}
+## Link-operator Boolean Regulatory Functions {-}
 
-:::{.green-box}
-- The **BBRs** (Balance Boolean Regulatory functions) functions have **two sets of regulators**: *activators* (on one side) and *inhibitors* (on the other).
-- I have observed two main classes of these functions: one that uses logical rules to derive the *combinatorial* activity of the regulators and one that relies on the combined *additive* activity (via pseudo-boolean constrains).
-:::
+Let $f$ be a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with $m \ge 1$ **activators** $x=\{x_i\}_{i=1}^{m}$ and $k \ge 1$ **inhibitors** $y=\{y_i\}_{i=1}^{k}$, that is a total of $n = m + k$ regulators.
+The link-operator boolean functions have a (non-DNF) formula representation that partitions the two distinct type of regulators (positive regulators are called *activators*, negative regulators are called *inhibitors*) into two separate groups and connect them with a specific logical operator (which we call the *link operator*).
+The presence of the link operator is what forces the condition $m,k \ge 1$ (at least one regulator in each category).
+An example of such a function that has been used in the literature is the formula with the `AND-NOT` link operator [@Mendoza2006]:
 
-Let $f$ be a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with $m$ **activators** $x=\{x_i\}_{i=1}^{m}$ and $k$ **inhibitors** $y=\{y_i\}_{i=1}^{k}$, that is a total of $n=m+k$ regulators.
-The BBRs have a (non-DNF) representation that puts the different category regulators in 2 separate groups and a *link boolean operator* between them.
-As such, for a link operator to make sense, we have that $m,k \ge 1$ (at least one regulator in each category).
-An example of such a function that has been used in the literature [@Mendoza2006] is the formula with the `AND-NOT` link operator: 
+- `AND-NOT`: $$f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{i=1}^{k} y_i\right)$$
 
-- `AND-NOT`: $$f(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{i=1}^{k} y_i\right)$$
+A **variation** of this one is the `OR-NOT` link operator function:
 
-A **variant** of that one that shifts the balance in favor of the activators (as we will see the truth density significantly increases) is the function with the `OR-NOT` link operator:
+- `OR-NOT`: $$f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{i=1}^{k} y_i\right)$$
 
-- `OR-NOT`: $$f(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{i=1}^{k} y_i\right)$$
+In theory, we could use any of the known logical operators as a link-operator, e.g. `XOR`, `NAND`, simple `AND` etc.
 
-Another one of this type of functions is the next one:
+For example, another link-operator function is the next one:
 
 - `BalanceOp1`: $$f(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{i=1}^{k} \lnot y_i\right)$$
 
-Next, we introduce the **threshold functions** which can be classified as *pseudo-Boolean*:
+:::{.note}
+@Cury2019 defined the **consistent boolean regulatory** functions and their respective **complete DNF forms (CDNF)**.
+
+The link-operator functions listed above are a subset of these functions, since they respect the regulatory structure in their respective DNF forms (for the *BalanceOp1* it's evident since it's written first in the DNF - for the *AND-NOT* and *OR-NOT* functions, see their respective DNF forms in the truth density proofs \@ref(prp:and-not-proof) and \@ref(prp:or-not-proof).
+:::
+
+## Threshold functions {-}
+
+The **boolean threshold functions** are formulated based on given *pseudo-Boolean* constrains for the regulators.
+Thus, the activators and inhibitors are combined in an *additive* manner and not a *combinatorial* one and the **majority rule** defines the value of the function [@Chaouiya2013].
+
+Two simple cases of **threshold** functions are given below:
 
 - `exp_act_win`: $$f_{act-win}(x,y)=\begin{cases}
         1, & \text{for } \sum_{i=1}^{m} x_i \ge \sum_{i=1}^{k} y_i\\
@@ -60,16 +69,11 @@ Next, we introduce the **threshold functions** which can be classified as *pseud
         \end{cases}$$
 
 Note that: $f_{inh-win}(x,y) = \lnot f_{act-win}(y,x)$.
-These functions are still categorized as BBRs, since they balance the additive activity of the activators and the inhibitors.
 
-I searched for an analytic formula for the two last functions. 
-The equivalent boolean rule expressions become very large with more regulators but they **always exist** - which means that pretty much we are talking about the same kind of functions (the *combinatorial* vs *additive* distinction is a *sugar* for the theorists :))
-More info and discussion about the last two formulas, see the [math.stackexchange question](https://math.stackexchange.com/questions/3767774/identify-boolean-function-that-satisfies-some-constrains/).
-
-:::{.note}
-Somewhat similar function notations and definitions have been used in the work by [@Cury2019], where they used the equivalent DNF forms.
+:::{.blue-box}
+Note that every boolean function has an equivalent combinatorial expression (i.e. the variables are connected with logical operators) and I searched for an analytic formula for the two last threshold functions.
+More more info, see this [math.stackexchange question](https://math.stackexchange.com/questions/3767774/identify-boolean-function-that-satisfies-some-constrains/).
 :::
-
 # Truth Density Data Analysis {-}
 
 ## Data {-}
@@ -100,8 +104,8 @@ Here we prove the exact formulas for the truth densities in the case of the `AND
 For both propositions presented, we assume that $f$ is a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with a total of $n$ regulators/input variables.
 We also assume that these regulators are uniquely separated to two distinct groups: $m$ **activators** (positive regulators) $x=\{x_i\}_{i=1}^{m}$ and $k$ **inhibitors** (negative regulators) $y=\{y_i\}_{i=1}^{k}$, with $n = m + k$.
 
-```{proposition, name="AND-NOT Truth Density Formula"}
-When a boolean regulatory function $f$ has the form of an `AND-NOT` link-operator boolean function:
+```{proposition, name="AND-NOT Truth Density Formula", label='and-not-proof'}
+When a boolean regulatory function $f$ has the form of an *AND-NOT* link-operator boolean function:
 $f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{i=1}^{k} y_i\right)$ with $m \ge 1$ activators and $k \ge 1$ inhibitors, its truth density is $TD_{AND-NOT}=\frac{2^m-1}{2^n} = \frac{1}{2^k}-\frac{1}{2^n}$.
 ```
 
@@ -110,9 +114,9 @@ Using the distributivity property and De Morgan's law we can re-write $f_{AND-NO
 \begin{equation}
 \begin{split}
 f_{AND-NOT}(x,y) & = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{i=1}^{k} y_i\right) \\
-& = \bigvee_{i=1}^{m} \left( x_i \land \lnot \left( \bigvee_{i=1}^{k} y_i \right) \right) \\ 
-& = \bigvee_{i=1}^{m} (x_i \land \bigwedge_{j=1}^{k} \lnot y_j) \\ 
-& = \bigvee_{i=1}^{m} (x_i \land \lnot y_1 ... \land \lnot y_k)
+                 & = \bigvee_{i=1}^{m} \left( x_i \land \lnot \left( \bigvee_{i=1}^{k} y_i \right) \right) \\ 
+                 & = \bigvee_{i=1}^{m} (x_i \land \bigwedge_{j=1}^{k} \lnot y_j) \\ 
+                 & = \bigvee_{i=1}^{m} (x_i \land \lnot y_1 \land ... \land \lnot y_k)
 \end{split}
 \end{equation}
 
@@ -127,26 +131,39 @@ Thus $TD_{AND-NOT}=\frac{2^m-1}{2^n}$.
 
 <br>
 
-
-```{proposition, name="OR-NOT Truth Density Formula"}
-When a boolean regulatory function $f$ has the form of an `OR-NOT` link-operator boolean function:
+```{proposition, name="OR-NOT Truth Density Formula", label='or-not-proof'}
+When a boolean regulatory function $f$ has the form of an *OR-NOT* link-operator boolean function:
 $f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{i=1}^{k} y_i\right)$ with $m \ge 1$ activators and $k \ge 1$ inhibitors, its truth density is $TD_{OR-NOT}=\frac{2^n-(2^k-1)}{2^n} = 1 + \frac{1}{2^n} - \frac{1}{2^m}$.
 ```
 
 ```{proof}
-mpl mapl $f$
-```
+Using De Morgan’s law we can re-write $f_{OR-NOT}$ in a DNF form as:
+\begin{equation}
+\begin{split}
+f_{OR-NOT}(x,y) & = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{i=1}^{k} y_i\right) \\
+                & = \left(\bigvee_{i=1}^{m} x_i\right) \lor \left(\bigwedge_{i=1}^{k} \lnot y_i\right) \\
+                & = x_1 \lor x_2 \lor ... \lor x_m \lor (\lnot y_1 \land ... \land \lnot y_k)
+\end{split}
+\end{equation}
 
+To calculate the $TD_{OR-NOT}$, it's easier to find the number of rows of the $f_{OR-NOT}$ truth table that result in a *FALSE* output result ($R_{false}$), subtract that number from the total number of rows ($2^n$) to get the rows that result in $f$ being *TRUE* and then divide by the total.
+Thus $TD_{OR-NOT} = \frac{2^n-R_{false}}{2^n}$.
+Note that $f_{OR-NOT}$, written in it's equivalent DNF form, has exactly $m+1$ clauses.
+To make $f_{OR-NOT}$ *FALSE*, we first need to assign the $m$ activators as *FALSE* and then it all depends on the logical assignments of the inhibitors $y_i$ that are part of the last clause.
+Out of all possible $2^k$ *TRUE/FALSE* logical assignments of the $k$ inhibitors (ranging from all *FALSE* to all *TRUE*) there is **only one that does not make** the last clause of $f_{OR-NOT}$ *FALSE* and that happens when all $k$ inhibitors are *FALSE*.
+Thus, $R_{false}=2^k-1$ and $TD_{OR-NOT}=\frac{2^n-(2^k-1)}{2^n}$.
+```
 
 ### Asymptotic behavior {-}
 
-For a large number of regulators $n$, the truth density become:
+For a large number of regulators $n$, the truth densities of the `AND-NOT` and `OR-NOT` functions are as follows:
 
-- `AND-NOT`: $$TD_{AND-NOT} = \frac{1}{2^k}-\frac{1}{2^n} \xrightarrow{n \text{ large}} \frac{1}{2^k}$$
-- `OR-NOT`:  $$TD_{OR-NOT} = 1 + \frac{1}{2^n} - \frac{1}{2^m} \xrightarrow{n \text{ large}} 1-\frac{1}{2^m}$$
+- `AND-NOT`: $$TD_{AND-NOT} = \frac{1}{2^k}-\frac{1}{2^n} \xrightarrow{n \text{ large}} \frac{1}{2^k} \xrightarrow{k \text{ large}}0$$
+- `OR-NOT`:  $$TD_{OR-NOT} = 1 + \frac{1}{2^n} - \frac{1}{2^m} \xrightarrow{n \text{ large}} 1-\frac{1}{2^m} \xrightarrow{m \text{ large}} 1$$
 
 :::{.green-box}
-For large $n$, the $TD_{AND-NOT}$ depends only **on the number of inhibitors** while the $TD_{OR-NOT}$ depends only **on the number of activators**.
+For large $n$, the $TD_{AND-NOT}$ depends only **on the number of inhibitors** and tends towards $0$ with increasing number of inhibitors.
+Similarly, the $TD_{OR-NOT}$ depends only **on the number of activators** for large $n$ and tends towards $1$ with increasing number of activators.
 :::
 
 Also, again for large $n$, the extreme case of having a TD value equal to $1/2$ is a result of having **only one of the regulators being an inhibitor (resp. activator)** of the `AND-NOT` (resp. `OR-NOT`) equation.
