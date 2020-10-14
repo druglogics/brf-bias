@@ -5,36 +5,8 @@ library(stringr)
 library(usefun)
 library(ggplot2)
 
-get_topology_file_stats = function() {
-  data_list = list()
-  index = 1
-
-  # read the scale free topology files with gamma = 2.5
-  for (topology_file in list.files(path = 'data/random_topology_files/scale_free_gamma2_5',
-    full.names = TRUE, pattern = "scale")) {
-    # THIS IS HOW YOU READ A TAB-DELIMITED SIF FILE, RIGHT HERE!!!
-    edge_tbl = readr::read_delim(file = topology_file, delim = "\t",
-      col_names = c('source', 'effect', 'target'), col_types = "ccc")
-    lo_stats = get_lo_stats(edge_tbl)
-
-    data_list[[index]] = dplyr::bind_cols(lo_nodes_num = nrow(lo_stats), max_num_reg = lo_stats %>% summarise(m = max(num_reg)) %>% pull(), gamma = 2.5)
-    index = index + 1
-  }
-
-  # read the scale free topology files with gamma = 2
-  for (topology_file in list.files(path = 'data/random_topology_files/scale_free_gamma2',
-    full.names = TRUE, pattern = "scale")) {
-    # THIS IS HOW YOU READ A TAB-DELIMITED SIF FILE, RIGHT HERE!!!
-    edge_tbl = readr::read_delim(file = topology_file, delim = "\t",
-      col_names = c('source', 'effect', 'target'), col_types = "ccc")
-    lo_stats = get_lo_stats(edge_tbl)
-
-    data_list[[index]] = dplyr::bind_cols(lo_nodes_num = nrow(lo_stats), max_num_reg = lo_stats %>% summarise(m = max(num_reg)) %>% pull(), gamma = 2)
-    index = index + 1
-  }
-
-  topo_file_stats = dplyr::bind_rows(data_list)
-}
+# THIS IS HOW YOU READ A TAB-DELIMITED SIF FILE, RIGHT HERE!!!
+# edge_tbl = readr::read_delim(file = topology_file, delim = "\t", col_names = c('source', 'effect', 'target'), col_types = "ccc")
 
 # `edge_tbl` is the result of reading a SIF file to a tibble (see above)
 # The returned `lo_stats` has info about the link operator nodes of the model
