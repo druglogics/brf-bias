@@ -18,6 +18,8 @@ library(gtools)
 library(dplyr)
 library(tibble)
 library(tidyr)
+library(readr)
+library(stringr)
 library(usefun)
 library(foreach)
 library(doParallel)
@@ -26,6 +28,7 @@ library(ggplot2)
 library(ggpubr)
 library(corrplot)
 library(latex2exp)
+library(BoolNet)
 ```
 
 ## Link-operator Boolean Regulatory Functions {-}
@@ -165,9 +168,11 @@ For a large number of regulators $n$, the truth densities of the `AND-NOT` and `
 :::{.green-box}
 For large $n$, the $TD_{AND-NOT}$ depends only **on the number of inhibitors** and tends towards $0$ with increasing number of inhibitors.
 Similarly, the $TD_{OR-NOT}$ depends only **on the number of activators** for large $n$ and tends towards $1$ with increasing number of activators.
+
+Thus, in these two cases of link-operator functions, **the standardized boolean model parameterization plays a major role in the definition of the biological state of the link operator nodes** - the more regulators/inputs these functions have, the more biased the output result is (towards $0$ or $1$ respectively).
 :::
 
-Also, again for large $n$, the extreme case of having a TD value equal to $1/2$ is a result of having **only one of the regulators being an inhibitor (resp. activator)** of the `AND-NOT` (resp. `OR-NOT`) equation.
+Note that for large $n$, the extreme case of having a TD value equal to $1/2$ is a result of having **only one of the regulators being an inhibitor (resp. activator)** of the `AND-NOT` (resp. `OR-NOT`) equation.
 
 ### Validation {-}
 
@@ -304,7 +309,7 @@ ggboxplot(data = stats_functions, x = "num_reg", y = "td",
 
 :::{.green-box}
 - Both boolean functions show a **large variance of truth densities** irrespective of the number of regulators, since the values inside the boxplots represent the middle $50\%$ of the data and span across the $(0,1)$ range.
-- The median values seem to converge to $0.5$ for both formulas.
+- The median truth density values seem to converge to $1/2$ for both formulas and this is how a proper *balanced* boolean function behaves :) less bias to the truth density values for increasing number of regulators results in a more *fair or balanced* boolean formula.
 - The median value of truth density for the $f_{act-win}(x,y)$ is always larger than the $f_{inh-win}(x,y)$ (as expected).
 :::
 
