@@ -5,6 +5,7 @@ library(BoolNet)
 library(dplyr)
 library(ggplot2)
 library(readr)
+source('scripts/help.R')
 
 # Define 2 useful functions first
 
@@ -88,69 +89,26 @@ k = 50 # max number of regulators per node
 
 set.seed(42)
 for (i in 1:100) {
-  res = gen_random_nk_topology(n = n, k = k, topology = "scale_free") # gamma = 2.5 (default)
-  write_sif(interactions_tbl = res, filename = paste0("data/random_topology_files/scale_free_", n, "n_", k, "k_gamma2_5_", i, ".sif"))
+  repeat {
+    res = gen_random_nk_topology(n = n, k = k, topology = "scale_free") # gamma = 2.5 (default)
+    lo_stats = get_lo_stats(res)
+    if (nrow(lo_stats) < 19) {
+      break # no more that 18 equations with link operators
+    }
+  }
+  write_sif(interactions_tbl = res, filename = paste0("data/random_topology_files/scale_free_gamma2_5/scale_free_", n, "n_", k, "k_gamma2_5_", i, ".sif"))
 }
 
 # gamma = 2 => hub nodes with even higher degree
 set.seed(42)
 for (i in 1:100) {
-  res = gen_random_nk_topology(n = n, k = k, topology = "scale_free", gamma = 2)
-  write_sif(interactions_tbl = res, filename = paste0("data/random_topology_files/scale_free_", n, "n_", k, "k_gamma2_", i, ".sif"))
-}
-
-# Other help functions
-get_lo_stats = function(edge_tbl) {
-  data_list = list()
-  index = 1
-  for (node in edge_tbl %>% distinct(target) %>% pull()) {
-    effects = edge_tbl %>%
-      filter(target == node) %>%
-      pull(effect)
-    if (length(unique(effects)) == 2) { # both activation and inhibition (node has link operator)
-      num_reg = length(effects)
-      num_act = sum(effects == "->")
-      num_inh = sum(effects == "-|")
-      data_list[[index]] = dplyr::bind_cols(lo_index = index, node = node, num_reg = num_reg,
-        num_act = num_act, num_inh = num_inh)
-      index = index + 1
+  repeat {
+    res = gen_random_nk_topology(n = n, k = k, topology = "scale_free", gamma = 2)
+    lo_stats = get_lo_stats(res)
+    if (nrow(lo_stats) < 19) {
+      break # no more that 18 equations with link operators
     }
   }
 
-  lo_stats = dplyr::bind_rows(data_list)
-  #lo_stats %>% arrange(desc(num_reg))
-}
-
-print_stats = function() {
-  for (topology_file in list.files(path = 'data/random_topology_files',
-    full.names = TRUE, pattern = "scale")) {
-    print(topology_file)
-    edge_tbl = readr::read_delim(file = topology_file, delim = "\t",
-      col_names = c('source', 'effect', 'target'), col_types = "ccc")
-    lo_stats = get_lo_stats(edge_tbl)
-    if (nrow(lo_stats) >= 20) {
-      print(paste0("Number of link-operator equations: ", nrow(lo_stats) ,
-        " with max #regulators: ", lo_stats %>% summarise(m = max(num_reg)) %>% pull()))
-    }
-  }
-}
-
-plot_distribution_fig = function(edge_tbl) {
-  node_names = edge_tbl %>% pull(target) %>% unique()
-
-  # calculate in-degrees
-  in_degree = sapply(node_names, function(node) { edge_tbl %>% filter(target == node) %>% nrow() })
-
-  # calculate out-degrees
-  out_degree = sapply(node_names, function(node) { edge_tbl %>% filter(source == node) %>% nrow() })
-
-  # degree distribution stats
-  dd_stats = dplyr::bind_cols(node = node_names, in_degree = in_degree, out_degree = out_degree)
-
-  dd_stats %>% group_by(in_degree) %>% tally() %>%
-    ggplot(aes(x = in_degree, y = n)) +
-    geom_bar(stat = "identity", fill = "steelblue", width = 0.7) +
-    geom_smooth(aes(color = "red"), se = FALSE, show.legend = FALSE) +
-    theme_classic() +
-    labs(title = "In-Degree Distribution", x = "In Degree", y = "Number of Nodes")
+  write_sif(interactions_tbl = res, filename = paste0("data/random_topology_files/scale_free_gamma2/scale_free_", n, "n_", k, "k_gamma2_", i, ".sif"))
 }
