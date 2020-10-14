@@ -1,6 +1,9 @@
-# some help functions
+# some helpful functions
 library(dplyr)
 library(readr)
+library(stringr)
+library(usefun)
+library(ggplot2)
 
 get_topology_file_stats = function() {
   data_list = list()
@@ -59,6 +62,7 @@ get_lo_stats = function(edge_tbl) {
 }
 
 # calculate agreement measures between stable states and link operator assignments per node
+# used in `get_scale_free_model_stats.R`
 calculate_agreement_stats = function(lo_stats, ss_tbl) {
   # number of equations with link operator (`num_bits`)
   num_bits = nrow(lo_stats)
@@ -132,6 +136,7 @@ calculate_agreement_stats = function(lo_stats, ss_tbl) {
   agreement_stats = dplyr::bind_rows(data_list)
 }
 
+# in-degree distribution figure
 plot_distribution_fig = function(edge_tbl) {
   node_names = edge_tbl %>% pull(target) %>% unique()
 
