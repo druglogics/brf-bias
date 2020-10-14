@@ -88,7 +88,7 @@ n = 50 # #nodes
 k = 50 # max number of regulators per node
 
 set.seed(42)
-for (i in 1:100) {
+for (i in 1:1000) {
   repeat {
     res = gen_random_nk_topology(n = n, k = k, topology = "scale_free") # gamma = 2.5 (default)
     lo_stats = get_lo_stats(res)
