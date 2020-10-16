@@ -607,7 +607,111 @@ knitr::include_graphics(path = "img/zero_ss_dist.png")
 
 ## Parameterization vs Activity {-}
 
+```{r}
+sf_stats_g2_5 = readRDS(file = "data/sf_stats_gamma2.5.rds")
+sf_stats_g2 = readRDS(file = "data/sf_stats_gamma2.rds")
+```
 
+```{r agree-stats-g2, warning=FALSE}
+sf_stats_g2 = sf_stats_g2 %>% mutate(reg_group = factor(case_when(
+  num_reg %in% 2:3 ~ "2-3", 
+  num_reg %in% 4:6 ~ "4-6", 
+  num_reg %in% 7:10 ~ "7-10", 
+  num_reg %in% 11:14 ~ "11-14", 
+  num_reg %in% 15:20 ~ "15-20",
+  TRUE ~ ">20"), levels = c("2-3", "4-6", "7-10", "11-14", "15-20", ">20"))) 
+
+sf_stats_g2 %>%
+  ggplot(aes(x = reg_group, y = percent_agreement, fill = reg_group)) + 
+  geom_boxplot(show.legend = FALSE) +
+  scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+  labs(title = latex2exp::TeX("Agreement (parameterization vs stable state activity) - $\\gamma$ = 2"), x = "Number of Regulators", y = "Percent Agreement") +
+  geom_hline(yintercept = 0.5, linetype = 'dashed', color = "red") +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 15))
+
+sf_stats_g2 %>%
+  ggplot(aes(x = reg_group, y = cohen_k, fill = reg_group)) + 
+  geom_boxplot(show.legend = FALSE) +
+  scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+  labs(title = latex2exp::TeX("Cohen's k (parameterization vs stable state activity) - $\\gamma$ = 2"), x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
+  geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
+  geom_text(aes(x = 6, y = 0.55, label="k = 0.6")) + 
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 15))
+```
+
+```{r agree-stats-g2-5, warning=FALSE}
+sf_stats_g2_5 = sf_stats_g2_5 %>% mutate(reg_group = factor(case_when(
+  num_reg %in% 2:3 ~ "2-3", 
+  num_reg %in% 4:6 ~ "4-6", 
+  num_reg %in% 7:10 ~ "7-10", 
+  num_reg %in% 11:14 ~ "11-14", 
+  num_reg %in% 15:20 ~ "15-20",
+  TRUE ~ ">20"), levels = c("2-3", "4-6", "7-10", "11-14", "15-20", ">20"))) 
+
+sf_stats_g2_5 %>%
+  ggplot(aes(x = reg_group, y = percent_agreement, fill = reg_group)) + 
+  geom_boxplot(show.legend = FALSE) +
+  scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+  labs(title = latex2exp::TeX("Agreement (parameterization vs stable state activity) - $\\gamma$ = 2.5"), x = "Number of Regulators", y = "Percent Agreement") +
+  geom_hline(yintercept = 0.5, linetype = 'dashed', color = "red") +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 15))
+
+sf_stats_g2_5 %>%
+  ggplot(aes(x = reg_group, y = cohen_k, fill = reg_group)) + 
+  geom_boxplot(show.legend = FALSE) +
+  scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+  labs(title = latex2exp::TeX("Cohen's k (parameterization vs stable state activity) - $\\gamma$ = 2.5"), x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
+  geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
+  geom_text(aes(x = 6, y = 0.55, label="k = 0.6")) + 
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 15))
+```
+
+```{r, kmeans-cl-reg-group-g2, include=FALSE, eval=FALSE, warning=FALSE}
+set.seed(42)
+k = 7 # how many groups to split?
+
+num_reg_vec = sf_stats_g2 %>% pull(num_reg)
+cl = kmeans(x = num_reg_vec, centers = k)
+
+cl_sort = cl$centers %>% sort(index.return=TRUE)
+
+sf_stats_g2_new = sf_stats_g2 %>% 
+  tibble::add_column(reg_group = factor(cl$cluster, levels = cl_sort$ix)) 
+
+# find the regulatory group ranges from the clustering (in terms of number of regulators)
+group_ranges = sf_stats_g2_new %>% 
+  group_by(reg_group) %>% 
+  summarize(min = min(num_reg), max = max(num_reg)) %>% 
+  tidyr::unite(col = "group_ranges", min:max, sep = "-") %>% 
+  pull(group_ranges)
+
+# Percent agreement per group
+sf_stats_g2_new %>% 
+  ggplot(aes(x = num_reg, y = percent_agreement, fill = reg_group)) + 
+  geom_boxplot(show.legend = FALSE) +
+  scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+  scale_x_continuous(labels = group_ranges, breaks = sort(cl$centers)) +
+  labs(title = latex2exp::TeX("Agreement (parameterization vs stable state activity) - $\\gamma$ = 2"), x = "Number of Regulators", y = "Percent Agreement") +
+  geom_hline(yintercept = 0.5, linetype = 'dashed', color = "red") +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 15))
+
+# Cohen's k per group
+sf_stats_g2_new %>% 
+  ggplot(aes(x = num_reg, y = cohen_k, fill = reg_group)) + 
+  geom_boxplot(show.legend = FALSE) +
+  scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+  scale_x_continuous(labels = group_ranges, breaks = sort(cl$centers)) +
+  labs(title = latex2exp::TeX("Cohen's k (parameterization vs stable state activity) - $\\gamma$ = 2"), x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
+  geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
+  geom_text(aes(x = 39, y = 0.55, label="k = 0.6")) + 
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 15))
+```
 
 # R session info {-}
 
