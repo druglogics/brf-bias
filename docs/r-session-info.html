@@ -30,7 +30,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="cascade-2-0-data-analysis.html"/>
+<link rel="prev" href="random-scale-free-network-analysis.html"/>
 <link rel="next" href="references.html"/>
 <script src="libs/header-attrs-2.3/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
@@ -895,6 +895,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="cascade-2-0-data-analysis.html"><a href="cascade-2-0-data-analysis.html#data-2"><i class="fa fa-check"></i>Data</a></li>
 <li class="chapter" data-level="" data-path="cascade-2-0-data-analysis.html"><a href="cascade-2-0-data-analysis.html#parameterization-vs-activity-1"><i class="fa fa-check"></i>Parameterization vs Activity</a></li>
 </ul></li>
+<li class="chapter" data-level="" data-path="random-scale-free-network-analysis.html"><a href="random-scale-free-network-analysis.html"><i class="fa fa-check"></i>Random scale-free network Analysis</a>
+<ul>
+<li class="chapter" data-level="" data-path="random-scale-free-network-analysis.html"><a href="random-scale-free-network-analysis.html#method"><i class="fa fa-check"></i>Method</a></li>
+<li class="chapter" data-level="" data-path="random-scale-free-network-analysis.html"><a href="random-scale-free-network-analysis.html#topology-stats"><i class="fa fa-check"></i>Topology Stats</a></li>
+<li class="chapter" data-level="" data-path="random-scale-free-network-analysis.html"><a href="random-scale-free-network-analysis.html#boolean-model-stats"><i class="fa fa-check"></i>Boolean Model Stats</a></li>
+<li class="chapter" data-level="" data-path="random-scale-free-network-analysis.html"><a href="random-scale-free-network-analysis.html#parameterization-vs-activity-2"><i class="fa fa-check"></i>Parameterization vs Activity</a></li>
+</ul></li>
 <li class="chapter" data-level="" data-path="r-session-info.html"><a href="r-session-info.html"><i class="fa fa-check"></i>R session info</a></li>
 <li class="chapter" data-level="" data-path="references.html"><a href="references.html"><i class="fa fa-check"></i>References</a></li>
 <li class="divider"></li>
@@ -919,7 +926,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="r-session-info" class="section level1 unnumbered" number="">
 <h1>R session info</h1>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="r-session-info.html#cb25-1"></a>xfun<span class="op">::</span><span class="kw">session_info</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="r-session-info.html#cb29-1"></a>xfun<span class="op">::</span><span class="kw">session_info</span>()</span></code></pre></div>
 <pre><code>R version 3.6.3 (2020-02-29)
 Platform: x86_64-pc-linux-gnu (64-bit)
 Running under: Ubuntu 18.04.5 LTS
@@ -936,31 +943,32 @@ Package version:
   abind_1.4-5               assertthat_0.2.1         
   backports_1.1.9           base64enc_0.1.3          
   BH_1.72.0.3               bookdown_0.20            
-  boot_1.3.25               broom_0.7.0              
-  callr_3.4.4               car_3.0-9                
-  carData_3.0-4             cellranger_1.1.0         
-  cli_2.0.2                 clipr_0.7.0              
-  codetools_0.2-16          colorspace_1.4-1         
-  compiler_3.6.3            conquer_1.0.2            
-  corrplot_0.84             cowplot_1.1.0            
-  cpp11_0.2.1               crayon_1.3.4             
-  crosstalk_1.1.0.1         curl_4.3                 
-  data.table_1.13.0         desc_1.2.0               
-  digest_0.6.25             doParallel_1.0.15        
-  dplyr_1.0.2               DT_0.15                  
-  ellipsis_0.3.1            evaluate_0.14            
-  fansi_0.4.1               farver_2.0.3             
-  forcats_0.5.0             foreach_1.5.0            
-  foreign_0.8-75            generics_0.0.2           
-  ggplot2_3.3.2             ggpubr_0.4.0             
-  ggrepel_0.8.2             ggsci_2.9                
-  ggsignif_0.6.0            glue_1.4.2               
-  graphics_3.6.3            grDevices_3.6.3          
-  grid_3.6.3                gridExtra_2.3            
-  gtable_0.3.0              gtools_3.8.2             
-  haven_2.3.1               highr_0.8                
-  hms_0.5.3                 htmltools_0.5.0          
-  htmlwidgets_1.5.1         isoband_0.2.2            
+  BoolNet_2.1.5             boot_1.3.25              
+  broom_0.7.0               callr_3.4.4              
+  car_3.0-9                 carData_3.0-4            
+  cellranger_1.1.0          cli_2.0.2                
+  clipr_0.7.0               codetools_0.2-16         
+  colorspace_1.4-1          compiler_3.6.3           
+  conquer_1.0.2             corrplot_0.84            
+  cowplot_1.1.0             cpp11_0.2.1              
+  crayon_1.3.4              crosstalk_1.1.0.1        
+  curl_4.3                  data.table_1.13.0        
+  desc_1.2.0                digest_0.6.25            
+  doParallel_1.0.15         dplyr_1.0.2              
+  DT_0.15                   ellipsis_0.3.1           
+  evaluate_0.14             fansi_0.4.1              
+  farver_2.0.3              forcats_0.5.0            
+  foreach_1.5.0             foreign_0.8-75           
+  generics_0.0.2            ggplot2_3.3.2            
+  ggpubr_0.4.0              ggrepel_0.8.2            
+  ggsci_2.9                 ggsignif_0.6.0           
+  glue_1.4.2                graphics_3.6.3           
+  grDevices_3.6.3           grid_3.6.3               
+  gridExtra_2.3             gtable_0.3.0             
+  gtools_3.8.2              haven_2.3.1              
+  highr_0.8                 hms_0.5.3                
+  htmltools_0.5.0           htmlwidgets_1.5.1        
+  igraph_1.2.5              isoband_0.2.2            
   iterators_1.0.12          jsonlite_1.7.1           
   knitr_1.29                labeling_0.3             
   later_1.1.0.1             latex2exp_0.4.0          
@@ -977,28 +985,29 @@ Package version:
   parallel_3.6.3            pbkrtest_0.4.8.6         
   pillar_1.4.6              pkgbuild_1.1.0           
   pkgconfig_2.0.3           pkgload_1.1.0            
-  polynom_1.4.0             praise_1.0.0             
-  prettyunits_1.1.1         processx_3.4.4           
-  progress_1.2.2            promises_1.1.1           
-  ps_1.3.4                  purrr_0.3.4              
-  quantreg_5.67             R6_2.4.1                 
-  RColorBrewer_1.1.2        Rcpp_1.0.5               
-  RcppArmadillo_0.9.900.3.0 RcppEigen_0.3.3.7.0      
-  readr_1.3.1               readxl_1.3.1             
-  rematch_1.0.1             rio_0.5.16               
-  rlang_0.4.7               rmarkdown_2.3            
-  rprojroot_1.3.2           rstatix_0.6.0            
-  rstudioapi_0.11           scales_1.1.1             
-  sp_1.4.2                  SparseM_1.78             
-  splines_3.6.3             statmod_1.4.34           
-  stats_3.6.3               stringi_1.5.3            
-  stringr_1.4.0             testthat_2.3.2           
-  tibble_3.0.3              tidyr_1.1.2              
-  tidyselect_1.1.0          tinytex_0.25             
-  tools_3.6.3               usefun_0.4.8             
-  utf8_1.1.4                utils_3.6.3              
-  vctrs_0.3.4               viridisLite_0.3.0        
-  withr_2.2.0               xfun_0.17                
+  png_0.1-7                 polynom_1.4.0            
+  praise_1.0.0              prettyunits_1.1.1        
+  processx_3.4.4            progress_1.2.2           
+  promises_1.1.1            ps_1.3.4                 
+  purrr_0.3.4               quantreg_5.67            
+  R6_2.4.1                  RColorBrewer_1.1.2       
+  Rcpp_1.0.5                RcppArmadillo_0.9.900.3.0
+  RcppEigen_0.3.3.7.0       readr_1.3.1              
+  readxl_1.3.1              rematch_1.0.1            
+  rio_0.5.16                rlang_0.4.7              
+  rmarkdown_2.3             rprojroot_1.3.2          
+  rstatix_0.6.0             rstudioapi_0.11          
+  scales_1.1.1              sp_1.4.2                 
+  SparseM_1.78              splines_3.6.3            
+  statmod_1.4.34            stats_3.6.3              
+  stringi_1.5.3             stringr_1.4.0            
+  testthat_2.3.2            tibble_3.0.3             
+  tidyr_1.1.2               tidyselect_1.1.0         
+  tinytex_0.25              tools_3.6.3              
+  usefun_0.4.8              utf8_1.1.4               
+  utils_3.6.3               vctrs_0.3.4              
+  viridisLite_0.3.0         withr_2.2.0              
+  xfun_0.17                 XML_3.99-0.3             
   yaml_2.2.1                zip_2.1.1                </code></pre>
 </div>
             </section>
@@ -1006,7 +1015,7 @@ Package version:
           </div>
         </div>
       </div>
-<a href="cascade-2-0-data-analysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="random-scale-free-network-analysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
 <a href="references.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>

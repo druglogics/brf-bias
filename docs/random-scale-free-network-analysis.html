@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>Standaridized Boolean Regulatory Function Bias</title>
+  <title>Random scale-free network Analysis | Standaridized Boolean Regulatory Function Bias</title>
   <meta name="description" content="Data analyses related to Truth Density bias in standardized boolean regulatory functions" />
   <meta name="generator" content="bookdown 0.20 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="Standaridized Boolean Regulatory Function Bias" />
+  <meta property="og:title" content="Random scale-free network Analysis | Standaridized Boolean Regulatory Function Bias" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://bblodfon.github.io/brf-bias/" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="bblodfon/brf-bias" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="Standaridized Boolean Regulatory Function Bias" />
+  <meta name="twitter:title" content="Random scale-free network Analysis | Standaridized Boolean Regulatory Function Bias" />
   
   <meta name="twitter:description" content="Data analyses related to Truth Density bias in standardized boolean regulatory functions" />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-
-<link rel="next" href="truth-density-data-analysis.html"/>
+<link rel="prev" href="cascade-2-0-data-analysis.html"/>
+<link rel="next" href="r-session-info.html"/>
 <script src="libs/header-attrs-2.3/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -924,72 +924,70 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="header">
-<h1 class="title">Standaridized Boolean Regulatory Function Bias</h1>
-<p class="author"><em><a href="https://github.com/bblodfon">John Zobolas</a></em></p>
-<p class="date"><em>Last updated: 16 October, 2020</em></p>
+<div id="random-scale-free-network-analysis" class="section level1 unnumbered" number="">
+<h1>Random scale-free network Analysis</h1>
+<div id="method" class="section level2 unnumbered" number="">
+<h2>Method</h2>
+<div class="green-box">
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="random-scale-free-network-analysis.html#cb25-1"></a>knitr<span class="op">::</span><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;img/scale_free_methodology.png&quot;</span>)</span></code></pre></div>
+<div class="figure"><span id="fig:unnamed-chunk-3"></span>
+<img src="img/scale_free_methodology.png" alt="Methodology Overview" width="3154" />
+<p class="caption">
+Figure 13: Methodology Overview
+</p>
 </div>
-<div id="input-libraries" class="section level1 unnumbered" number="">
-<h1>Input Libraries</h1>
-<p>Libraries used:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1"></a><span class="kw">library</span>(gtools)</span>
-<span id="cb1-2"><a href="index.html#cb1-2"></a><span class="kw">library</span>(dplyr)</span>
-<span id="cb1-3"><a href="index.html#cb1-3"></a><span class="kw">library</span>(tibble)</span>
-<span id="cb1-4"><a href="index.html#cb1-4"></a><span class="kw">library</span>(tidyr)</span>
-<span id="cb1-5"><a href="index.html#cb1-5"></a><span class="kw">library</span>(readr)</span>
-<span id="cb1-6"><a href="index.html#cb1-6"></a><span class="kw">library</span>(stringr)</span>
-<span id="cb1-7"><a href="index.html#cb1-7"></a><span class="kw">library</span>(usefun)</span>
-<span id="cb1-8"><a href="index.html#cb1-8"></a><span class="kw">library</span>(foreach)</span>
-<span id="cb1-9"><a href="index.html#cb1-9"></a><span class="kw">library</span>(doParallel)</span>
-<span id="cb1-10"><a href="index.html#cb1-10"></a><span class="kw">library</span>(DT)</span>
-<span id="cb1-11"><a href="index.html#cb1-11"></a><span class="kw">library</span>(ggplot2)</span>
-<span id="cb1-12"><a href="index.html#cb1-12"></a><span class="kw">library</span>(ggpubr)</span>
-<span id="cb1-13"><a href="index.html#cb1-13"></a><span class="kw">library</span>(corrplot)</span>
-<span id="cb1-14"><a href="index.html#cb1-14"></a><span class="kw">library</span>(latex2exp)</span>
-<span id="cb1-15"><a href="index.html#cb1-15"></a><span class="kw">library</span>(BoolNet)</span></code></pre></div>
-<div id="link-operator-boolean-regulatory-functions" class="section level2 unnumbered" number="">
-<h2>Link-operator Boolean Regulatory Functions</h2>
-<p>Let <span class="math inline">\(f\)</span> be a boolean function <span class="math inline">\(f(x,y):\{0,1\}^n \rightarrow \{0,1\}\)</span>, with <span class="math inline">\(m \ge 1\)</span> <strong>activators</strong> <span class="math inline">\(x=\{x_i\}_{i=1}^{m}\)</span> and <span class="math inline">\(k \ge 1\)</span> <strong>inhibitors</strong> <span class="math inline">\(y=\{y_i\}_{i=1}^{k}\)</span>, that is a total of <span class="math inline">\(n = m + k\)</span> regulators.
-The link-operator boolean functions have a (non-DNF) formula representation that partitions the two distinct type of regulators (positive regulators are called <em>activators</em>, negative regulators are called <em>inhibitors</em>) into two separate groups and connect them with a specific logical operator (which we call the <em>link operator</em>).
-The presence of the link operator is what forces the condition <span class="math inline">\(m,k \ge 1\)</span> (at least one regulator in each category).
-An example of such a function that has been used in the literature is the formula with the <code>AND-NOT</code> link operator <span class="citation">(Mendoza and Xenarios <a href="references.html#ref-Mendoza2006" role="doc-biblioref">2006</a>)</span>:</p>
+</div>
 <ul>
-<li><code>AND-NOT</code>: <span class="math display">\[f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{i=1}^{k} y_i\right)\]</span></li>
-</ul>
-<p>A <strong>variation</strong> of this one is the <code>OR-NOT</code> link operator function:</p>
-<ul>
-<li><code>OR-NOT</code>: <span class="math display">\[f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{i=1}^{k} y_i\right)\]</span></li>
-</ul>
-<p>In theory, we could use any of the known logical operators as a link-operator, e.g. <code>XOR</code>, <code>NAND</code>, simple <code>AND</code> etc.</p>
-<p>For example, another link-operator function is the next one:</p>
-<ul>
-<li><code>BalanceOp1</code>: <span class="math display">\[f(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{i=1}^{k} \lnot y_i\right)\]</span></li>
+<li>We generate the scale-free topology <code>.sif</code> files with the script <a href="https://github.com/bblodfon/brf-bias/blob/main/scripts/random_topo_gen.R">random_topo_gen.R</a> - implementation was based on the BoolNet R package <span class="citation">(Müssel, Hopfensitz, and Kestler <a href="references.html#ref-Mussel2010" role="doc-biblioref">2010</a>)</span>.
+The input degree distribution of the scale-free networks follows Riemann’s Zeta function <span class="citation">(Aldana and Goldstein <a href="references.html#ref-Aldana2003" role="doc-biblioref">2003</a>)</span>.</li>
+<li>We use the <a href="https://github.com/druglogics/abmlog/releases/tag/v1.6.0">abmlog</a> software to produce every possible link-operator parameterized boolean model out of every topology file created in the previous step.
+The more link-operator equations the network topology has (target nodes with both <em>activating</em> and <em>inhibiting</em> regulators) the more boolean models are generated (see script <a href="https://github.com/bblodfon/brf-bias/blob/main/scripts/run_abmlog_topology_files.sh">run_abmlog_topology_files.sh</a>).</li>
+<li>We analyze the data from all the abmlog-produced models and <strong>compare stable state and link-operator assignment</strong> and produce agreement statistics (see script <a href="https://github.com/bblodfon/brf-bias/blob/main/scripts/get_scale_free_model_stats.R">get_scale_free_model_stats.R</a>)</li>
 </ul>
 <div class="note">
-<p><span class="citation">Cury, Monteiro, and Chaouiya (<a href="references.html#ref-Cury2019" role="doc-biblioref">2019</a>)</span> defined the <strong>consistent boolean regulatory</strong> functions and their respective <strong>complete DNF forms (CDNF)</strong>.</p>
-<p>The link-operator functions listed above are a subset of these functions, since they respect the regulatory structure in their respective DNF forms (for the <em>BalanceOp1</em> it’s evident since it’s written first in the DNF - for the <em>AND-NOT</em> and <em>OR-NOT</em> functions, see their respective DNF forms in the truth density proofs <a href="truth-density-data-analysis.html#prp:and-not-proof">1</a> and <a href="truth-density-data-analysis.html#prp:or-not-proof">2</a>.</p>
+<p>Most of the scale-free networks studied in literature have <span class="math inline">\(\gamma\in[2,2.5]\)</span> - see <strong>Fig. 5</strong> in <span class="citation">(Aldana and Goldstein <a href="references.html#ref-Aldana2003" role="doc-biblioref">2003</a>)</span>.</p>
 </div>
 </div>
-<div id="threshold-functions" class="section level2 unnumbered" number="">
-<h2>Threshold functions</h2>
-<p>The <strong>boolean threshold functions</strong> are formulated based on given <em>pseudo-Boolean</em> constrains for the regulators.
-Thus, the activators and inhibitors are combined in an <em>additive</em> manner and not a <em>combinatorial</em> one and the <strong>majority rule</strong> defines the value of the function <span class="citation">(Chaouiya, Ourrad, and Lima <a href="references.html#ref-Chaouiya2013" role="doc-biblioref">2013</a>)</span>.</p>
-<p>Two simple cases of <strong>threshold</strong> functions are given below:</p>
+<div id="topology-stats" class="section level2 unnumbered" number="">
+<h2>Topology Stats</h2>
+<p>Some statistics on the scale-free network topologies produced:</p>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="random-scale-free-network-analysis.html#cb26-1"></a>knitr<span class="op">::</span><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;img/lo_eq_density.png&quot;</span>)</span>
+<span id="cb26-2"><a href="random-scale-free-network-analysis.html#cb26-2"></a>knitr<span class="op">::</span><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;img/max_reg_density.png&quot;</span>)</span></code></pre></div>
+<div class="figure"><span id="fig:unnamed-chunk-4"></span>
+<img src="img/lo_eq_density.png" alt="Scale-free networks Topology statistics" width="50%" /><img src="img/max_reg_density.png" alt="Scale-free networks Topology statistics" width="50%" />
+<p class="caption">
+Figure 14: Scale-free networks Topology statistics
+</p>
+</div>
+<div class="green-box">
 <ul>
-<li><code>exp_act_win</code>: <span class="math display">\[f_{act-win}(x,y)=\begin{cases}
-      1, &amp; \text{for } \sum_{i=1}^{m} x_i \ge \sum_{i=1}^{k} y_i\\
-      0, &amp; \text{otherwise}
-      \end{cases}\]</span></li>
-<li><code>exp_inh_win</code>: <span class="math display">\[f_{inh-win}(x,y)=\begin{cases}
-      1, &amp; \text{for } \sum_{i=1}^{m} x_i \gt \sum_{i=1}^{k} y_i\\
-      0, &amp; \text{otherwise}
-      \end{cases}\]</span></li>
+<li><span class="math inline">\(\gamma=2\)</span> provides networks with statistically <strong>more link-operator nodes (targeted by both positive and negative regulators)</strong> and thus these topologies will produce more boolean models via <code>abmlog</code>, so <strong>more stable state data</strong> to compare with the respective parameterization.</li>
+<li><span class="math inline">\(\gamma=2\)</span> also provides networks with statistically <strong>higher in-degree for the largest hub-nodes</strong> and thus present <strong>better candidates</strong> for testing the truth density bias of the standardized boolean regulatory functions, which manifests especially for nodes with high input-degree (e.g. <span class="math inline">\(\ge 8\)</span>)</li>
 </ul>
-<p>Note that: <span class="math inline">\(f_{inh-win}(x,y) = \lnot f_{act-win}(y,x)\)</span>.</p>
-<div class="blue-box">
-<p>Note that every boolean function has an equivalent combinatorial expression (i.e. the variables are connected with logical operators) and I searched for an analytic formula for the two last threshold functions.
-More more info, see this <a href="https://math.stackexchange.com/questions/3767774/identify-boolean-function-that-satisfies-some-constrains/">math.stackexchange question</a>.</p>
 </div>
+</div>
+<div id="boolean-model-stats" class="section level2 unnumbered" number="">
+<h2>Boolean Model Stats</h2>
+<p>Some statistics regarding the abmlog-produced boolean models and their respective stable states:</p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="random-scale-free-network-analysis.html#cb27-1"></a>knitr<span class="op">::</span><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;img/ss_dist.png&quot;</span>)</span>
+<span id="cb27-2"><a href="random-scale-free-network-analysis.html#cb27-2"></a>knitr<span class="op">::</span><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;img/ss_dist_total_sum.png&quot;</span>)</span></code></pre></div>
+<p><img src="img/ss_dist.png" width="50%" /><img src="img/ss_dist_total_sum.png" width="50%" /></p>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="random-scale-free-network-analysis.html#cb28-1"></a>knitr<span class="op">::</span><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;img/zero_ss_dist.png&quot;</span>)</span></code></pre></div>
+<div class="figure"><span id="fig:unnamed-chunk-6"></span>
+<img src="img/zero_ss_dist.png" alt="Stable state statistics" width="50%" />
+<p class="caption">
+Figure 15: Stable state statistics
+</p>
+</div>
+<div class="green-box">
+<ul>
+<li><strong>More stable state data</strong> for <span class="math inline">\(\gamma=2\)</span>, even though we had <span class="math inline">\(\times10\)</span> more scale-free networks produced with <span class="math inline">\(\gamma=2.5\)</span>.</li>
+<li><span class="math inline">\(\approx 50\%\)</span> of the scale-free topologies that pass through <code>abmlog</code> and produce all possible link-operator parameterized boolean models, <strong>do not have any model with a stable state</strong>.</li>
+</ul>
+</div>
+</div>
+<div id="parameterization-vs-activity-2" class="section level2 unnumbered" number="">
+<h2>Parameterization vs Activity</h2>
 </div>
 </div>
             </section>
@@ -997,8 +995,8 @@ More more info, see this <a href="https://math.stackexchange.com/questions/37677
           </div>
         </div>
       </div>
-
-<a href="truth-density-data-analysis.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="cascade-2-0-data-analysis.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="r-session-info.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>
