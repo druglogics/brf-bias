@@ -554,6 +554,61 @@ Though **Cohen's kappa** $\kappa$ might not be a proper agreement measurement fo
 In the figure above we have drawn a horizontal line to indicate the value of $\kappa$ that corresponds to a *moderate* or *substantial* strength of agreement [@Landis1977; @McHugh2012a]
 :::
 
+
+# Random scale-free network Analysis {-}
+
+## Method {-}
+
+:::{.green-box}
+```{r, fig.cap="Methodology Overview"}
+knitr::include_graphics(path = "img/scale_free_methodology.png")
+```
+:::
+
+- We generate the scale-free topology `.sif` files with the script [random_topo_gen.R](https://github.com/bblodfon/brf-bias/blob/main/scripts/random_topo_gen.R) - implementation was based on the BoolNet R package [@Mussel2010].
+The input degree distribution of the scale-free networks follows Riemann's Zeta function [@Aldana2003].
+- We use the [abmlog](https://github.com/druglogics/abmlog/releases/tag/v1.6.0) software to produce every possible link-operator parameterized boolean model out of every topology file created in the previous step.
+The more link-operator equations the network topology has (target nodes with both *activating* and *inhibiting* regulators) the more boolean models are generated (see script [run_abmlog_topology_files.sh](https://github.com/bblodfon/brf-bias/blob/main/scripts/run_abmlog_topology_files.sh)).
+- We analyze the data from all the abmlog-produced models and **compare stable state and link-operator assignment** and produce agreement statistics (see script [get_scale_free_model_stats.R](https://github.com/bblodfon/brf-bias/blob/main/scripts/get_scale_free_model_stats.R))
+
+:::{.note}
+Most of the scale-free networks studied in literature have $\gamma\in[2,2.5]$ - see **Fig. 5** in [@Aldana2003].
+:::
+
+## Topology Stats {-}
+
+Some statistics on the scale-free network topologies produced:
+```{r, fig.cap="Scale-free networks Topology statistics", fig.show='hold', out.width='50%'}
+knitr::include_graphics(path = "img/lo_eq_density.png")
+knitr::include_graphics(path = "img/max_reg_density.png")
+```
+
+:::{.green-box}
+- $\gamma=2$ provides networks with statistically **more link-operator nodes (targeted by both positive and negative regulators)** and thus these topologies will produce more boolean models via `abmlog`, so **more stable state data** to compare with the respective parameterization.
+- $\gamma=2$ also provides networks with statistically **higher in-degree for the largest hub-nodes** and thus present **better candidates** for testing the truth density bias of the standardized boolean regulatory functions, which manifests especially for nodes with high input-degree (e.g. $\ge 8$)
+:::
+
+## Boolean Model Stats {-}
+
+Some statistics regarding the abmlog-produced boolean models and their respective stable states:
+```{r, fig.show='hold', out.width='50%'}
+knitr::include_graphics(path = "img/ss_dist.png")
+knitr::include_graphics(path = "img/ss_dist_total_sum.png")
+```
+
+```{r, fig.cap="Stable state statistics", fig.show='hold', out.width='50%'}
+knitr::include_graphics(path = "img/zero_ss_dist.png")
+```
+
+:::{.green-box}
+- **More stable state data** for $\gamma=2$, even though we had $\times10$ more scale-free networks produced with $\gamma=2.5$.
+- $\approx 50\%$ of the scale-free topologies that pass through `abmlog` and produce all possible link-operator parameterized boolean models, **do not have any model with a stable state**.
+:::
+
+## Parameterization vs Activity {-}
+
+
+
 # R session info {-}
 
 ```{r session info, comment=""}
