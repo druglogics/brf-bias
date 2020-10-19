@@ -380,7 +380,7 @@ The models are stored in both `.gitsbe` and `.bnet` files in the Zenodo dataset 
 
 :::{.blue-box}
 The dataset includes models with $0,1$ or $2$ stable states.
-We used the [get_ss_data.R](https://github.com/bblodfon/brf-bias/blob/main/scripts/get_ss_data.R) script to get the **1 stable state data** from the models and it's this data we are going to analyze in the next section.
+We used the [get_ss_data.R](https://github.com/bblodfon/brf-bias/blob/main/scripts/get_ss_data.R) script to get the **1 stable state data** from the models (a total of $2820224$ models - see [stable state distribution](https://bblodfon.github.io/bool-param-maps/cascade-1-0-general.html#model-stable-state-statistics)) and it's this data we are going to analyze in the next section.
 :::
 
 ## Parameterization vs Activity {-}
@@ -393,7 +393,7 @@ Load the `node_stats`:
 node_stats = readRDS(file = "data/node_stats.rds")
 ```
 
-:::{.note}
+:::{.note #percent-agreement-note}
 We are interested in two variables of interest:
 
 - **Parameterization** of a link operator node: `AND-NOT` (0) vs `OR-NOT` (1)
@@ -403,9 +403,17 @@ There exist are 4 different possibilities related to 2 cases:
 
 1. `0-0`, `1-1` => parameterization and stable state **match** (e.g. node was parameterized with `AND-NOT` and it's state was inhibited or it had `OR-NOT` and its state was active)
 2. `1-0`, `0-1` => parameterization and stable state **differ** (e.g. node had `OR-NOT` and its state was inhibited, or `AND-NOT` and it's state was active)
+
+The **percent Agreement** (or total observed proportionate agreement score) is the number of total matches (case 1 above) divided by the total number of data observations/models.
+
+A more *robust* and *sophisticated* (compared to the percent agreement) statistic is the **Cohen's kappa coefficient** ($\kappa$). 
+This statistic is used to measure the extent to which data collectors (raters) assign the same score to the same variable (interrater reliability) and takes into account the possibility of agreement occurring by chance.
+In our case **one rater assigns link-operator parameterization** (`AND-NOT` or $0$ vs `OR-NOT` or $1$) and **the other stable state activity** $0$ vs $1$).
+
+In the figures showing Cohen's $\kappa$, we draw a horizontal line to indicate the value of $\kappa=0.6$ that corresponds to a *moderate* or *substantial* strength of agreement [@Landis1977; @McHugh2012a]
 :::
 
-In the next Figure we show the **total observed proportionate agreement or percent agreement** for each node, which is the number of models for which **parameterization and stable state matched (case 1 above) divided by the total amount of models**:
+In the next Figure we show the **percent agreement** for each node:
 ```{r ss-lo-agreement-prop, fig.align='center', dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement"}
 node_stats %>% mutate(node = forcats::fct_reorder(node, desc(num_reg))) %>% 
   ggplot(aes(x = node, y = obs_prop_agreement, fill = as.factor(num_reg))) +
@@ -424,8 +432,8 @@ The above score means that the is a higher probability than chance to assign a n
 **This suggests that the corresponding boolean formula used is biased**.
 :::
 
-In the next figure, where we have **separated the nodes to groups based on the number of regulators**, we observe that even for a small number of regulators, the **median percent agreement score is higher than** $0.5$:
-```{r ss-lo-agreement-prop-grouped, fig.align='center', warning=FALSE, dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement. CASCADE 1.0 link-operator nodes are grouped based on their respective number of regulators"}
+In the next figures, we have **separated the nodes to groups based on the number of regulators** and show both percent agreement and Cohen's $\kappa$:
+```{r ss-lo-agreement-prop-grouped, warning='FALSE', fig.show='hold', out.width='50%', warning=FALSE, dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement. CASCADE 1.0 link-operator nodes are grouped based on their respective number of regulators. Both percent agreement and Cohen's k are presented"}
 node_stats %>% 
   mutate(num_reg = as.factor(num_reg)) %>%
   ggplot(aes(x = num_reg, y = obs_prop_agreement, fill = num_reg)) + 
@@ -436,9 +444,27 @@ node_stats %>%
     geom_hline(yintercept = 0.5, linetype = 'dashed', color = "red") +
     theme_classic(base_size = 14) +
     theme(axis.text.x = element_text(size = 15))
+
+node_stats %>% 
+  mutate(num_reg = as.factor(num_reg)) %>%
+  ggplot(aes(x = num_reg, y = cohen_k, fill = num_reg)) + 
+    geom_boxplot(show.legend = FALSE) +
+    geom_jitter(shape = 19, position = position_jitter(0.2), show.legend = FALSE) +
+    ylim(c(0,1)) +
+    labs(title = "Cohen's k (parameterization vs stable state activity)", x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
+    geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
+    geom_text(aes(x = 3.4, y = 0.55, label="k = 0.6")) + 
+    theme_classic(base_size = 14) +
+    theme(axis.text.x = element_text(size = 15))
 ```
 
-Next, we calculate per node, the proportion of link operator assignments that retained their expected (i.e. keeping the same digit) stable state activity (e.g. the proportion of models corresponding to the cases `0-0`/(`0-0` + `0-1`) for the `AND-NOT` link operator - and `1-1`/(`1-1` + `1-o`) for `OR-NOT`):
+:::{.green-box}
+We observe that even for a small number of regulators, the **median percent agreement score is higher than** $0.5$, though the corresponding Cohen's $\kappa$ score seems to be quite variant across the number of regulators.
+
+Since Cohen's $\kappa$ is a more *strict* score to assess agreement between parameterization and stable state activity we conclude that the *truth density bias* of the standardized regulatory functions might not be quite evident from these data (**we need link-operator nodes with more regulators**).
+:::
+
+Next, we calculate per node, the proportion of link operator assignments that retained their expected (i.e. keeping the same digit) stable state activity (e.g. the proportion of models corresponding to the cases `0-0`/(`0-0` + `0-1`) for the `AND-NOT` link operator - and `1-1`/(`1-1` + `1-0`) for `OR-NOT`):
 ```{r ss-comp-agreement-props, fig.align='center', dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement 2"}
 node_stats %>% 
   mutate(and_not_0ss_prop = and_not_0ss_agreement/(and_not_0ss_agreement + and_not_1ss_disagreement)) %>% 
@@ -474,8 +500,7 @@ Probably the network dynamical configuration may have something to do with that.
 caption.title = "Link Operator Statistics (CASCADE 1.0)"
 DT::datatable(data = node_stats %>% select(node, num_reg, num_act, num_inh), 
   caption = htmltools::tags$caption(caption.title, style="color:#dd4814; font-size: 18px"),
-  options = list(order = list(list(2, "desc")))) %>% 
-  formatRound(5:6, digits = 3)
+  options = list(order = list(list(2, "desc"))))
 ```
 
 # CASCADE 2.0 Data Analysis {-}
@@ -513,13 +538,9 @@ node_stats_cascade2 %>% mutate(node = forcats::fct_reorder(node, desc(num_reg)))
 ```
 :::{.green-box}
 The total barplot area covered (i.e. the **total agreement score** so to speak) is **`r node_stats_cascade2 %>% summarise(100 * sum(obs_prop_agreement)/n()) %>% pull()`%**.
-
-The nodes with number of regulators $>5$ have always a percent agreement $\geq 70\%$ between stable state activity and link operator parameterization.
-The above results provide evidence that the statistics-based conclusion we reached in a [previous section](#stand-eq-bias) is correct, i.e. that the **standardized boolean formula is biased for larger number of regulators**.
 :::
 
-In the next two figures, we group the nodes to $3$ groups, based on the number of regulators they have.
-In order to account for the uncertainty factors involved when comparing stable state activity values and corresponding link-operator parameterization, we additionally try a more *robust* statistic to measure the level of agreement, namely the **Cohen's kappa coefficient** ($\kappa$):
+In the next two figures, we separate the nodes to $3$ groups based on the number of regulators they have and show both the percent agreement and Cohen's $\kappa$ statistic (see [note](#percent-agreement-note)):
 ```{r ss-lo-prop-aggreement-cascade2-grouped, fig.align='center', fig.show='hold', out.width='50%', dpi=300, cache=TRUE, fig.cap='Parameterization and Stable State activity agreement. CASCADE 2.0 link-operator nodes are grouped based on their respective number of regulators'}
 node_stats_cascade2 %>% mutate(reg_group = 
     factor(case_when(num_reg >= 6 ~ ">5", num_reg <= 3 ~ "2-3", TRUE ~ "4-5"), levels = c("2-3", "4-5", ">5"))) %>%
@@ -544,18 +565,13 @@ node_stats_cascade2 %>% mutate(reg_group =
     theme_classic(base_size = 14) +
     theme(axis.text.x = element_text(size = 15))
 ```
+
 :::{.green-box}
-The larger the number of regulators, the higher the percent agreement and Cohen's $\kappa$.
+The nodes with number of regulators $>5$ have always a percent agreement $\geq 75\%$ between stable state activity and link operator parameterization and $\kappa_{median}>0.6$.
+The above results provide evidence that the statistics-based conclusion we reached in a [previous section](#stand-eq-bias) is correct, i.e. that the **standardized boolean formula is biased for larger number of regulators**.
 :::
 
-:::{.note}
-Though **Cohen's kappa** $\kappa$ might not be a proper agreement measurement for this dataset, we know that it is more sophisticated than the simple percent agreement calculation, as it takes into account the possibility of the agreement occurring by chance.
-
-In the figure above we have drawn a horizontal line to indicate the value of $\kappa$ that corresponds to a *moderate* or *substantial* strength of agreement [@Landis1977; @McHugh2012a]
-:::
-
-
-# Random scale-free network Analysis {-}
+# Random scale-free Networks Analysis {-}
 
 ## Method {-}
 
@@ -585,6 +601,7 @@ knitr::include_graphics(path = "img/max_reg_density.png")
 
 :::{.green-box}
 - $\gamma=2$ provides networks with statistically **more link-operator nodes (targeted by both positive and negative regulators)** and thus these topologies will produce more boolean models via `abmlog`, so **more stable state data** to compare with the respective parameterization.
+- We also observe for both $\gamma$'s the presence of **link-operator nodes with high numbers of regulators** which is exactly what we needed from the dataset to test if the standardized regulatory functions are biased or not.
 - $\gamma=2$ also provides networks with statistically **higher in-degree for the largest hub-nodes** and thus present **better candidates** for testing the truth density bias of the standardized boolean regulatory functions, which manifests especially for nodes with high input-degree (e.g. $\ge 8$)
 :::
 
@@ -607,13 +624,20 @@ knitr::include_graphics(path = "img/zero_ss_dist.png")
 
 ## Parameterization vs Activity {-}
 
-```{r}
+```{r load-scale-free-stats-data}
 sf_stats_g2_5 = readRDS(file = "data/sf_stats_gamma2.5.rds")
 sf_stats_g2 = readRDS(file = "data/sf_stats_gamma2.rds")
 ```
 
-```{r agree-stats-g2, warning=FALSE}
-sf_stats_g2 = sf_stats_g2 %>% mutate(reg_group = factor(case_when(
+We will **organize the link-operator nodes on separate groups** based on the number of regulators they have and compare nodes coming from different-$\gamma$ scale-free topologies in separate sections/figures.
+
+For the agreement statistics we will use the **percent agreement** and Cohen's $\kappa$ as before (see [note](#percent-agreement-note)).
+
+### Results for networks with $\gamma = 2$ {-}
+
+```{r agree-stats-g2, warning=FALSE, cache=TRUE, dpi=300, fig.show='hold', out.width='50%', fig.cap='Link-operator Parameterization vs Stable State Activity for scale-free topologies with $\\gamma$ = 2'}
+sf_stats_g2 = 
+  sf_stats_g2 %>% mutate(reg_group = factor(case_when(
   num_reg %in% 2:3 ~ "2-3", 
   num_reg %in% 4:6 ~ "4-6", 
   num_reg %in% 7:10 ~ "7-10", 
@@ -633,7 +657,7 @@ sf_stats_g2 %>%
 sf_stats_g2 %>%
   ggplot(aes(x = reg_group, y = cohen_k, fill = reg_group)) + 
   geom_boxplot(show.legend = FALSE) +
-  scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+  scale_y_continuous(limits = c(0,1)) +
   labs(title = latex2exp::TeX("Cohen's k (parameterization vs stable state activity) - $\\gamma$ = 2"), x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
   geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
   geom_text(aes(x = 6, y = 0.55, label="k = 0.6")) + 
@@ -641,7 +665,9 @@ sf_stats_g2 %>%
   theme(axis.text.x = element_text(size = 15))
 ```
 
-```{r agree-stats-g2-5, warning=FALSE}
+### Results for networks with $\gamma = 2.5$ {-}
+
+```{r agree-stats-g2-5, warning=FALSE, cache=TRUE, dpi=300, fig.show='hold', out.width='50%', fig.cap='Link-operator Parameterization vs Stable State Activity for scale-free topologies with $\\gamma$ = 2.5'}
 sf_stats_g2_5 = sf_stats_g2_5 %>% mutate(reg_group = factor(case_when(
   num_reg %in% 2:3 ~ "2-3", 
   num_reg %in% 4:6 ~ "4-6", 
@@ -657,18 +683,24 @@ sf_stats_g2_5 %>%
   labs(title = latex2exp::TeX("Agreement (parameterization vs stable state activity) - $\\gamma$ = 2.5"), x = "Number of Regulators", y = "Percent Agreement") +
   geom_hline(yintercept = 0.5, linetype = 'dashed', color = "red") +
   theme_classic(base_size = 14) +
-  theme(axis.text.x = element_text(size = 15))
+  theme(axis.text.x = element_text(size = 15), plot.title = element_text(size = 16))
 
 sf_stats_g2_5 %>%
   ggplot(aes(x = reg_group, y = cohen_k, fill = reg_group)) + 
   geom_boxplot(show.legend = FALSE) +
-  scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
+  scale_y_continuous(limits = c(0,1)) +
   labs(title = latex2exp::TeX("Cohen's k (parameterization vs stable state activity) - $\\gamma$ = 2.5"), x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
   geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
   geom_text(aes(x = 6, y = 0.55, label="k = 0.6")) + 
   theme_classic(base_size = 14) +
-  theme(axis.text.x = element_text(size = 15))
+  theme(axis.text.x = element_text(size = 15), plot.title = element_text(size = 16))
 ```
+
+:::{.green-box}
+Results for both $\gamma$'s show the same thing: **the higher the number of regulators, the more biased the boolean link-operator function result is**.
+
+Specifically, for both $\gamma$'s, we observe that for $n>7-10$ regulators, assigning a node the `AND-NOT` link-operator in its corresponding equation, results in it having a stable state equal to $0$ and vice-versa for the `OR-NOT` case.
+:::
 
 ```{r, kmeans-cl-reg-group-g2, include=FALSE, eval=FALSE, warning=FALSE}
 set.seed(42)
