@@ -64,7 +64,7 @@ gen_random_nk_topology = function(n, k, topology, gamma = 2.5, approx_cutoff = 1
 # write a .sif file with the results from `gen_random_nk_topology` function
 write_sif = function(interactions_tbl, filename) {
   stopifnot(colnames(interactions_tbl) == c('source', 'effect', 'target'))
-  readr::write_tsv(interactions_tbl, path = filename, col_names = FALSE)
+  readr::write_tsv(interactions_tbl, file = filename, col_names = FALSE)
 }
 
 ##########################################
