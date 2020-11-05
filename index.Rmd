@@ -26,7 +26,6 @@ library(doParallel)
 library(DT)
 library(ggplot2)
 library(ggpubr)
-library(corrplot)
 library(latex2exp)
 library(BoolNet)
 ```
@@ -214,11 +213,11 @@ ggboxplot(data = stats_and_or, x = "num_reg", y = "td",
 
 :::{.green-box}
 - **The more regulators** there are, the more likely it is that the `AND-NOT` link operator in the boolean equation will result in an **inhibited** target and that the `OR-NOT` link operator in an **active** target.
-- For $n>6$, the points outside the boxplots (with a truth density of $\frac{1}{2}, \frac{1}{4}, 1-\frac{1}{4},\frac{1}{8},1-\frac{1}{8},...$) correspond to the **long-term behavior** of the truth density formulas shown above where there is also **large imbalance between the number of activators and inhibitors**.
+- For $n>6$ regulators, the points outside the boxplots (with a truth density of $\frac{1}{2}, \frac{1}{4}, 1-\frac{1}{4},\frac{1}{8},1-\frac{1}{8},...$) correspond to the **asymptotic behavior** of the truth density formulas shown [above](#asymptotic-behavior) where there is a large difference between the **number of activators and inhibitors** ($k \ll m$ for the `AND-NOT` case, e.g. $1,2,...$ inhibitors only or $m \ll k$ for the `OR-NOT` case, i.e. $1,2,...$ activators).
 :::
 
 We can also check the relation between TD and number of activators and inhibitors in each case.
-The following two figures show us why **the number of inhibitors** are more decisive in the `AND-NOT` case:
+The following figures demonstrate that the asymptotic behaviour of the truth density of the `AND-NOT` link-operator function is largely dependent on the number of **inhibitors** and not on the number of **activators**:
 ```{r and-not-reg-plot, dpi=300, cache=TRUE, fig.show='hold', out.width='50%', fig.cap="AND-NOT TD vs Number of Activators and Inhibitors"}
 ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_inh", 
   y = "td_and_not", color = "#Regulators",
@@ -233,7 +232,7 @@ ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_act",
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-In the `OR-NOT` case the number of activators is more important:
+The reverse situation is true for the `OR-NOT` case: 
 ```{r or-not-reg-plot, dpi=300, cache=TRUE, fig.show='hold', out.width='50%', fig.cap="OR-NOT TD vs Number of Activators and Inhibitors"}
 ggscatter(data = stats %>% rename(`#Regulators` = num_reg), 
   x = "num_inh", y = "td_or_not", color = "#Regulators",
@@ -315,8 +314,8 @@ ggboxplot(data = stats_functions, x = "num_reg", y = "td",
 
 ## TD Data Distance {-}
 
-We check how close are the truth density values of the different proposed BBRs, also compared to the **proportion of activators**, e.g. if a BBR has 1 activator and 5 inhibitors (resp. 5 activators and 1 inhibitor) I would expect the boolean regulatory function's output to be statistically more inhibited (resp. activated).
-We find the *euclidean distance* between the different truth density values and show them in a table and dendrogram format:
+We check how close are the truth density values of the different proposed boolean regulatory functions, also compared to the **proportion of activators**, e.g. if a function has $1$ activator and $5$ inhibitors (resp. $5$ activators and $1$ inhibitor) I would expect the boolean regulatory function's output to be statistically more *inhibited* (resp. *activated*).
+We find the *euclidean distance* between the different truth density values and show them in a data table:
 
 ```{r td-values-distance}
 act_prop = stats %>% mutate(act_prop = num_act/num_reg) %>% pull(act_prop)
@@ -343,7 +342,7 @@ DT::datatable(data = d %>% as.matrix(), options = list(dom = "t", scrollX = TRUE
   formatStyle(columns = c("act_prop"), backgroundColor = styleInterval(breaks, col))
 ```
 
-```{r dist-dendogram, fig.height=7, fig.align='center'}
+```{r dist-dendogram, fig.height=7, fig.align='center', eval=FALSE, include=FALSE}
 plot(hclust(dist(d)), main = "Distance Dendogram of Thruth Densities",
   ylab = "Euclidean Distance", sub = "", xlab = "")
 ```
@@ -353,23 +352,6 @@ plot(hclust(dist(d)), main = "Distance Dendogram of Thruth Densities",
 As such they might represent more realistic candidates for regulatory functions from a statistical point of view.
 - The TD values of `OR-NOT` and `BalanceOp1` are in general very close (as we've also seen in a previous figure)
 :::
-
-## Correlation {-}
-
-We will now check the *correlation* between each pair of operators/proposed functions, as well as the number of regulators, inhibitors and activators:
-```{r cor-plot, fig.align='center', dpi=300, cache=TRUE, fig.cap="Correlation Matrix of Truth Densities and number of regulators"}
-M = cor(stats, method = "kendall")
-res = corrplot::cor.mtest(stats, method = "kendall")
-corrplot::corrplot(corr = M, type = "upper", p.mat = res$p, sig.level = c(.001, .01, .05), 
-  pch.cex = 1, pch.col = "white", insig = "label_sig", tl.col = "black", tl.srt = 45)
-```
-
-:::{.green-box}
-- The two functions results $f_{act-win}(x,y), f_{inh-win}(x,y)$ are highly correlated as expected
-- Lower `AND-NOT` TD values highly correlate with *higher* number of inhibitors
-- Higher `OR-NOT` TD values highly correlate with *higher* number of activators
-:::
-
 
 # CASCADE 1.0 Data Analysis {-}
 
