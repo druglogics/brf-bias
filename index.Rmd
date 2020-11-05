@@ -33,22 +33,22 @@ library(BoolNet)
 
 ## Link-operator Boolean Regulatory Functions {-}
 
-Let $f$ be a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with $m \ge 1$ **activators** $x=\{x_i\}_{i=1}^{m}$ and $k \ge 1$ **inhibitors** $y=\{y_i\}_{i=1}^{k}$, that is a total of $n = m + k$ regulators.
+Let $f$ be a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with $m \ge 1$ **activators** $x=\{x_i\}_{i=1}^{m}$ and $k \ge 1$ **inhibitors** $y=\{y_j\}_{j=1}^{k}$, that is a total of $n = m + k$ regulators.
 The link-operator boolean functions have a (non-DNF) formula representation that partitions the two distinct type of regulators (positive regulators are called *activators*, negative regulators are called *inhibitors*) into two separate groups and connect them with a specific logical operator (which we call the *link operator*).
 The presence of the link operator is what forces the condition $m,k \ge 1$ (at least one regulator in each category).
 An example of such a function that has been used in the literature is the formula with the `AND-NOT` link operator [@Mendoza2006]:
 
-- `AND-NOT`: $$f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{i=1}^{k} y_i\right)$$
+- `AND-NOT`: $$f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{j=1}^{k} y_j\right)$$
 
 A **variation** of this one is the `OR-NOT` link operator function:
 
-- `OR-NOT`: $$f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{i=1}^{k} y_i\right)$$
+- `OR-NOT`: $$f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{j=1}^{k} y_j\right)$$
 
 In theory, we could use any of the known logical operators as a link-operator, e.g. `XOR`, `NAND`, simple `AND` etc.
 
 For example, another link-operator function is the next one:
 
-- `BalanceOp1`: $$f(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{i=1}^{k} \lnot y_i\right)$$
+- `BalanceOp1`: $$f(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)$$
 
 :::{.note}
 @Cury2019 defined the **consistent boolean regulatory** functions and their respective **complete DNF forms (CDNF)**.
@@ -64,11 +64,11 @@ Thus, the activators and inhibitors are combined in an *additive* manner and not
 Two simple cases of **threshold** functions are given below:
 
 - `exp_act_win`: $$f_{act-win}(x,y)=\begin{cases}
-        1, & \text{for } \sum_{i=1}^{m} x_i \ge \sum_{i=1}^{k} y_i\\
+        1, & \text{for } \sum_{i=1}^{m} x_i \ge \sum_{j=1}^{k} y_j\\
         0, & \text{otherwise}
         \end{cases}$$
 - `exp_inh_win`: $$f_{inh-win}(x,y)=\begin{cases}
-        1, & \text{for } \sum_{i=1}^{m} x_i \gt \sum_{i=1}^{k} y_i\\
+        1, & \text{for } \sum_{i=1}^{m} x_i \gt \sum_{j=1}^{k} y_j\\
         0, & \text{otherwise}
         \end{cases}$$
 
@@ -106,19 +106,19 @@ DT::datatable(data = stats,
 
 Here we prove the exact formulas for the truth densities in the case of the `AND-NOT` and `OR-NOT` link operator boolean functions.
 For both propositions presented, we assume that $f$ is a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with a total of $n$ regulators/input variables.
-We also assume that these regulators are uniquely separated to two distinct groups: $m$ **activators** (positive regulators) $x=\{x_i\}_{i=1}^{m}$ and $k$ **inhibitors** (negative regulators) $y=\{y_i\}_{i=1}^{k}$, with $n = m + k$.
+We also assume that these regulators are uniquely separated to two distinct groups: $m$ **activators** (positive regulators) $x=\{x_i\}_{i=1}^{m}$ and $k$ **inhibitors** (negative regulators) $y=\{y_j\}_{j=1}^{k}$, with $n = m + k$.
 
 ```{proposition, name="AND-NOT Truth Density Formula", label='and-not-proof'}
 When a boolean regulatory function $f$ has the form of an *AND-NOT* link-operator boolean function:
-$f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{i=1}^{k} y_i\right)$ with $m \ge 1$ activators and $k \ge 1$ inhibitors, its truth density is $TD_{AND-NOT}=\frac{2^m-1}{2^n} = \frac{1}{2^k}-\frac{1}{2^n}$.
+$f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{j=1}^{k} y_j\right)$ with $m \ge 1$ activators and $k \ge 1$ inhibitors, its truth density is $TD_{AND-NOT}=\frac{2^m-1}{2^n} = \frac{1}{2^k}-\frac{1}{2^n}$.
 ```
 
 ```{proof}
 Using the distributivity property and De Morgan's law we can re-write $f_{AND-NOT}$ in a DNF form as:
 \begin{equation}
 \begin{split}
-f_{AND-NOT}(x,y) & = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{i=1}^{k} y_i\right) \\
-                 & = \bigvee_{i=1}^{m} \left( x_i \land \lnot \left( \bigvee_{i=1}^{k} y_i \right) \right) \\ 
+f_{AND-NOT}(x,y) & = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{j=1}^{k} y_j\right) \\
+                 & = \bigvee_{i=1}^{m} \left( x_i \land \lnot \left( \bigvee_{j=1}^{k} y_j \right) \right) \\ 
                  & = \bigvee_{i=1}^{m} (x_i \land \bigwedge_{j=1}^{k} \lnot y_j) \\ 
                  & = \bigvee_{i=1}^{m} (x_i \land \lnot y_1 \land ... \land \lnot y_k)
 \end{split}
@@ -137,15 +137,15 @@ Thus $TD_{AND-NOT}=\frac{2^m-1}{2^n}$.
 
 ```{proposition, name="OR-NOT Truth Density Formula", label='or-not-proof'}
 When a boolean regulatory function $f$ has the form of an *OR-NOT* link-operator boolean function:
-$f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{i=1}^{k} y_i\right)$ with $m \ge 1$ activators and $k \ge 1$ inhibitors, its truth density is $TD_{OR-NOT}=\frac{2^n-(2^k-1)}{2^n} = 1 + \frac{1}{2^n} - \frac{1}{2^m}$.
+$f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{j=1}^{k} y_j\right)$ with $m \ge 1$ activators and $k \ge 1$ inhibitors, its truth density is $TD_{OR-NOT}=\frac{2^n-(2^k-1)}{2^n} = 1 + \frac{1}{2^n} - \frac{1}{2^m}$.
 ```
 
 ```{proof}
 Using De Morgan’s law we can re-write $f_{OR-NOT}$ in a DNF form as:
 \begin{equation}
 \begin{split}
-f_{OR-NOT}(x,y) & = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{i=1}^{k} y_i\right) \\
-                & = \left(\bigvee_{i=1}^{m} x_i\right) \lor \left(\bigwedge_{i=1}^{k} \lnot y_i\right) \\
+f_{OR-NOT}(x,y) & = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{j=1}^{k} y_j\right) \\
+                & = \left(\bigvee_{i=1}^{m} x_i\right) \lor \left(\bigwedge_{j=1}^{k} \lnot y_j\right) \\
                 & = x_1 \lor x_2 \lor ... \lor x_m \lor (\lnot y_1 \land ... \land \lnot y_k)
 \end{split}
 \end{equation}
