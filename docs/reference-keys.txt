@@ -6,7 +6,6 @@ fig:or-not-reg-plot
 fig:fig-and-or-not-balanceop
 fig:balanceOp1-reg-plot
 fig:fig-two-bool-formulas
-fig:cor-plot
 fig:ss-lo-agreement-prop
 fig:ss-lo-agreement-prop-grouped
 fig:ss-comp-agreement-props

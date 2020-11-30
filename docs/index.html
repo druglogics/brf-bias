@@ -32,7 +32,7 @@
   
 
 <link rel="next" href="truth-density-data-analysis.html"/>
-<script src="libs/header-attrs-2.4/header-attrs.js"></script>
+<script src="libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
 <link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
@@ -51,6 +51,8 @@
 
 
 <script src="libs/accessible-code-block-0.0.1/empty-anchor.js"></script>
+<link href="libs/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0/anchor-sections.js"></script>
 <script src="libs/htmlwidgets-1.5.2/htmlwidgets.js"></script>
 <link href="libs/datatables-css-0.0.0/datatables-crosstalk.css" rel="stylesheet" />
 <script src="libs/datatables-binding-0.16/datatables.js"></script>
@@ -883,7 +885,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="truth-density-data-analysis.html#balanceop1-td"><em>BalanceOp1</em> TD</a></li>
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#threshold-functions-td"><i class="fa fa-check"></i>Threshold Functions TD</a></li>
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#td-data-distance"><i class="fa fa-check"></i>TD Data Distance</a></li>
-<li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#correlation"><i class="fa fa-check"></i>Correlation</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="cascade-1-0-data-analysis.html"><a href="cascade-1-0-data-analysis.html"><i class="fa fa-check"></i>CASCADE 1.0 Data Analysis</a>
 <ul>
@@ -931,7 +932,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">Standaridized Boolean Regulatory Function Bias</h1>
 <p class="author"><em><a href="https://github.com/bblodfon">John Zobolas</a></em></p>
-<p class="date"><em>Last updated: 19 October, 2020</em></p>
+<p class="date"><em>Last updated: 30 November, 2020</em></p>
 </div>
 <div id="input-libraries" class="section level1 unnumbered" number="">
 <h1>Input Libraries</h1>
@@ -948,26 +949,25 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-10"><a href="index.html#cb1-10"></a><span class="kw">library</span>(DT)</span>
 <span id="cb1-11"><a href="index.html#cb1-11"></a><span class="kw">library</span>(ggplot2)</span>
 <span id="cb1-12"><a href="index.html#cb1-12"></a><span class="kw">library</span>(ggpubr)</span>
-<span id="cb1-13"><a href="index.html#cb1-13"></a><span class="kw">library</span>(corrplot)</span>
-<span id="cb1-14"><a href="index.html#cb1-14"></a><span class="kw">library</span>(latex2exp)</span>
-<span id="cb1-15"><a href="index.html#cb1-15"></a><span class="kw">library</span>(BoolNet)</span></code></pre></div>
+<span id="cb1-13"><a href="index.html#cb1-13"></a><span class="kw">library</span>(latex2exp)</span>
+<span id="cb1-14"><a href="index.html#cb1-14"></a><span class="kw">library</span>(BoolNet)</span></code></pre></div>
 <div id="link-operator-boolean-regulatory-functions" class="section level2 unnumbered" number="">
 <h2>Link-operator Boolean Regulatory Functions</h2>
-<p>Let <span class="math inline">\(f\)</span> be a boolean function <span class="math inline">\(f(x,y):\{0,1\}^n \rightarrow \{0,1\}\)</span>, with <span class="math inline">\(m \ge 1\)</span> <strong>activators</strong> <span class="math inline">\(x=\{x_i\}_{i=1}^{m}\)</span> and <span class="math inline">\(k \ge 1\)</span> <strong>inhibitors</strong> <span class="math inline">\(y=\{y_i\}_{i=1}^{k}\)</span>, that is a total of <span class="math inline">\(n = m + k\)</span> regulators.
+<p>Let <span class="math inline">\(f\)</span> be a boolean function <span class="math inline">\(f(x,y):\{0,1\}^n \rightarrow \{0,1\}\)</span>, with <span class="math inline">\(m \ge 1\)</span> <strong>activators</strong> <span class="math inline">\(x=\{x_i\}_{i=1}^{m}\)</span> and <span class="math inline">\(k \ge 1\)</span> <strong>inhibitors</strong> <span class="math inline">\(y=\{y_j\}_{j=1}^{k}\)</span>, that is a total of <span class="math inline">\(n = m + k\)</span> regulators.
 The link-operator boolean functions have a (non-DNF) formula representation that partitions the two distinct type of regulators (positive regulators are called <em>activators</em>, negative regulators are called <em>inhibitors</em>) into two separate groups and connect them with a specific logical operator (which we call the <em>link operator</em>).
 The presence of the link operator is what forces the condition <span class="math inline">\(m,k \ge 1\)</span> (at least one regulator in each category).
 An example of such a function that has been used in the literature is the formula with the <code>AND-NOT</code> link operator <span class="citation">(Mendoza and Xenarios <a href="references.html#ref-Mendoza2006" role="doc-biblioref">2006</a>)</span>:</p>
 <ul>
-<li><code>AND-NOT</code>: <span class="math display">\[f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{i=1}^{k} y_i\right)\]</span></li>
+<li><code>AND-NOT</code>: <span class="math display">\[f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{j=1}^{k} y_j\right)\]</span></li>
 </ul>
 <p>A <strong>variation</strong> of this one is the <code>OR-NOT</code> link operator function:</p>
 <ul>
-<li><code>OR-NOT</code>: <span class="math display">\[f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{i=1}^{k} y_i\right)\]</span></li>
+<li><code>OR-NOT</code>: <span class="math display">\[f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{j=1}^{k} y_j\right)\]</span></li>
 </ul>
 <p>In theory, we could use any of the known logical operators as a link-operator, e.g. <code>XOR</code>, <code>NAND</code>, simple <code>AND</code> etc.</p>
 <p>For example, another link-operator function is the next one:</p>
 <ul>
-<li><code>BalanceOp1</code>: <span class="math display">\[f(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{i=1}^{k} \lnot y_i\right)\]</span></li>
+<li><code>BalanceOp1</code>: <span class="math display">\[f(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)\]</span></li>
 </ul>
 <div class="note">
 <p><span class="citation">Cury, Monteiro, and Chaouiya (<a href="references.html#ref-Cury2019" role="doc-biblioref">2019</a>)</span> defined the <strong>consistent boolean regulatory</strong> functions and their respective <strong>complete DNF forms (CDNF)</strong>.</p>
@@ -981,11 +981,11 @@ Thus, the activators and inhibitors are combined in an <em>additive</em> manner 
 <p>Two simple cases of <strong>threshold</strong> functions are given below:</p>
 <ul>
 <li><code>exp_act_win</code>: <span class="math display">\[f_{act-win}(x,y)=\begin{cases}
-      1, &amp; \text{for } \sum_{i=1}^{m} x_i \ge \sum_{i=1}^{k} y_i\\
+      1, &amp; \text{for } \sum_{i=1}^{m} x_i \ge \sum_{j=1}^{k} y_j\\
       0, &amp; \text{otherwise}
       \end{cases}\]</span></li>
 <li><code>exp_inh_win</code>: <span class="math display">\[f_{inh-win}(x,y)=\begin{cases}
-      1, &amp; \text{for } \sum_{i=1}^{m} x_i \gt \sum_{i=1}^{k} y_i\\
+      1, &amp; \text{for } \sum_{i=1}^{m} x_i \gt \sum_{j=1}^{k} y_j\\
       0, &amp; \text{otherwise}
       \end{cases}\]</span></li>
 </ul>
