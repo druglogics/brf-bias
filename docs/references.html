@@ -363,6 +363,14 @@ window.initializeCodeFolding = function(show) {
   var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
   rCodeBlocks.each(function() {
 
+    // if code block has been labeled with class `fold-show`, show the code on init!
+    var classList = $(this).attr('class').split(/\s+/);
+    for (var i = 0; i < classList.length; i++) {
+    if (classList[i] === 'fold-show') {
+        show = true;
+      }
+    }
+
     // create a collapsable div to wrap the code in
     var div = $('<div class="collapse r-code-collapse"></div>');
     if (show)
@@ -389,6 +397,9 @@ window.initializeCodeFolding = function(show) {
     buttonRow.append(buttonCol);
 
     div.before(buttonRow);
+
+    // hack: return show to false, otherwise all next codeBlocks will be shown!
+    show = false;
 
     // update state of button on show/hide
     div.on('hidden.bs.collapse', function () {
@@ -868,10 +879,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">Sections</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Input Libraries</a>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Input</a></li>
+<li class="chapter" data-level="" data-path="boolean-regulatory-functions.html"><a href="boolean-regulatory-functions.html"><i class="fa fa-check"></i>Boolean Regulatory Functions</a>
 <ul>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#link-operator-boolean-regulatory-functions"><i class="fa fa-check"></i>Link-operator Boolean Regulatory Functions</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#threshold-functions"><i class="fa fa-check"></i>Threshold functions</a></li>
+<li class="chapter" data-level="" data-path="boolean-regulatory-functions.html"><a href="boolean-regulatory-functions.html#link-operator-boolean-regulatory-functions"><i class="fa fa-check"></i>Link operator Boolean Regulatory Functions</a></li>
+<li class="chapter" data-level="" data-path="boolean-regulatory-functions.html"><a href="boolean-regulatory-functions.html#threshold-functions"><i class="fa fa-check"></i>Threshold functions</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html"><i class="fa fa-check"></i>Truth Density Data Analysis</a>
 <ul>
@@ -882,7 +894,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#validation"><i class="fa fa-check"></i>Validation</a></li>
 </ul></li>
 <li><a href="truth-density-data-analysis.html#stand-eq-bias"><em>AND-NOT</em> vs <em>OR-NOT</em> TD</a></li>
-<li><a href="truth-density-data-analysis.html#balanceop1-td"><em>BalanceOp1</em> TD</a></li>
+<li><a href="truth-density-data-analysis.html#pairs-td"><em>Pairs</em> TD</a></li>
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#threshold-functions-td"><i class="fa fa-check"></i>Threshold Functions TD</a></li>
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#td-data-distance"><i class="fa fa-check"></i>TD Data Distance</a></li>
 </ul></li>
@@ -939,6 +951,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="ref-Chaouiya2013">
 <p>Chaouiya, Claudine, Ouerdia Ourrad, and Ricardo Lima. 2013. “Majority Rules with Random Tie-Breaking in Boolean Gene Regulatory Networks.” <em>PLoS ONE</em> 8 (7): 69626. <a href="https://doi.org/10.1371/journal.pone.0069626">https://doi.org/10.1371/journal.pone.0069626</a>.</p>
 </div>
+<div id="ref-crama2011boolean">
+<p>Crama, Yves, and Peter L Hammer. 2011. <em>Boolean functions: Theory, algorithms, and applications</em>. Cambridge University Press.</p>
+</div>
 <div id="ref-Cury2019">
 <p>Cury, José E. R., Pedro T. Monteiro, and Claudine Chaouiya. 2019. “Partial Order on the set of Boolean Regulatory Functions,” January. <a href="http://arxiv.org/abs/1901.07623">http://arxiv.org/abs/1901.07623</a>.</p>
 </div>
@@ -956,6 +971,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 </div>
+
+
+
+
+
+
+
             </section>
 
           </div>

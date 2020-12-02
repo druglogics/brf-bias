@@ -31,7 +31,7 @@
   
   
 
-<link rel="next" href="truth-density-data-analysis.html"/>
+<link rel="next" href="boolean-regulatory-functions.html"/>
 <script src="libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -363,6 +363,14 @@ window.initializeCodeFolding = function(show) {
   var rCodeBlocks = $('pre.sourceCode, pre.r, pre.python, pre.bash, pre.sql, pre.cpp, pre.stan');
   rCodeBlocks.each(function() {
 
+    // if code block has been labeled with class `fold-show`, show the code on init!
+    var classList = $(this).attr('class').split(/\s+/);
+    for (var i = 0; i < classList.length; i++) {
+    if (classList[i] === 'fold-show') {
+        show = true;
+      }
+    }
+
     // create a collapsable div to wrap the code in
     var div = $('<div class="collapse r-code-collapse"></div>');
     if (show)
@@ -389,6 +397,9 @@ window.initializeCodeFolding = function(show) {
     buttonRow.append(buttonCol);
 
     div.before(buttonRow);
+
+    // hack: return show to false, otherwise all next codeBlocks will be shown!
+    show = false;
 
     // update state of button on show/hide
     div.on('hidden.bs.collapse', function () {
@@ -868,10 +879,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><a href="./">Sections</a></li>
 
 <li class="divider"></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Input Libraries</a>
+<li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Input</a></li>
+<li class="chapter" data-level="" data-path="boolean-regulatory-functions.html"><a href="boolean-regulatory-functions.html"><i class="fa fa-check"></i>Boolean Regulatory Functions</a>
 <ul>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#link-operator-boolean-regulatory-functions"><i class="fa fa-check"></i>Link-operator Boolean Regulatory Functions</a></li>
-<li class="chapter" data-level="" data-path="index.html"><a href="index.html#threshold-functions"><i class="fa fa-check"></i>Threshold functions</a></li>
+<li class="chapter" data-level="" data-path="boolean-regulatory-functions.html"><a href="boolean-regulatory-functions.html#link-operator-boolean-regulatory-functions"><i class="fa fa-check"></i>Link operator Boolean Regulatory Functions</a></li>
+<li class="chapter" data-level="" data-path="boolean-regulatory-functions.html"><a href="boolean-regulatory-functions.html#threshold-functions"><i class="fa fa-check"></i>Threshold functions</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html"><i class="fa fa-check"></i>Truth Density Data Analysis</a>
 <ul>
@@ -882,7 +894,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#validation"><i class="fa fa-check"></i>Validation</a></li>
 </ul></li>
 <li><a href="truth-density-data-analysis.html#stand-eq-bias"><em>AND-NOT</em> vs <em>OR-NOT</em> TD</a></li>
-<li><a href="truth-density-data-analysis.html#balanceop1-td"><em>BalanceOp1</em> TD</a></li>
+<li><a href="truth-density-data-analysis.html#pairs-td"><em>Pairs</em> TD</a></li>
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#threshold-functions-td"><i class="fa fa-check"></i>Threshold Functions TD</a></li>
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#td-data-distance"><i class="fa fa-check"></i>TD Data Distance</a></li>
 </ul></li>
@@ -932,12 +944,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div id="header">
 <h1 class="title">Standaridized Boolean Regulatory Function Bias</h1>
 <p class="author"><em><a href="https://github.com/bblodfon">John Zobolas</a></em></p>
-<p class="date"><em>Last updated: 30 November, 2020</em></p>
+<p class="date"><em>Last updated: 02 December, 2020</em></p>
 </div>
-<div id="input-libraries" class="section level1 unnumbered" number="">
-<h1>Input Libraries</h1>
-<p>Libraries used:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1"></a><span class="kw">library</span>(gtools)</span>
+<div id="input" class="section level1 unnumbered" number="">
+<h1>Input</h1>
+<p>Libraries used in various scripts and in the analysis on this report:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r fold-show"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1"></a><span class="kw">library</span>(gtools)</span>
 <span id="cb1-2"><a href="index.html#cb1-2"></a><span class="kw">library</span>(dplyr)</span>
 <span id="cb1-3"><a href="index.html#cb1-3"></a><span class="kw">library</span>(tibble)</span>
 <span id="cb1-4"><a href="index.html#cb1-4"></a><span class="kw">library</span>(tidyr)</span>
@@ -951,50 +963,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-12"><a href="index.html#cb1-12"></a><span class="kw">library</span>(ggpubr)</span>
 <span id="cb1-13"><a href="index.html#cb1-13"></a><span class="kw">library</span>(latex2exp)</span>
 <span id="cb1-14"><a href="index.html#cb1-14"></a><span class="kw">library</span>(BoolNet)</span></code></pre></div>
-<div id="link-operator-boolean-regulatory-functions" class="section level2 unnumbered" number="">
-<h2>Link-operator Boolean Regulatory Functions</h2>
-<p>Let <span class="math inline">\(f\)</span> be a boolean function <span class="math inline">\(f(x,y):\{0,1\}^n \rightarrow \{0,1\}\)</span>, with <span class="math inline">\(m \ge 1\)</span> <strong>activators</strong> <span class="math inline">\(x=\{x_i\}_{i=1}^{m}\)</span> and <span class="math inline">\(k \ge 1\)</span> <strong>inhibitors</strong> <span class="math inline">\(y=\{y_j\}_{j=1}^{k}\)</span>, that is a total of <span class="math inline">\(n = m + k\)</span> regulators.
-The link-operator boolean functions have a (non-DNF) formula representation that partitions the two distinct type of regulators (positive regulators are called <em>activators</em>, negative regulators are called <em>inhibitors</em>) into two separate groups and connect them with a specific logical operator (which we call the <em>link operator</em>).
-The presence of the link operator is what forces the condition <span class="math inline">\(m,k \ge 1\)</span> (at least one regulator in each category).
-An example of such a function that has been used in the literature is the formula with the <code>AND-NOT</code> link operator <span class="citation">(Mendoza and Xenarios <a href="references.html#ref-Mendoza2006" role="doc-biblioref">2006</a>)</span>:</p>
-<ul>
-<li><code>AND-NOT</code>: <span class="math display">\[f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{j=1}^{k} y_j\right)\]</span></li>
-</ul>
-<p>A <strong>variation</strong> of this one is the <code>OR-NOT</code> link operator function:</p>
-<ul>
-<li><code>OR-NOT</code>: <span class="math display">\[f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{j=1}^{k} y_j\right)\]</span></li>
-</ul>
-<p>In theory, we could use any of the known logical operators as a link-operator, e.g. <code>XOR</code>, <code>NAND</code>, simple <code>AND</code> etc.</p>
-<p>For example, another link-operator function is the next one:</p>
-<ul>
-<li><code>BalanceOp1</code>: <span class="math display">\[f(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)\]</span></li>
-</ul>
-<div class="note">
-<p><span class="citation">Cury, Monteiro, and Chaouiya (<a href="references.html#ref-Cury2019" role="doc-biblioref">2019</a>)</span> defined the <strong>consistent boolean regulatory</strong> functions and their respective <strong>complete DNF forms (CDNF)</strong>.</p>
-<p>The link-operator functions listed above are a subset of these functions, since they respect the regulatory structure in their respective DNF forms (for the <em>BalanceOp1</em> it’s evident since it’s written first in the DNF - for the <em>AND-NOT</em> and <em>OR-NOT</em> functions, see their respective DNF forms in the truth density proofs <a href="truth-density-data-analysis.html#prp:and-not-proof">1</a> and <a href="truth-density-data-analysis.html#prp:or-not-proof">2</a>.</p>
-</div>
-</div>
-<div id="threshold-functions" class="section level2 unnumbered" number="">
-<h2>Threshold functions</h2>
-<p>The <strong>boolean threshold functions</strong> are formulated based on given <em>pseudo-Boolean</em> constrains for the regulators.
-Thus, the activators and inhibitors are combined in an <em>additive</em> manner and not a <em>combinatorial</em> one and the <strong>majority rule</strong> defines the value of the function <span class="citation">(Chaouiya, Ourrad, and Lima <a href="references.html#ref-Chaouiya2013" role="doc-biblioref">2013</a>)</span>.</p>
-<p>Two simple cases of <strong>threshold</strong> functions are given below:</p>
-<ul>
-<li><code>exp_act_win</code>: <span class="math display">\[f_{act-win}(x,y)=\begin{cases}
-      1, &amp; \text{for } \sum_{i=1}^{m} x_i \ge \sum_{j=1}^{k} y_j\\
-      0, &amp; \text{otherwise}
-      \end{cases}\]</span></li>
-<li><code>exp_inh_win</code>: <span class="math display">\[f_{inh-win}(x,y)=\begin{cases}
-      1, &amp; \text{for } \sum_{i=1}^{m} x_i \gt \sum_{j=1}^{k} y_j\\
-      0, &amp; \text{otherwise}
-      \end{cases}\]</span></li>
-</ul>
-<p>Note that: <span class="math inline">\(f_{inh-win}(x,y) = \lnot f_{act-win}(y,x)\)</span>.</p>
-<div class="blue-box">
-<p>Note that every boolean function has an equivalent combinatorial expression (i.e. the variables are connected with logical operators) and I searched for an analytic formula for the two last threshold functions.
-More more info, see this <a href="https://math.stackexchange.com/questions/3767774/identify-boolean-function-that-satisfies-some-constrains/">math.stackexchange question</a>.</p>
-</div>
-</div>
 </div>
             </section>
 
@@ -1002,7 +970,7 @@ More more info, see this <a href="https://math.stackexchange.com/questions/37677
         </div>
       </div>
 
-<a href="truth-density-data-analysis.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+<a href="boolean-regulatory-functions.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

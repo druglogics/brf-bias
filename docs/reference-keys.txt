@@ -3,8 +3,8 @@ prp:or-not-proof
 fig:fig-and-or-not
 fig:and-not-reg-plot
 fig:or-not-reg-plot
-fig:fig-and-or-not-balanceop
-fig:balanceOp1-reg-plot
+fig:fig-and-or-pairs-tds
+fig:pairs-reg-plot
 fig:fig-two-bool-formulas
 fig:ss-lo-agreement-prop
 fig:ss-lo-agreement-prop-grouped
