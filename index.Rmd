@@ -52,6 +52,8 @@ In theory, we could use any of the known logical operators as a link operator, e
 
 For example, another link operator function is the next one ^[We call it *pairs* function since the intuition behind it is that the function returns *TRUE* if there is at least one pair of regulators consisting of a **present activator** and an **absent inhibitor**]:
 
+:::{#pairs-fun}
+:::
 - `Pairs`: $$f_{pairs}(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)$$
 
 :::{.note}
@@ -212,10 +214,10 @@ stats_and_or = tidyr::pivot_longer(data = stats, cols = c(td_and_not, td_or_not)
   select(num_reg, lo, td) %>%
   mutate(lo = replace(x = lo, list = lo == "td_and_not", values = "AND-NOT")) %>%
   mutate(lo = replace(x = lo, list = lo == "td_or_not", values = "OR-NOT")) %>%
-  rename(`Link Operator` = lo)
+  rename(`Function` = lo)
 
 ggboxplot(data = stats_and_or, x = "num_reg", y = "td", 
-  color = "Link Operator", palette = "Set1",
+  color = "Function", palette = "Set1",
   title = "AND-NOT vs OR-NOT Truth Densities", 
   xlab = "Number of regulators", ylab = "Truth Density") +
   theme(plot.title = element_text(hjust = 0.5))
@@ -272,11 +274,11 @@ stats_and_or_pairs = tidyr::pivot_longer(data = stats, cols = c(td_and_not, td_o
   mutate(lo = replace(x = lo, list = lo == "td_and_not", values = "AND-NOT")) %>%
   mutate(lo = replace(x = lo, list = lo == "td_or_not", values = "OR-NOT")) %>%
   mutate(lo = replace(x = lo, list = lo == "td_pairs", values = "Pairs")) %>%
-  rename(`Link Operator` = lo)
+  rename(`Function` = lo)
 
 ggboxplot(data = stats_and_or_pairs, x = "num_reg", y = "td", 
-  color = "Link Operator", palette = "Set1",
-  title = "AND-NOT vs OR-NOT vs Pairs Truth Densities", 
+  color = "Function", palette = "Set1",
+  title = "Truth Densities of boolean functions AND-NOT, OR-NOT and Pairs", 
   xlab = "Number of regulators", ylab = "Truth Density") +
   theme(plot.title = element_text(hjust = 0.5))
 ```
@@ -313,11 +315,11 @@ stats_functions = tidyr::pivot_longer(data = stats, cols = c(td_act_win, td_inh_
   select(num_reg, fun, td) %>%
   mutate(fun = replace(x = fun, list = fun == "td_act_win", values = "Activators Win")) %>%
   mutate(fun = replace(x = fun, list = fun == "td_inh_win", values = "Inhibitors Win")) %>%
-  rename(`Equation Formula` = fun)
+  rename(`Function` = fun)
 
 ggboxplot(data = stats_functions, x = "num_reg", y = "td",
-  color = "Equation Formula", palette = "lancet",
-  title = latex2exp::TeX("Truth Densities of $f_{act-win}(x,y)$ and $f_{inh-win}(x,y)$"),
+  color = "Function", palette = "lancet",
+  title = latex2exp::TeX("Truth Densities of threshold functions $f_{act-win}(x,y)$ and $f_{inh-win}(x,y)$"),
   xlab = "Number of regulators", ylab = "Truth Density") +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_hline(yintercept = 0.5, linetype="dashed", color = "black")
@@ -367,6 +369,206 @@ plot(hclust(dist(d)), main = "Dendogram of Truth Density Distances between vario
 - The **threshold functions** have truth densities values that are **closer to the proportion of activators** for a varying number of regulators, compared to the `AND-NOT` and `OR-NOT` formulas.
 As such they might represent better candidates for boolean regulatory functions from this (statistical) point of view.
 - The TD values of `OR-NOT` and `Pairs` are in general very close (as we've also seen in a previous figure)
+:::
+
+## Complexity vs Truth Density {-}
+
+In [@Gherardi2016], the authors present figures measuring the **complexity** of boolean functions based on a formula that counts the number of conjunctions in the minimized DNF form (lets call this $con_{DNF_{min}}$) vs the **bias** (which is their terminology for our **truth density**!).
+Since we already have the calculated the TD values for the `AND-NOT`, `OR-NOT` and `Pairs` functions in our [test data](#tr-data) and their respective (minimum) DNFs (for the `AND-NOT` and `OR-NOT` DNFs see the proofs [above](#truth-density-formulas) and for the `Pairs` DNF, see [definition](#pairs-fun)), we can measure the $con_{DNF_{min}}$ as:
+
+- $con_{AND-NOT,DNF_{min}} = m$ (number of activators)
+- $con_{OR-NOT,DNF_{min}} = m + 1$ (number of activators + 1)
+- $con_{Pairs,DNF_{min}} = m \times k$ (number of activators x number of inhibitors)
+
+We notice that the `AND-NOT` and `OR-NOT` functions have similar $con_{DNF_{min}}$ and so we would expect them to have similar complexities, whereas the `Pairs` function should be more complex than both of them.
+
+Dividing the number of conjunctions in the DNF with the number of rows of the corresponding truth table ($2^n$), we get the complexity score as defined in [@Gherardi2016].
+The complexity as it is defined, ranges between $[0,0.5]$, where the highest possible complexity ($0.5$) is due to the *parity* function, which outputs $1$ for half of the rows in the truth table, i.e. when the number of input $1$'s is odd.
+
+Firstly, we calculate the complexity score for each data point:
+```{r calc-complexities}
+stats = stats %>% 
+  mutate(complex_and_not = num_act/(2^num_reg)) %>%
+  mutate(complex_or_not = (num_act + 1)/(2^num_reg)) %>% 
+  mutate(complex_pairs = (num_act * num_inh)/(2^num_reg))
+```
+
+Next, we subset the dataset to the boolean formulas with less than $10$ regulators and separately to the formulas with more than $10$ regulators, and group the complexity scores according to the three different functions they belong, namely the `AND-NOT`, `OR-NOT` and `Pairs`:
+```{r complexity-per-function-class, warning=FALSE, fig.show='hold', out.width='50%', fig.align='center', fig.height=5, fig.width=7, dpi=300, cache=TRUE, fig.cap='Complexity scores for the AND-NOT, OR-NOT and Pairs boolean regulatory functions for every boolean formula with at least one activator and one inhibitor and either less (first figure) or more (second figure) than 10 regulators in total.'}
+my_comp = list(c("andnot","ornot"), c("andnot","pairs"), c("ornot","pairs"))
+
+stats %>% 
+  filter(num_reg < 10) %>%
+  select(starts_with('complex')) %>%
+  rename(andnot = complex_and_not, ornot = complex_or_not, pairs = complex_pairs) %>%
+  tidyr::pivot_longer(cols = everything(), names_to = 'class', values_to = 'c') %>% 
+  ggplot(aes(x = class, y = c, fill = class)) + 
+  geom_boxplot(show.legend = FALSE) +
+  ggpubr::stat_compare_means(comparisons = my_comp, method = "wilcox.test", label = "p.format") +
+  scale_fill_brewer(palette = 'Set1') +
+  scale_x_discrete(labels = c('AND-NOT', 'OR-NOT', 'Pairs')) +
+  scale_y_continuous(n.breaks = 6) +
+  labs(x = 'Function', y = 'Complexity', title = 'Complexity per function class (less than 10 regulators)') +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 12), axis.text.y = element_text(size = 12),
+    plot.title = element_text(hjust = 0.5))
+
+stats %>% 
+  filter(num_reg > 10) %>%
+  select(starts_with('complex')) %>%
+  rename(andnot = complex_and_not, ornot = complex_or_not, pairs = complex_pairs) %>%
+  tidyr::pivot_longer(cols = everything(), names_to = 'class', values_to = 'c') %>% 
+  ggplot(aes(x = class, y = c, fill = class)) + 
+  geom_boxplot(show.legend = FALSE) +
+  ggpubr::stat_compare_means(comparisons = my_comp, method = "wilcox.test", label = "p.format") +
+  scale_fill_brewer(palette = 'Set1') +
+  scale_x_discrete(labels = c('AND-NOT', 'OR-NOT', 'Pairs')) +
+  scale_y_continuous(n.breaks = 6) +
+  labs(x = 'Function', y = 'Complexity', title = 'Complexity per function class (more than 10 regulators)') +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 12), axis.text.y = element_text(size = 12),
+    plot.title = element_text(hjust = 0.5))
+```
+
+:::{.green-box}
+- **All three functions show low complexities (especially for $n \gt 10$)**, with `Pairs` having the higher median complexity of the three with statistical significance from the other two in both figures.
+- The complexities between `AND-NOT` and `OR-NOT` do not differ significantly, as expected from their similar $con_{DNF_{min}}$ formula.
+:::
+
+We next present some Truth Density vs Complexity figures:
+```{r td-vs-complexity-1, warning=FALSE, fig.show='hold', out.width='50%', fig.align='center', fig.height=5, fig.width=7, dpi=300, cache=TRUE, fig.cap='Truth Density vs Complexity for the AND-NOT, OR-NOT and Pairs boolean regulatory functions. Each point represents a different boolean formula with at least one activator and one inhibitor. The number of total regulators ranges from 2 to 9 in the first figure and 11 to 20 in the second.'}
+stats %>% 
+  filter(num_reg < 10) %>%
+  select(starts_with('complex'), starts_with('td'), -td_act_win, -td_inh_win) %>% 
+  rename(td_andnot = td_and_not, td_ornot = td_or_not, complex_andnot = complex_and_not, complex_ornot = complex_or_not) %>%
+  pivot_longer(cols = everything(), names_to = c(".value", "fun"), names_sep = "_") %>% # tricky
+  ggplot(aes(x = td, y = complex, color = fun)) +
+  geom_point(alpha = 0.6) +
+  scale_color_brewer(palette = 'Set1', name = 'Function', 
+    labels = c('AND-NOT','OR-NOT','Pairs'), 
+    guide = guide_legend(label.theme = element_text(size = 12), 
+      override.aes = list(shape = 19, size = 12))) +
+  geom_smooth(mapping = aes(x = td, y = complex, fill = fun), method = 'loess', formula = y ~ x, show.legend = FALSE) +
+  scale_fill_brewer(palette = 'Set1') + 
+  labs(x = 'Truth Density (TD)', y = 'Complexity (C)', title = 'Truth Density vs Complexity (less than 10 regulators)') +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 12), axis.text.y = element_text(size = 12),
+    plot.title = element_text(hjust = 0.5))
+
+stats %>% 
+  filter(num_reg > 10) %>%
+  select(starts_with('complex'), starts_with('td'), -td_act_win, -td_inh_win) %>% 
+  rename(td_andnot = td_and_not, td_ornot = td_or_not, complex_andnot = complex_and_not, complex_ornot = complex_or_not) %>%
+  pivot_longer(cols = everything(), names_to = c(".value", "fun"), names_sep = "_") %>% # tricky
+  ggplot(aes(x = td, y = complex, color = fun)) +
+  geom_point(alpha = 0.6) +
+  scale_color_brewer(palette = 'Set1', name = 'Function', labels = c('AND-NOT','OR-NOT','Pairs'),
+    guide = guide_legend(label.theme = element_text(size = 12), 
+      override.aes = list(shape = 19, size = 12))) +
+  geom_smooth(mapping = aes(x = td, y = complex, fill = fun), method = 'loess', formula = y ~ x, show.legend = FALSE) +
+  scale_fill_brewer(palette = 'Set1') + 
+  labs(x = 'Truth Density (TD)', y = 'Complexity (C)', title = 'Truth Density vs Complexity (more than 10 regulators)') +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 12), axis.text.y = element_text(size = 12),
+    plot.title = element_text(hjust = 0.5))
+```
+
+If we put all data together, we have:
+```{r td-vs-complexity-2, warning=FALSE, fig.align='center', fig.height=5, fig.width=7, dpi=300, cache=TRUE, fig.cap='Truth Density vs Complexity for the AND-NOT, OR-NOT and Pairs boolean regulatory functions. Each point represents a different boolean formula with at least one activator and one inhibitor. The number of total regulators ranges from 2 to 20 in total.'}
+stats %>% 
+  select(starts_with('complex'), starts_with('td'), -td_act_win, -td_inh_win) %>% 
+  rename(td_andnot = td_and_not, td_ornot = td_or_not, complex_andnot = complex_and_not, complex_ornot = complex_or_not) %>%
+  pivot_longer(cols = everything(), names_to = c(".value", "fun"), names_sep = "_") %>% # tricky
+  ggplot(aes(x = td, y = complex, color = fun)) +
+  geom_point(alpha = 0.6) +
+  scale_color_brewer(palette = 'Set1', name = 'Function', labels = c('AND-NOT','OR-NOT','Pairs'),
+    guide = guide_legend(label.theme = element_text(size = 12), 
+      override.aes = list(shape = 19, size = 12))) +
+  geom_smooth(mapping = aes(x = td, y = complex, fill = fun), method = 'loess', formula = y ~ x, show.legend = FALSE) +
+  scale_fill_brewer(palette = 'Set1') + 
+  labs(x = 'Truth Density (TD)', y = 'Complexity (C)', title = 'Truth Density vs Complexity') +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 12), axis.text.y = element_text(size = 12),
+    plot.title = element_text(hjust = 0.5))
+```
+
+:::{.green-box}
+- `Pairs` covers more TD spectrum than the other two functions, while the `AND-NOT` and `OR-NOT` dichotomize it.
+- TD values are very discretized: points tend to cluster at points that denote either the truth density bias (e.g. $0,1$) or the cases where there is an unbalance between number of activators and inhibitors (e.g. $1/2^n$)
+- `Pairs` shows higher complexity than the other two functions when the number of regulators is higher (e.g. more than $10$ regulators) but the difference is not significant since the size of the truth table ($2^{10}$) becomes the dominating term in the complexity score.
+So, in general, as observed in [@Gherardi2016], **these boolean regulatory functions have very low complexity, especially for larger number of regulators**.
+:::
+
+If we restrict the shown values to a **specific number of total regulators**, we have the following example figures:
+```{r td-vs-complexity-3, warning=FALSE, fig.show='hold', out.height='50%', out.width='50%', fig.align='center', fig.height=5, fig.width=7, dpi=300, cache=TRUE, fig.cap='Truth Density vs Complexity for the AND-NOT, OR-NOT and Pairs boolean regulatory functions. Each point represents a different boolean formula with at least one activator and one inhibitor. In each figure, formulas with a specific number of total regulators is shown (5,8,11,14).'}
+stats %>% 
+  filter(num_reg == 5) %>%
+  select(starts_with('complex'), starts_with('td'), -td_act_win, -td_inh_win) %>% 
+  rename(td_andnot = td_and_not, td_ornot = td_or_not, complex_andnot = complex_and_not, complex_ornot = complex_or_not) %>%
+  pivot_longer(cols = everything(), names_to = c(".value", "fun"), names_sep = "_") %>% # tricky
+  ggplot(aes(x = td, y = complex, color = fun)) +
+  geom_point(alpha = 0.6) +
+  scale_color_brewer(palette = 'Set1', name = 'Function', 
+    labels = c('AND-NOT','OR-NOT','Pairs'), 
+    guide = guide_legend(label.theme = element_text(size = 12), 
+      override.aes = list(shape = 19, size = 12))) +
+  geom_line(size = 1.2, show.legend = FALSE) +
+  labs(x = 'Truth Density (TD)', y = 'Complexity (C)', title = 'Truth Density vs Complexity (5 regulators)') +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 12), axis.text.y = element_text(size = 12),
+    plot.title = element_text(hjust = 0.5))
+
+stats %>% 
+  filter(num_reg == 8) %>%
+  select(starts_with('complex'), starts_with('td'), -td_act_win, -td_inh_win) %>% 
+  rename(td_andnot = td_and_not, td_ornot = td_or_not, complex_andnot = complex_and_not, complex_ornot = complex_or_not) %>%
+  pivot_longer(cols = everything(), names_to = c(".value", "fun"), names_sep = "_") %>% # tricky
+  ggplot(aes(x = td, y = complex, color = fun)) +
+  geom_point(alpha = 0.6) +
+  scale_color_brewer(palette = 'Set1', name = 'Function', labels = c('AND-NOT','OR-NOT','Pairs'),
+    guide = guide_legend(label.theme = element_text(size = 12), 
+      override.aes = list(shape = 19, size = 12))) +
+  geom_line(size = 1.2, show.legend = FALSE) +
+  labs(x = 'Truth Density (TD)', y = 'Complexity (C)', title = 'Truth Density vs Complexity (8 regulators)') +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 12), axis.text.y = element_text(size = 12),
+    plot.title = element_text(hjust = 0.5))
+
+stats %>% 
+  filter(num_reg == 11) %>%
+  select(starts_with('complex'), starts_with('td'), -td_act_win, -td_inh_win) %>% 
+  rename(td_andnot = td_and_not, td_ornot = td_or_not, complex_andnot = complex_and_not, complex_ornot = complex_or_not) %>%
+  pivot_longer(cols = everything(), names_to = c(".value", "fun"), names_sep = "_") %>% # tricky
+  ggplot(aes(x = td, y = complex, color = fun)) +
+  geom_point(alpha = 0.6) +
+  scale_color_brewer(palette = 'Set1', name = 'Function', labels = c('AND-NOT','OR-NOT','Pairs'),
+    guide = guide_legend(label.theme = element_text(size = 12), 
+      override.aes = list(shape = 19, size = 12))) +
+  geom_line(size = 1.2, show.legend = FALSE) +
+  labs(x = 'Truth Density (TD)', y = 'Complexity (C)', title = 'Truth Density vs Complexity (11 regulators)') +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 12), axis.text.y = element_text(size = 12),
+    plot.title = element_text(hjust = 0.5))
+
+stats %>% 
+  filter(num_reg == 14) %>%
+  select(starts_with('complex'), starts_with('td'), -td_act_win, -td_inh_win) %>% 
+  rename(td_andnot = td_and_not, td_ornot = td_or_not, complex_andnot = complex_and_not, complex_ornot = complex_or_not) %>%
+  pivot_longer(cols = everything(), names_to = c(".value", "fun"), names_sep = "_") %>% # tricky
+  ggplot(aes(x = td, y = complex, color = fun)) +
+  geom_point(alpha = 0.6) +
+  scale_color_brewer(palette = 'Set1', name = 'Function', labels = c('AND-NOT','OR-NOT','Pairs'),
+    guide = guide_legend(label.theme = element_text(size = 12), 
+      override.aes = list(shape = 19, size = 12))) +
+  geom_line(size = 1.2, show.legend = FALSE) +
+  labs(x = 'Truth Density (TD)', y = 'Complexity (C)', title = 'Truth Density vs Complexity (14 regulators)') +
+  theme_classic(base_size = 14) +
+  theme(axis.text.x = element_text(size = 12), axis.text.y = element_text(size = 12),
+    plot.title = element_text(hjust = 0.5))
+```
+
+:::{.green-box}
+As observed in [@Gherardi2016] for empirical, experimentally-validated boolean functions, there seems to be a **monotonic relationship between Truth Density and Complexity** (when fixing the number of regulators to a particular value).
 :::
 
 # CASCADE 1.0 Data Analysis {-}
@@ -745,7 +947,7 @@ sf_stats_g2_new %>%
 
 # R session info {-}
 
-```{r session info, comment=""}
+```{r session info, class.source = 'fold-show', comment=""}
 xfun::session_info()
 ```
 
