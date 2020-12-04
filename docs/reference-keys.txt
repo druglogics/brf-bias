@@ -6,6 +6,10 @@ fig:or-not-reg-plot
 fig:fig-and-or-pairs-tds
 fig:pairs-reg-plot
 fig:fig-two-bool-formulas
+fig:complexity-per-function-class
+fig:td-vs-complexity-1
+fig:td-vs-complexity-2
+fig:td-vs-complexity-3
 fig:ss-lo-agreement-prop
 fig:ss-lo-agreement-prop-grouped
 fig:ss-comp-agreement-props
