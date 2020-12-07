@@ -569,6 +569,9 @@ stats %>%
 
 :::{.green-box}
 As observed in [@Gherardi2016] for empirical, experimentally-validated boolean functions, there seems to be a **monotonic relationship between Truth Density and Complexity** (when fixing the number of regulators to a particular value).
+
+The more regulators, arbitrarily chosen same-type functions (points here) with different TD values, results in smaller differences of complexity.
+Also the bias of the `AND-NOT` and `OR-NOT` functions can be visually shown from the large curvature of the red and blue functions for larger number of regulators.
 :::
 
 # CASCADE 1.0 Data Analysis {-}
