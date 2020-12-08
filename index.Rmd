@@ -62,14 +62,16 @@ In our example with $3$ regulators and a total of $8$ rows in the truth table, t
 
 :::{#table1-caption}
 Table 1: Truth table of three boolean functions with three input variables.
-Functions $f_1$ and $f_2$ are written in disjunctive normal form (DNF) with the minimum possible clauses.
+Functions $f_1$ and $f_2$ are written in disjunctive normal form (DNF) with the minimum possible terms.
 $f_3$ is a tautology.
 :::
 
 ## Truth Density {-}
 
+```{definition, label='td-def'}
 **Truth density (TD)** of a boolean function is the number of ones ($1$) in its truth table output, normalized by the total number of rows.
-
+```
+<br>
 Note that the truth density of a boolean function rests in the $[0,1]$ interval.
 Using the example with the three functions from [Table 1](#table1), we have $TD_{f_1}=3/8=0.375$,  $TD_{f_2}=5/8=0.625$ and $TD_{f_3}=8/8=1$, where the last function is the *tautology*, with the maximum possible truth density.
 
@@ -83,27 +85,29 @@ This brings us to the notion of a general form which could be used to define use
 This need does not come only from a representation point of view (a more compact function form enhances readability, e.g. compare $f_1$ with $f_1^{'}$), but is also a motivation for the design of optimal digital circuits, since the number of gates used (i.e. logical operators) is an indicator of computation time and affects the efficiency of a circuit [@wegener1987complexity].
 
 Every boolean function can be represented in a **disjunctive normal form or DNF**, requiring only AND ($\land$), OR ($\lor$) and NOT ($\lnot$) operators as building blocks.
-In such a representation, *literals*, which are variables (e.g. positive literal $x$) or their negations (e.g. negative literal $\text{NOT }x$), are connected by AND's producing clauses, which are then in turn connected by OR's.
+In such a representation, *literals*, which are variables (e.g. positive literal $x$) or their negations (e.g. negative literal $\text{NOT }x$), are connected by AND's producing terms, which are then in turn connected by OR's [@crama2011boolean].
 For example, every function in [Table 1](#table1) is written in DNF, while the boolean expressions $\lnot (x_1 \lor x_2)$ and $\lnot (x_1\land x_2)\lor x_3$ are not.
 
 ## Complexity {-}
 
-The **length of a DNF** is defined as the number of its clauses, i.e the number of terms separated by $\lor$ operators.
+The **length of a DNF** is defined as the number of its terms, i.e. the number of conjunctions separated by $\lor$ operators.
 As such, $l_{f_1}=l_{f_2}=2$, $l_{f_3}=1$ and $l_{f_1^{'}}=3$ from [Table 1](#table1).
-Intuitively speaking, the more clauses a DNF has, the more complex it is.
+Intuitively speaking, the more terms a DNF has, the more complex it is.
 This observation leads us to the following definition:
 
+```{definition, label='complexity-def'}
 The **complexity** $C$ of a boolean function is the length of its **shortest DNF**, normalized by the total number of rows of its truth table [@Gherardi2016].
-
+```
+<br>
 For example, using the functions from [Table 1](#table1), for which the minimum DNF expression is given, we have that $C_{f_1}=C_{f_2}=2/8$, $C_{f_3}=1/8$, where the tautology $f_3$ is assigned the smallest possible complexity.
 
-Note that *minimizing* the DNF form of a boolean function to get an equivalent expression with the shortest number of clauses, is considered a computational difficult problem and there can be multiple such minimum DNF representations for a single boolean function.
+Note that *minimizing* the DNF form of a boolean function to get an equivalent expression with the shortest number of terms, is considered a computational difficult problem and there can be multiple such minimum DNF representations for a single boolean function.
 
 ## Link operator Boolean Regulatory Functions {-}
 
 We consider the class of BRFs that partitions the input variables (regulators) to two sets: the set $x$ of positive regulators (also called *activators*) and the set of negative regulators (also called *inhibitors*).
 Let $f$ be such a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with $m \ge 1$ **activators** $x=\{x_i\}_{i=1}^{m}$ and $k \ge 1$ **inhibitors** $y=\{y_j\}_{j=1}^{k}$, that is a total of $n = m + k$ regulators.
-The **link operator BRFs** have an analytical non-DNF form, which distributes the two distinct types of regulators in two separate clauses, while connecting them with a special logical operator that we call a **link operator**.
+The **link operator BRFs** have an analytical non-DNF form, which distributes the two distinct types of regulators in two separate expressions, while connecting them with a special logical operator that we call a **link operator**.
 
 An example of such a function that has been used extensively in the logical modeling literature is the standardized BRF formula with the `AND-NOT` link operator [@Mendoza2006]:
 
@@ -132,8 +136,8 @@ For example, another link operator function is the *Pairs* function:
 :::
 - `Pairs`: $$f_{pairs}(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)$$
 
-The name is derived from the intuition that the function will return *TRUE* if there is at least one pair of regulators consisting of a **present activator** and an **absent inhibitor**.
-The function is also written in conjunction normal form (CNF), which is the reverse of the DNF: clauses are connected with AND’s ($\land$) and inside the clauses the literals are connected with OR’s ($\lor$).
+The intuition behind the name is derived from the fact that the function will return *TRUE* if there is at least one pair of regulators consisting of a **present activator** and an **absent inhibitor**.
+The function is also written in conjunction normal form (CNF), which is the reverse of the DNF: two separate clauses are connected with AND’s ($\land$) and inside the clauses the literals are connected with OR’s ($\lor$).
 
 :::{.note}
 @Cury2019 defined the **consistent boolean regulatory** functions and their respective **complete DNF forms (CDNF)**.
@@ -212,10 +216,10 @@ f_{AND-NOT}(x,y) & = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigve
 \end{equation}
 
 To calculate the $TD_{AND-NOT}$, we need to find the number of rows of the $f_{AND-NOT}$ truth table that result in a *TRUE* output result and divide that by the total number of rows, which is $2^n$ ($n$ regulators/inputs).
-Note that $f_{AND-NOT}$, written in it's equivalent DNF form, has exactly $m$ clauses.
-Each clause has a unique *TRUE/FALSE* assignment of regulators that makes it *TRUE*.
-This happens when the activator of the clause is *TRUE* and all of the inhibitors *FALSE*.
-Since the condition for the inhibitors is the same regardless of the clause we are looking at and $f$ is expressed in a DNF form, the *TRUE* outcomes of the function $f$ are defined by all logical assignment combinations of the $m$ activators that have at least one of them being *TRUE* and all inhibitors assigned as *FALSE*.
+Note that $f_{AND-NOT}$, written in it's equivalent DNF form, has exactly $m$ terms.
+Each term has a unique *TRUE/FALSE* assignment of regulators that makes it *TRUE*.
+This happens when the activator of the term is *TRUE* and all of the inhibitors *FALSE*.
+Since the condition for the inhibitors is the same regardless of the term we are looking at and $f$ is expressed in a DNF form, the *TRUE* outcomes of the function $f$ are defined by all logical assignment combinations of the $m$ activators that have at least one of them being *TRUE* and all inhibitors assigned as *FALSE*.
 There are a total of $2^m$ possible $TRUE/FALSE$ logical assignments of the $m$ activators (from all *FALSE* to all *TRUE*) and $f_{AND-NOT}$ becomes *TRUE* on all except one of them (i.e. when all activators are *FALSE*) and the corresponding $2^m-1$ truth table rows have all inhibitors assigned as *FALSE*.
 Thus $TD_{AND-NOT}=\frac{2^m-1}{2^n}$.
 ```
@@ -239,9 +243,9 @@ f_{OR-NOT}(x,y) & = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_
 
 To calculate the $TD_{OR-NOT}$, it's easier to find the number of rows of the $f_{OR-NOT}$ truth table that result in a *FALSE* output result ($R_{false}$), subtract that number from the total number of rows ($2^n$) to get the rows that result in $f$ being *TRUE* and then divide by the total.
 Thus $TD_{OR-NOT} = \frac{2^n-R_{false}}{2^n}$.
-Note that $f_{OR-NOT}$, written in it's equivalent DNF form, has exactly $m+1$ clauses.
-To make $f_{OR-NOT}$ *FALSE*, we first need to assign the $m$ activators as *FALSE* and then it all depends on the logical assignments of the inhibitors $y_i$ that are part of the last clause.
-Out of all possible $2^k$ *TRUE/FALSE* logical assignments of the $k$ inhibitors (ranging from all *FALSE* to all *TRUE*) there is **only one that does not make** the last clause of $f_{OR-NOT}$ *FALSE* and that happens when all $k$ inhibitors are *FALSE*.
+Note that $f_{OR-NOT}$, written in it's equivalent DNF form, has exactly $m+1$ terms.
+To make $f_{OR-NOT}$ *FALSE*, we first need to assign the $m$ activators as *FALSE* and then it all depends on the logical assignments of the inhibitors $y_i$ that are part of the last DNF term.
+Out of all possible $2^k$ *TRUE/FALSE* logical assignments of the $k$ inhibitors (ranging from all *FALSE* to all *TRUE*) there is **only one that does not make** the last term of $f_{OR-NOT}$ *FALSE* and that happens when all $k$ inhibitors are *FALSE*.
 Thus, $R_{false}=2^k-1$ and $TD_{OR-NOT}=\frac{2^n-(2^k-1)}{2^n}$.
 ```
 
