@@ -3,8 +3,8 @@ title: "Standaridized Boolean Regulatory Function Bias"
 author: "[John Zobolas](https://github.com/bblodfon)"
 date: "Last updated: `r format(Sys.time(), '%d %B, %Y')`"
 description: "Data analyses related to Truth Density bias in standardized boolean regulatory functions"
-url: 'https\://bblodfon.github.io/brf-bias/'
-github-repo: "bblodfon/brf-bias"
+url: 'https\://druglogics.github.io/brf-bias/'
+github-repo: "druglogics/brf-bias"
 bibliography: references.bib
 link-citations: true
 site: bookdown::bookdown_site
@@ -171,7 +171,7 @@ More more info, see this [math.stackexchange question](https://math.stackexchang
 
 I created every possible truth table for up to $20$ variables (variables here means *regulators* for us) and calculated the `AND-NOT`, `OR-NOT`, `Pairs`, `Act-win`, `Inh-win` boolean function results for every possible configuration of the number of activators and inhibitors that added up to the number of regulators.
 Then, from the truth tables I calculated the **truth density** of each operator for each particular configuration.
-For more details see the script [get_stats.R](get_stats.R)
+For more details see the script [get_stats.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_stats.R)
 
 :::{#tr-data}
 See part of the data below:
@@ -659,12 +659,12 @@ The models are stored in both `.gitsbe` and `.bnet` files in the Zenodo dataset 
 
 :::{.blue-box}
 The dataset includes models with $0,1$ or $2$ stable states.
-We used the [get_ss_data.R](https://github.com/bblodfon/brf-bias/blob/main/scripts/get_ss_data.R) script to get the **1 stable state data** from the models (a total of $2820224$ models - see [stable state distribution](https://bblodfon.github.io/bool-param-maps/cascade-1-0-general.html#model-stable-state-statistics)) and it's this data we are going to analyze in the next section.
+We used the [get_ss_data.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_ss_data.R) script to get the **1 stable state data** from the models (a total of $2820224$ models - see [stable state distribution](https://bblodfon.github.io/bool-param-maps/cascade-1-0-general.html#model-stable-state-statistics)) and it's this data we are going to analyze in the next section.
 :::
 
 ## Parameterization vs Activity {-}
 
-We calculate the `node_stats` object using the [get_node_stats.R](https://github.com/bblodfon/brf-bias/blob/main/scripts/get_node_stats.R) script.
+We calculate the `node_stats` object using the [get_node_stats.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_node_stats.R) script.
 This object includes the **agreement statistics information** for each link operator node (i.e. one that is targeted by both activators and inhibitors).
 
 Load the `node_stats`:
@@ -793,7 +793,7 @@ CASCADE 2.0 represents a larger topology/network with nodes with more than $5$ r
 ## Data {-}
 
 :::{.note}
-The dataset used was generated for [another analysis](https://bblodfon.github.io/gitsbe-model-analysis/cascade/random-model-ss/main.html) and we are going to use part of it, i.e. the **models that had 1 stable state** (see [get_node_stats_cascade_2.R](https://github.com/bblodfon/brf-bias/blob/main/scripts/get_node_stats_cascade_2.R) script).
+The dataset used was generated for [another analysis](https://bblodfon.github.io/gitsbe-model-analysis/cascade/random-model-ss/main.html) and we are going to use part of it, i.e. the **models that had 1 stable state** (see [get_node_stats_cascade_2.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_node_stats_cascade_2.R) script).
 The dataset is stored in Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3932382.svg)](https://doi.org/10.5281/zenodo.3932382)
 :::
 
@@ -860,11 +860,11 @@ knitr::include_graphics(path = "img/scale_free_methodology.png")
 ```
 :::
 
-- We generate the scale-free topology `.sif` files with the script [random_topo_gen.R](https://github.com/bblodfon/brf-bias/blob/main/scripts/random_topo_gen.R) - implementation was based on the BoolNet R package [@Mussel2010].
+- We generate the scale-free topology `.sif` files with the script [random_topo_gen.R](https://github.com/druglogics/brf-bias/blob/main/scripts/random_topo_gen.R) - implementation was based on the BoolNet R package [@Mussel2010].
 The input degree distribution of the scale-free networks follows Riemann's Zeta function [@Aldana2003].
 - We use the [abmlog](https://github.com/druglogics/abmlog/releases/tag/v1.6.0) software to produce every possible link operator parameterized boolean model out of every topology file created in the previous step.
-The more link operator equations the network topology has (target nodes with both *activating* and *inhibiting* regulators) the more boolean models are generated (see script [run_abmlog_topology_files.sh](https://github.com/bblodfon/brf-bias/blob/main/scripts/run_abmlog_topology_files.sh)).
-- We analyze the data from all the abmlog-produced models and **compare stable state and link operator assignment** and produce agreement statistics (see script [get_scale_free_model_stats.R](https://github.com/bblodfon/brf-bias/blob/main/scripts/get_scale_free_model_stats.R))
+The more link operator equations the network topology has (target nodes with both *activating* and *inhibiting* regulators) the more boolean models are generated (see script [run_abmlog_topology_files.sh](https://github.com/druglogics/brf-bias/blob/main/scripts/run_abmlog_topology_files.sh)).
+- We analyze the data from all the abmlog-produced models and **compare stable state and link operator assignment** and produce agreement statistics (see script [get_scale_free_model_stats.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_scale_free_model_stats.R))
 
 :::{.note}
 Most of the scale-free networks studied in literature have $\gamma\in[2,2.5]$ - see **Fig. 5** in [@Aldana2003].
