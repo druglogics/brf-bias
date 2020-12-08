@@ -10,10 +10,10 @@
 
   <meta property="og:title" content="Random scale-free Networks Analysis | Standaridized Boolean Regulatory Function Bias" />
   <meta property="og:type" content="book" />
-  <meta property="og:url" content="https://bblodfon.github.io/brf-bias/" />
+  <meta property="og:url" content="https://druglogics.github.io/brf-bias/" />
   
   <meta property="og:description" content="Data analyses related to Truth Density bias in standardized boolean regulatory functions" />
-  <meta name="github-repo" content="bblodfon/brf-bias" />
+  <meta name="github-repo" content="druglogics/brf-bias" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Random scale-free Networks Analysis | Standaridized Boolean Regulatory Function Bias" />
@@ -880,10 +880,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <li class="divider"></li>
 <li class="chapter" data-level="" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i>Input</a></li>
-<li class="chapter" data-level="" data-path="boolean-regulatory-functions.html"><a href="boolean-regulatory-functions.html"><i class="fa fa-check"></i>Boolean Regulatory Functions</a>
+<li class="chapter" data-level="" data-path="background.html"><a href="background.html"><i class="fa fa-check"></i>Background</a>
 <ul>
-<li class="chapter" data-level="" data-path="boolean-regulatory-functions.html"><a href="boolean-regulatory-functions.html#link-operator-boolean-regulatory-functions"><i class="fa fa-check"></i>Link operator Boolean Regulatory Functions</a></li>
-<li class="chapter" data-level="" data-path="boolean-regulatory-functions.html"><a href="boolean-regulatory-functions.html#threshold-functions"><i class="fa fa-check"></i>Threshold functions</a></li>
+<li class="chapter" data-level="" data-path="background.html"><a href="background.html#boolean-functions"><i class="fa fa-check"></i>Boolean functions</a></li>
+<li class="chapter" data-level="" data-path="background.html"><a href="background.html#truth-density"><i class="fa fa-check"></i>Truth Density</a></li>
+<li class="chapter" data-level="" data-path="background.html"><a href="background.html#the-dnf-form"><i class="fa fa-check"></i>The DNF form</a></li>
+<li class="chapter" data-level="" data-path="background.html"><a href="background.html#complexity"><i class="fa fa-check"></i>Complexity</a></li>
+<li class="chapter" data-level="" data-path="background.html"><a href="background.html#link-operator-boolean-regulatory-functions"><i class="fa fa-check"></i>Link operator Boolean Regulatory Functions</a></li>
+<li class="chapter" data-level="" data-path="background.html"><a href="background.html#threshold-functions"><i class="fa fa-check"></i>Threshold functions</a></li>
 </ul></li>
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html"><i class="fa fa-check"></i>Truth Density Data Analysis</a>
 <ul>
@@ -956,11 +960,11 @@ Figure 16: Methodology Overview
 </div>
 </div>
 <ul>
-<li>We generate the scale-free topology <code>.sif</code> files with the script <a href="https://github.com/bblodfon/brf-bias/blob/main/scripts/random_topo_gen.R">random_topo_gen.R</a> - implementation was based on the BoolNet R package <span class="citation">(Müssel, Hopfensitz, and Kestler <a href="references.html#ref-Mussel2010" role="doc-biblioref">2010</a>)</span>.
+<li>We generate the scale-free topology <code>.sif</code> files with the script <a href="https://github.com/druglogics/brf-bias/blob/main/scripts/random_topo_gen.R">random_topo_gen.R</a> - implementation was based on the BoolNet R package <span class="citation">(Müssel, Hopfensitz, and Kestler <a href="references.html#ref-Mussel2010" role="doc-biblioref">2010</a>)</span>.
 The input degree distribution of the scale-free networks follows Riemann’s Zeta function <span class="citation">(Aldana and Goldstein <a href="references.html#ref-Aldana2003" role="doc-biblioref">2003</a>)</span>.</li>
 <li>We use the <a href="https://github.com/druglogics/abmlog/releases/tag/v1.6.0">abmlog</a> software to produce every possible link operator parameterized boolean model out of every topology file created in the previous step.
-The more link operator equations the network topology has (target nodes with both <em>activating</em> and <em>inhibiting</em> regulators) the more boolean models are generated (see script <a href="https://github.com/bblodfon/brf-bias/blob/main/scripts/run_abmlog_topology_files.sh">run_abmlog_topology_files.sh</a>).</li>
-<li>We analyze the data from all the abmlog-produced models and <strong>compare stable state and link operator assignment</strong> and produce agreement statistics (see script <a href="https://github.com/bblodfon/brf-bias/blob/main/scripts/get_scale_free_model_stats.R">get_scale_free_model_stats.R</a>)</li>
+The more link operator equations the network topology has (target nodes with both <em>activating</em> and <em>inhibiting</em> regulators) the more boolean models are generated (see script <a href="https://github.com/druglogics/brf-bias/blob/main/scripts/run_abmlog_topology_files.sh">run_abmlog_topology_files.sh</a>).</li>
+<li>We analyze the data from all the abmlog-produced models and <strong>compare stable state and link operator assignment</strong> and produce agreement statistics (see script <a href="https://github.com/druglogics/brf-bias/blob/main/scripts/get_scale_free_model_stats.R">get_scale_free_model_stats.R</a>)</li>
 </ul>
 <div class="note">
 <p>Most of the scale-free networks studied in literature have <span class="math inline">\(\gamma\in[2,2.5]\)</span> - see <strong>Fig. 5</strong> in <span class="citation">(Aldana and Goldstein <a href="references.html#ref-Aldana2003" role="doc-biblioref">2003</a>)</span>.</p>

@@ -4,11 +4,11 @@
 
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <title>References | Standaridized Boolean Regulatory Function Bias</title>
+  <title>Background | Standaridized Boolean Regulatory Function Bias</title>
   <meta name="description" content="Data analyses related to Truth Density bias in standardized boolean regulatory functions" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
-  <meta property="og:title" content="References | Standaridized Boolean Regulatory Function Bias" />
+  <meta property="og:title" content="Background | Standaridized Boolean Regulatory Function Bias" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://druglogics.github.io/brf-bias/" />
   
@@ -16,7 +16,7 @@
   <meta name="github-repo" content="druglogics/brf-bias" />
 
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="References | Standaridized Boolean Regulatory Function Bias" />
+  <meta name="twitter:title" content="Background | Standaridized Boolean Regulatory Function Bias" />
   
   <meta name="twitter:description" content="Data analyses related to Truth Density bias in standardized boolean regulatory functions" />
   
@@ -30,8 +30,8 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
   
   
-<link rel="prev" href="r-session-info.html"/>
-
+<link rel="prev" href="index.html"/>
+<link rel="next" href="truth-density-data-analysis.html"/>
 <script src="libs/header-attrs-2.5/header-attrs.js"></script>
 <script src="libs/jquery-2.2.3/jquery.min.js"></script>
 <link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
@@ -946,39 +946,197 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           <div class="page-inner">
 
             <section class="normal" id="section-">
-<div id="references" class="section level1 unnumbered" number="">
-<h1>References</h1>
+<div id="background" class="section level1 unnumbered" number="">
+<h1>Background</h1>
+<p>In this section we introduce basic concepts and notation.</p>
+<div id="boolean-functions" class="section level2 unnumbered" number="">
+<h2>Boolean functions</h2>
+<p><strong>Boolean regulatory functions (BRFs)</strong> are boolean functions used in the context of biological networks and modeling.
+A mathematical presentation of such a function associates the activity output of a target biological entity with the boolean input values of <span class="math inline">\(n\)</span> variables (the <em>regulators</em>), such that <span class="math inline">\(f_{BRF}:\{0,1\}^n \rightarrow \{0,1\}\)</span>.
+Thus, the target’s output state is binary, i.e. either <span class="math inline">\(0\)</span> (FALSE, denoting an inactive/inhibited state) or <span class="math inline">\(1\)</span> (TRUE, indicating an active state).</p>
+<p>The most intuitive representation of a boolean function is its <em>truth table</em>, which is a list of all possible boolean input configurations of the <span class="math inline">\(n\)</span> regulators along with their associated function output.
+Since for every regulator, there are two possible values (<span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>), the total number of input configurations (i.e. rows) in a truth table is <span class="math inline">\(2^n\)</span>.
+For example, a boolean function <span class="math inline">\(f(x_1,x_2,x_3)\)</span> with <span class="math inline">\(3\)</span> regulators has a total of <span class="math inline">\(2^3=8\)</span> rows in its corresponding truth table, starting from the input configuration <span class="math inline">\((0,0,0)\)</span> and ending with <span class="math inline">\((1,1,1)\)</span> (see <a href="background.html#table1">Table 1</a>).</p>
+<p>The total number of BRFs with <span class="math inline">\(n\)</span> regulators is <span class="math inline">\(2^{2^n}\)</span> and the easiest way to think about it is to see that for each input configuration (i.e. row of the truth table) there can be only two possible function outcomes (<span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>).
+In our example with <span class="math inline">\(3\)</span> regulators and a total of <span class="math inline">\(8\)</span> rows in the truth table, that would be a total of <span class="math inline">\(2^8=256\)</span> functions, three of which are shown in <a href="background.html#table1">Table 1</a> below.</p>
+<div id="table1">
 
-<div id="refs" class="references hanging-indent">
-<div id="ref-Aldana2003">
-<p>Aldana, Maximino, and R E Goldstein. 2003. “Boolean dynamics of networks with scale-free topology.” <em>Physica D: Nonlinear Phenomena</em>. <a href="https://doi.org/10.1016/S0167-2789(03)00174-X">https://doi.org/10.1016/S0167-2789(03)00174-X</a>.</p>
 </div>
-<div id="ref-Chaouiya2013">
-<p>Chaouiya, Claudine, Ouerdia Ourrad, and Ricardo Lima. 2013. “Majority Rules with Random Tie-Breaking in Boolean Gene Regulatory Networks.” <em>PLoS ONE</em> 8 (7): 69626. <a href="https://doi.org/10.1371/journal.pone.0069626">https://doi.org/10.1371/journal.pone.0069626</a>.</p>
+<table style="width:100%;">
+<colgroup>
+<col width="16%" />
+<col width="16%" />
+<col width="16%" />
+<col width="16%" />
+<col width="16%" />
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"><span class="math inline">\(x_1\)</span></th>
+<th align="center"><span class="math inline">\(x_2\)</span></th>
+<th align="center"><span class="math inline">\(x_3\)</span></th>
+<th align="center"><span class="math inline">\(f_1=(x_1 \land \lnot x_3) \lor (x_2 \land \lnot x_3)\)</span></th>
+<th align="center"><span class="math inline">\(f_2=x_1 \lor (\lnot x_2 \land \lnot x_3)\)</span></th>
+<th align="center"><span class="math inline">\(f_3 = 1\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+</tbody>
+</table>
+<div id="table1-caption">
+<p>Table 1: Truth table of three boolean functions with three input variables.
+Functions <span class="math inline">\(f_1\)</span> and <span class="math inline">\(f_2\)</span> are written in disjunctive normal form (DNF) with the minimum possible clauses.
+<span class="math inline">\(f_3\)</span> is a tautology.</p>
 </div>
-<div id="ref-crama2011boolean">
-<p>Crama, Yves, and Peter L Hammer. 2011. <em>Boolean functions: Theory, algorithms, and applications</em>. Cambridge University Press.</p>
 </div>
-<div id="ref-Cury2019">
-<p>Cury, José E. R., Pedro T. Monteiro, and Claudine Chaouiya. 2019. “Partial Order on the set of Boolean Regulatory Functions,” January. <a href="http://arxiv.org/abs/1901.07623">http://arxiv.org/abs/1901.07623</a>.</p>
+<div id="truth-density" class="section level2 unnumbered" number="">
+<h2>Truth Density</h2>
+<p><strong>Truth density (TD)</strong> of a boolean function is the number of ones (<span class="math inline">\(1\)</span>) in its truth table output, normalized by the total number of rows.</p>
+<p>Note that the truth density of a boolean function rests in the <span class="math inline">\([0,1]\)</span> interval.
+Using the example with the three functions from <a href="background.html#table1">Table 1</a>, we have <span class="math inline">\(TD_{f_1}=3/8=0.375\)</span>, <span class="math inline">\(TD_{f_2}=5/8=0.625\)</span> and <span class="math inline">\(TD_{f_3}=8/8=1\)</span>, where the last function is the <em>tautology</em>, with the maximum possible truth density.</p>
 </div>
-<div id="ref-Gherardi2016">
-<p>Gherardi, Marco, and Pietro Rotondo. 2016. “Measuring logic complexity can guide pattern discovery in empirical systems.” <em>Complexity</em> 21 (March): 397–408. <a href="http://arxiv.org/abs/1603.03337">http://arxiv.org/abs/1603.03337</a>.</p>
+<div id="the-dnf-form" class="section level2 unnumbered" number="">
+<h2>The DNF form</h2>
+<p>The most practically used form of a boolean function is its <strong>analytical form</strong>, where variables are connected with logical operators such as AND (<span class="math inline">\(\land\)</span>), OR (<span class="math inline">\(\lor\)</span>), NOT (<span class="math inline">\(\lnot\)</span>), XOR (<span class="math inline">\(\oplus\)</span>), etc. and the output of the function is calculated using basic boolean algebra.
+In <a href="background.html#table1">Table 1</a> for example, we provide the analytical forms for the functions <span class="math inline">\(f_1\)</span> and <span class="math inline">\(f_2\)</span>.
+Note that there can be multiple analytical forms that essentially compute the same function, e.g. another form of the <span class="math inline">\(f_1\)</span> function is <span class="math inline">\(f_1^{&#39;}=(\lnot x_1 \land x_2 \land \lnot x_3) \lor (x_1 \land \lnot x_2 \land \lnot x_3) \lor (x_1 \land x_2 \land \lnot x_3)\)</span>.</p>
+<p>This brings us to the notion of a general form which could be used to define useful metrics common to all boolean functions (e.g. complexity), as well as the need to provide minimal forms.
+This need does not come only from a representation point of view (a more compact function form enhances readability, e.g. compare <span class="math inline">\(f_1\)</span> with <span class="math inline">\(f_1^{&#39;}\)</span>), but is also a motivation for the design of optimal digital circuits, since the number of gates used (i.e. logical operators) is an indicator of computation time and affects the efficiency of a circuit <span class="citation">(Wegener <a href="references.html#ref-wegener1987complexity" role="doc-biblioref">1987</a>)</span>.</p>
+<p>Every boolean function can be represented in a <strong>disjunctive normal form or DNF</strong>, requiring only AND (<span class="math inline">\(\land\)</span>), OR (<span class="math inline">\(\lor\)</span>) and NOT (<span class="math inline">\(\lnot\)</span>) operators as building blocks.
+In such a representation, <em>literals</em>, which are variables (e.g. positive literal <span class="math inline">\(x\)</span>) or their negations (e.g. negative literal <span class="math inline">\(\text{NOT }x\)</span>), are connected by AND’s producing clauses, which are then in turn connected by OR’s.
+For example, every function in <a href="background.html#table1">Table 1</a> is written in DNF, while the boolean expressions <span class="math inline">\(\lnot (x_1 \lor x_2)\)</span> and <span class="math inline">\(\lnot (x_1\land x_2)\lor x_3\)</span> are not.</p>
 </div>
-<div id="ref-Landis1977">
-<p>Landis, J. Richard, and Gary G. Koch. 1977. “The Measurement of Observer Agreement for Categorical Data.” <em>Biometrics</em> 33 (1): 159. <a href="https://doi.org/10.2307/2529310">https://doi.org/10.2307/2529310</a>.</p>
+<div id="complexity" class="section level2 unnumbered" number="">
+<h2>Complexity</h2>
+<p>The <strong>length of a DNF</strong> is defined as the number of its clauses, i.e the number of terms separated by <span class="math inline">\(\lor\)</span> operators.
+As such, <span class="math inline">\(l_{f_1}=l_{f_2}=2\)</span>, <span class="math inline">\(l_{f_3}=1\)</span> and <span class="math inline">\(l_{f_1^{&#39;}}=3\)</span> from <a href="background.html#table1">Table 1</a>.
+Intuitively speaking, the more clauses a DNF has, the more complex it is.
+This observation leads us to the following definition:</p>
+<p>The <strong>complexity</strong> <span class="math inline">\(C\)</span> of a boolean function is the length of its <strong>shortest DNF</strong>, normalized by the total number of rows of its truth table <span class="citation">(Gherardi and Rotondo <a href="references.html#ref-Gherardi2016" role="doc-biblioref">2016</a>)</span>.</p>
+<p>For example, using the functions from <a href="background.html#table1">Table 1</a>, for which the minimum DNF expression is given, we have that <span class="math inline">\(C_{f_1}=C_{f_2}=2/8\)</span>, <span class="math inline">\(C_{f_3}=1/8\)</span>, where the tautology <span class="math inline">\(f_3\)</span> is assigned the smallest possible complexity.</p>
+<p>Note that <em>minimizing</em> the DNF form of a boolean function to get an equivalent expression with the shortest number of clauses, is considered a computational difficult problem and there can be multiple such minimum DNF representations for a single boolean function.</p>
 </div>
-<div id="ref-McHugh2012a">
-<p>McHugh, Mary L. 2012. “Interrater reliability: The kappa statistic.” <em>Biochemia Medica</em> 22 (3): 276–82. <a href="https://doi.org/10.11613/bm.2012.031">https://doi.org/10.11613/bm.2012.031</a>.</p>
+<div id="link-operator-boolean-regulatory-functions" class="section level2 unnumbered" number="">
+<h2>Link operator Boolean Regulatory Functions</h2>
+<p>We consider the class of BRFs that partitions the input variables (regulators) to two sets: the set <span class="math inline">\(x\)</span> of positive regulators (also called <em>activators</em>) and the set of negative regulators (also called <em>inhibitors</em>).
+Let <span class="math inline">\(f\)</span> be such a boolean function <span class="math inline">\(f(x,y):\{0,1\}^n \rightarrow \{0,1\}\)</span>, with <span class="math inline">\(m \ge 1\)</span> <strong>activators</strong> <span class="math inline">\(x=\{x_i\}_{i=1}^{m}\)</span> and <span class="math inline">\(k \ge 1\)</span> <strong>inhibitors</strong> <span class="math inline">\(y=\{y_j\}_{j=1}^{k}\)</span>, that is a total of <span class="math inline">\(n = m + k\)</span> regulators.
+The <strong>link operator BRFs</strong> have an analytical non-DNF form, which distributes the two distinct types of regulators in two separate clauses, while connecting them with a special logical operator that we call a <strong>link operator</strong>.</p>
+<p>An example of such a function that has been used extensively in the logical modeling literature is the standardized BRF formula with the <code>AND-NOT</code> link operator <span class="citation">(Mendoza and Xenarios <a href="references.html#ref-Mendoza2006" role="doc-biblioref">2006</a>)</span>:</p>
+<ul>
+<li><code>AND-NOT</code>: <span class="math display">\[f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{j=1}^{k} y_j\right)\]</span></li>
+</ul>
+<p>A <strong>variation</strong> of the above function is the <code>OR-NOT</code> link operator function:</p>
+<ul>
+<li><code>OR-NOT</code>: <span class="math display">\[f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{j=1}^{k} y_j\right)\]</span></li>
+</ul>
+<p>Note that the presence of the link operator is what forces the condition <span class="math inline">\(m,k \ge 1\)</span> (at least one regulator in each category).
+For the rest of this work, we will not consider BRFs with only one type of regulator, since these can be represented by simple logical functions without loss of interpretability or biological consistency.
+Following the notation introduced in <span class="citation">(Mendoza and Xenarios <a href="references.html#ref-Mendoza2006" role="doc-biblioref">2006</a>)</span>, we have in the case of only activators:</p>
+<p><span class="math display">\[f(x)=\bigvee_{i=1}^{m} x_i\]</span>
+where the presence of at least one activator makes the function output <em>TRUE</em> (active).
+Similarly, in the case of only inhibitors we have:</p>
+<p><span class="math display">\[f(y)=\lnot \bigvee_{j=1}^{k} y_j=\bigwedge_{j=1}^{k} \lnot y_j\]</span>
+where the presence of at least one inhibitor is enough to make the target inhibited (<em>FALSE</em>).</p>
+<p>Borrowing notation from circuit theory, we could use other link operators like the <code>NAND</code>, <code>NOR</code>, <code>XNOR</code> (<span class="math inline">\(\odot\)</span>) gates, combined with the <code>NOT</code> operator or not.
+Note that the operator used to connect the same type of regulators (e.g. the activators) is usually the OR, but other operators could be used as well.</p>
+<div id="pairs-fun">
+<p>For example, another link operator function is the <em>Pairs</em> function:</p>
 </div>
-<div id="ref-Mendoza2006">
-<p>Mendoza, Luis, and Ioannis Xenarios. 2006. “A method for the generation of standardized qualitative dynamical systems of regulatory networks.” <em>Theoretical Biology and Medical Modelling</em> 3 (1): 13. <a href="https://doi.org/10.1186/1742-4682-3-13">https://doi.org/10.1186/1742-4682-3-13</a>.</p>
+<ul>
+<li><code>Pairs</code>: <span class="math display">\[f_{pairs}(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)\]</span></li>
+</ul>
+<p>The name is derived from the intuition that the function will return <em>TRUE</em> if there is at least one pair of regulators consisting of a <strong>present activator</strong> and an <strong>absent inhibitor</strong>.
+The function is also written in conjunction normal form (CNF), which is the reverse of the DNF: clauses are connected with AND’s (<span class="math inline">\(\land\)</span>) and inside the clauses the literals are connected with OR’s (<span class="math inline">\(\lor\)</span>).</p>
+<div class="note">
+<p><span class="citation">Cury, Monteiro, and Chaouiya (<a href="references.html#ref-Cury2019" role="doc-biblioref">2019</a>)</span> defined the <strong>consistent boolean regulatory</strong> functions and their respective <strong>complete DNF forms (CDNF)</strong>.</p>
+<p>The link operator functions listed above are a subset of these functions, since they respect the regulatory structure in their respective DNF forms (for the <em>Pairs</em> function it’s evident since it’s written first in the DNF - for the <em>AND-NOT</em> and <em>OR-NOT</em> functions, see their respective DNF forms in the truth density proofs <a href="truth-density-data-analysis.html#prp:and-not-proof">1</a> and <a href="truth-density-data-analysis.html#prp:or-not-proof">2</a>.</p>
 </div>
-<div id="ref-Mussel2010">
-<p>Müssel, Christoph, Martin Hopfensitz, and Hans A. Kestler. 2010. “BoolNet—an R package for generation, reconstruction and analysis of Boolean networks.” <em>Bioinformatics</em> 26 (10): 1378–80. <a href="https://doi.org/10.1093/bioinformatics/btq124">https://doi.org/10.1093/bioinformatics/btq124</a>.</p>
 </div>
-<div id="ref-wegener1987complexity">
-<p>Wegener, Ingo. 1987. <em>The complexity of Boolean functions</em>. BG Teubner.</p>
+<div id="threshold-functions" class="section level2 unnumbered" number="">
+<h2>Threshold functions</h2>
+<p><strong>Boolean threshold functions</strong> are formulated based on given <em>pseudo-Boolean</em> constraints for the regulators.
+Thus, the activators and inhibitors are combined in an <em>additive</em> manner and not a <em>combinatorial</em> one (i.e. using logical operators) and the <strong>majority rule</strong> defines the value of the function <span class="citation">(Chaouiya, Ourrad, and Lima <a href="references.html#ref-Chaouiya2013" role="doc-biblioref">2013</a>; Crama and Hammer <a href="references.html#ref-crama2011boolean" role="doc-biblioref">2011</a>)</span>.</p>
+<p>We will use two simple boolean threshold functions, which both output <span class="math inline">\(1\)</span> when <strong>the number of present activators is larger than the number of present inhibitors</strong>.
+These functions differ with regards to their output when there is balance between the activities of the positive and negative regulators: the first outputs <span class="math inline">\(1\)</span> (the activators “win”) while the second outputs <span class="math inline">\(0\)</span> (the inhibitors “win”).</p>
+<ul>
+<li><code>Act-win</code>: <span class="math display">\[f_{act-win}(x,y)=\begin{cases}
+      1, &amp; \text{for } \sum_{i=1}^{m} x_i \ge \sum_{j=1}^{k} y_j\\
+      0, &amp; \text{otherwise}
+      \end{cases}\]</span></li>
+<li><code>Inh-win</code>: <span class="math display">\[f_{inh-win}(x,y)=\begin{cases}
+      1, &amp; \text{for } \sum_{i=1}^{m} x_i \gt \sum_{j=1}^{k} y_j\\
+      0, &amp; \text{otherwise}
+      \end{cases}\]</span></li>
+</ul>
+<p>Note that: <span class="math inline">\(f_{inh-win}(x,y) = \lnot f_{act-win}(y,x)\)</span>.</p>
+<div class="blue-box">
+<p>Note that every boolean threshold function has an equivalent combinatorial expression and I searched for an analytic formula for the two last threshold functions.
+More more info, see this <a href="https://math.stackexchange.com/questions/3767774/identify-boolean-function-that-satisfies-some-constrains/">math.stackexchange question</a>.</p>
 </div>
 </div>
 </div>
@@ -987,8 +1145,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
           </div>
         </div>
       </div>
-<a href="r-session-info.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
-
+<a href="index.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="truth-density-data-analysis.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
     </div>
   </div>
 <script src="libs/gitbook-2.6.7/js/app.min.js"></script>

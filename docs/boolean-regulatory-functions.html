@@ -944,8 +944,99 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="boolean-regulatory-functions" class="section level1 unnumbered" number="">
 <h1>Boolean Regulatory Functions</h1>
-<p><strong>Boolean Regulatory Functions or BRFs</strong> are boolean functions used in the context of biology networks and models.
-A mathematical presentation of such a function with <span class="math inline">\(n\)</span> input variables (regulators) would be: <span class="math inline">\(f_{BRF}:\{0,1\}^n \rightarrow \{0,1\}\)</span>, where the output of the target biological entity is always <span class="math inline">\(0\)</span> (FALSE/inactive/inhibited) or <span class="math inline">\(1\)</span> (TRUE/active).</p>
+<p><strong>Boolean regulatory functions (BRFs)</strong> are boolean functions used in the context of biological networks and logical modeling.
+A mathematical presentation of such a function associates the activity output of a target biological entity with the boolean input values of <span class="math inline">\(n\)</span> variables (the <em>regulators</em>), such that <span class="math inline">\(f_{BRF}:\{0,1\}^n \rightarrow \{0,1\}\)</span>.
+The resulting output can be either <span class="math inline">\(0\)</span> (FALSE/inactive/inhibited) or <span class="math inline">\(1\)</span> (TRUE/active).</p>
+<p>The most simple representation of a boolean function is its <em>truth table</em>, which is a list of all possible boolean input configurations of the <span class="math inline">\(n\)</span> regulators along with their associated function output.
+Since for every regulator, there are two possible values (<span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>), the total number of input configurations (i.e. rows) in a truth table is <span class="math inline">\(2^n\)</span>.
+For example, a boolean function <span class="math inline">\(f(x_1,x_2,x_3)\)</span> with <span class="math inline">\(3\)</span> regulators has a total of <span class="math inline">\(2^3=8\)</span> rows in its corresponding truth table, starting from the input configuration <span class="math inline">\((0,0,0)\)</span> and ending with the <span class="math inline">\((1,1,1)\)</span> (see <a href="boolean-regulatory-functions.html#table1">Table 1</a>).</p>
+<p>The total number of possible unique BRFs with <span class="math inline">\(n\)</span> regulators is <span class="math inline">\(2^{2^n}\)</span> and the easiest way to think about it is to see that for each input configuration (i.e. row of the truth table) there can be only two outcomes associated with the function output (<span class="math inline">\(0\)</span> or <span class="math inline">\(1\)</span>).
+In our example with <span class="math inline">\(3\)</span> regulators and a total of <span class="math inline">\(8\)</span> rows in the truth table, that would be a total of <span class="math inline">\(2^8=256\)</span> functions, two of which are shown in <a href="boolean-regulatory-functions.html#table1">Table 1</a> below.</p>
+<p>We define as <strong>truth density (TD)</strong> of a BRF the <strong>number of rows that the function is active</strong> divided by <strong>the total number of rows</strong> <span class="math inline">\((2^n)\)</span>.
+Using the two functions from Table 1, we have <span class="math inline">\(TD_{f_1}=3/8=0.375\)</span> and <span class="math inline">\(TD_{f_2}=5/8=0.625\)</span>.</p>
+<p>The most practically used form of a boolean function is its analytical form, where variables are connected with logical operators such as AND (<span class="math inline">\(\land\)</span>), OR (<span class="math inline">\(\lor\)</span>), NOT (<span class="math inline">\(\lnot,!\)</span>), XOR (<span class="math inline">\(\oplus\)</span>), etc.</p>
+<div id="table1">
+
+</div>
+<table>
+<colgroup>
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+<col width="20%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center"><span class="math inline">\(x_1\)</span></th>
+<th align="center"><span class="math inline">\(x_2\)</span></th>
+<th align="center"><span class="math inline">\(x_3\)</span></th>
+<th align="center"><span class="math inline">\(f_1=(x_1 \lor x_2) \land \lnot x_3\)</span></th>
+<th align="center"><span class="math inline">\(f_2=x_1 \lor \lnot (x_2 \lor x_3)\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+</tr>
+<tr class="even">
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+</tr>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+<tr class="odd">
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+<td align="center">1</td>
+</tr>
+<tr class="even">
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">1</td>
+<td align="center">0</td>
+<td align="center">1</td>
+</tr>
+</tbody>
+</table>
+<div id="table1-caption">
+<p>Table 1: Truth tables of two boolean functions with three input variables.</p>
+</div>
 <div id="link-operator-boolean-regulatory-functions" class="section level2 unnumbered" number="">
 <h2>Link operator Boolean Regulatory Functions</h2>
 <p>Let <span class="math inline">\(f\)</span> be a boolean function <span class="math inline">\(f(x,y):\{0,1\}^n \rightarrow \{0,1\}\)</span>, with <span class="math inline">\(m \ge 1\)</span> <strong>activators</strong> <span class="math inline">\(x=\{x_i\}_{i=1}^{m}\)</span> and <span class="math inline">\(k \ge 1\)</span> <strong>inhibitors</strong> <span class="math inline">\(y=\{y_j\}_{j=1}^{k}\)</span>, that is a total of <span class="math inline">\(n = m + k\)</span> regulators.
