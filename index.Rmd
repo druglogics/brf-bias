@@ -30,31 +30,110 @@ library(latex2exp)
 library(BoolNet)
 ```
 
-# Boolean Regulatory Functions {-}
+# Background {-}
 
-**Boolean Regulatory Functions or BRFs** are boolean functions used in the context of biology networks and models.
-A mathematical presentation of such a function with $n$ input variables (regulators) would be: $f_{BRF}:\{0,1\}^n \rightarrow \{0,1\}$, where the output of the target biological entity is always $0$ (FALSE/inactive/inhibited) or $1$ (TRUE/active).
+In this section we introduce basic concepts and notation.
+
+## Boolean functions {-}
+
+**Boolean regulatory functions (BRFs)** are boolean functions used in the context of biological networks and modeling.
+A mathematical presentation of such a function associates the activity output of a target biological entity with the boolean input values of $n$ variables (the *regulators*), such that $f_{BRF}:\{0,1\}^n \rightarrow \{0,1\}$.
+Thus, the target's output state is binary, i.e. either $0$ (FALSE, denoting an inactive/inhibited state) or $1$ (TRUE, indicating an active state).
+
+The most intuitive representation of a boolean function is its *truth table*, which is a list of all possible boolean input configurations of the $n$ regulators along with their associated function output.
+Since for every regulator, there are two possible values ($0$ and $1$), the total number of input configurations (i.e. rows) in a truth table is $2^n$.
+For example, a boolean function $f(x_1,x_2,x_3)$ with $3$ regulators has a total of $2^3=8$ rows in its corresponding truth table, starting from the input configuration $(0,0,0)$ and ending with $(1,1,1)$ (see [Table 1](#table1)).
+
+The total number of BRFs with $n$ regulators is $2^{2^n}$ and the easiest way to think about it is to see that for each input configuration (i.e. row of the truth table) there can be only two possible function outcomes ($0$ or $1$).
+In our example with $3$ regulators and a total of $8$ rows in the truth table, that would be a total of $2^8=256$ functions, three of which are shown in [Table 1](#table1) below.
+
+:::{#table1}
+:::
+| $x_1$ | $x_2$ | $x_3$ | $f_1=(x_1 \land \lnot x_3) \lor (x_2 \land \lnot x_3)$ | $f_2=x_1 \lor (\lnot x_2 \land \lnot x_3)$ | $f_3 = 1$|
+|:-:|:-:|:-:|:-:|:-:|:-:|
+|0|0|0|0|1|1
+|0|0|1|0|0|1
+|0|1|0|1|0|1
+|0|1|1|0|0|1
+|1|0|0|1|1|1
+|1|0|1|0|1|1
+|1|1|0|1|1|1
+|1|1|1|0|1|1
+
+:::{#table1-caption}
+Table 1: Truth table of three boolean functions with three input variables.
+Functions $f_1$ and $f_2$ are written in disjunctive normal form (DNF) with the minimum possible clauses.
+$f_3$ is a tautology.
+:::
+
+## Truth Density {-}
+
+**Truth density (TD)** of a boolean function is the number of ones ($1$) in its truth table output, normalized by the total number of rows.
+
+Note that the truth density of a boolean function rests in the $[0,1]$ interval.
+Using the example with the three functions from [Table 1](#table1), we have $TD_{f_1}=3/8=0.375$,  $TD_{f_2}=5/8=0.625$ and $TD_{f_3}=8/8=1$, where the last function is the *tautology*, with the maximum possible truth density.
+
+## The DNF form {-}
+
+The most practically used form of a boolean function is its **analytical form**, where variables are connected with logical operators such as AND ($\land$), OR ($\lor$), NOT ($\lnot$), XOR ($\oplus$), etc. and the output of the function is calculated using basic boolean algebra.
+In [Table 1](#table1) for example, we provide the analytical forms for the functions $f_1$ and $f_2$.
+Note that there can be multiple analytical forms that essentially compute the same function, e.g. another form of the $f_1$ function is $f_1^{'}=(\lnot x_1 \land x_2 \land \lnot x_3) \lor (x_1 \land \lnot x_2 \land \lnot x_3) \lor (x_1 \land x_2 \land \lnot x_3)$.
+
+This brings us to the notion of a general form which could be used to define useful metrics common to all boolean functions (e.g. complexity), as well as the need to provide minimal forms.
+This need does not come only from a representation point of view (a more compact function form enhances readability, e.g. compare $f_1$ with $f_1^{'}$), but is also a motivation for the design of optimal digital circuits, since the number of gates used (i.e. logical operators) is an indicator of computation time and affects the efficiency of a circuit [@wegener1987complexity].
+
+Every boolean function can be represented in a **disjunctive normal form or DNF**, requiring only AND ($\land$), OR ($\lor$) and NOT ($\lnot$) operators as building blocks.
+In such a representation, *literals*, which are variables (e.g. positive literal $x$) or their negations (e.g. negative literal $\text{NOT }x$), are connected by AND's producing clauses, which are then in turn connected by OR's.
+For example, every function in [Table 1](#table1) is written in DNF, while the boolean expressions $\lnot (x_1 \lor x_2)$ and $\lnot (x_1\land x_2)\lor x_3$ are not.
+
+## Complexity {-}
+
+The **length of a DNF** is defined as the number of its clauses, i.e the number of terms separated by $\lor$ operators.
+As such, $l_{f_1}=l_{f_2}=2$, $l_{f_3}=1$ and $l_{f_1^{'}}=3$ from [Table 1](#table1).
+Intuitively speaking, the more clauses a DNF has, the more complex it is.
+This observation leads us to the following definition:
+
+The **complexity** $C$ of a boolean function is the length of its **shortest DNF**, normalized by the total number of rows of its truth table [@Gherardi2016].
+
+For example, using the functions from [Table 1](#table1), for which the minimum DNF expression is given, we have that $C_{f_1}=C_{f_2}=2/8$, $C_{f_3}=1/8$, where the tautology $f_3$ is assigned the smallest possible complexity.
+
+Note that *minimizing* the DNF form of a boolean function to get an equivalent expression with the shortest number of clauses, is considered a computational difficult problem and there can be multiple such minimum DNF representations for a single boolean function.
 
 ## Link operator Boolean Regulatory Functions {-}
 
-Let $f$ be a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with $m \ge 1$ **activators** $x=\{x_i\}_{i=1}^{m}$ and $k \ge 1$ **inhibitors** $y=\{y_j\}_{j=1}^{k}$, that is a total of $n = m + k$ regulators.
-The link operator boolean functions have a (non-DNF) formula representation that partitions the two distinct type of regulators (positive regulators are called *activators*, negative regulators are called *inhibitors*) into two separate groups and connect them with a specific logical operator (which we call the *link operator*).
-The presence of the link operator is what forces the condition $m,k \ge 1$ (at least one regulator in each category).
-An example of such a function that has been used in the literature is the formula with the `AND-NOT` link operator [@Mendoza2006]:
+We consider the class of BRFs that partitions the input variables (regulators) to two sets: the set $x$ of positive regulators (also called *activators*) and the set of negative regulators (also called *inhibitors*).
+Let $f$ be such a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with $m \ge 1$ **activators** $x=\{x_i\}_{i=1}^{m}$ and $k \ge 1$ **inhibitors** $y=\{y_j\}_{j=1}^{k}$, that is a total of $n = m + k$ regulators.
+The **link operator BRFs** have an analytical non-DNF form, which distributes the two distinct types of regulators in two separate clauses, while connecting them with a special logical operator that we call a **link operator**.
+
+An example of such a function that has been used extensively in the logical modeling literature is the standardized BRF formula with the `AND-NOT` link operator [@Mendoza2006]:
 
 - `AND-NOT`: $$f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{j=1}^{k} y_j\right)$$
 
-A **variation** of this one is the `OR-NOT` link operator function:
+A **variation** of the above function is the `OR-NOT` link operator function:
 
 - `OR-NOT`: $$f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{j=1}^{k} y_j\right)$$
 
-In theory, we could use any of the known logical operators as a link operator, e.g. `XOR`, `NAND`, etc.
+Note that the presence of the link operator is what forces the condition $m,k \ge 1$ (at least one regulator in each category).
+For the rest of this work, we will not consider BRFs with only one type of regulator, since these can be represented by simple logical functions without loss of interpretability or biological consistency.
+Following the notation introduced in [@Mendoza2006], we have in the case of only activators:
 
-For example, another link operator function is the next one ^[We call it *pairs* function since the intuition behind it is that the function returns *TRUE* if there is at least one pair of regulators consisting of a **present activator** and an **absent inhibitor**]:
+$$f(x)=\bigvee_{i=1}^{m} x_i$$
+where the presence of at least one activator makes the function output *TRUE* (active).
+Similarly, in the case of only inhibitors we have:
+
+$$f(y)=\lnot \bigvee_{j=1}^{k} y_j=\bigwedge_{j=1}^{k} \lnot y_j$$
+where the presence of at least one inhibitor is enough to make the target inhibited (*FALSE*).
+
+Borrowing notation from circuit theory, we could use other link operators like the `NAND`, `NOR`, `XNOR` ($\odot$) gates, combined with the `NOT` operator or not.
+Note that the operator used to connect the same type of regulators (e.g. the activators) is usually the OR, but other operators could be used as well.
 
 :::{#pairs-fun}
+For example, another link operator function is the *Pairs* function:
 :::
 - `Pairs`: $$f_{pairs}(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)$$
+
+The name is derived from the intuition that the function will return *TRUE* if there is at least one pair of regulators consisting of a **present activator** and an **absent inhibitor**.
+The function is also written in conjunction normal form (CNF), which is the reverse of the DNF: clauses are connected with AND’s ($\land$) and inside the clauses the literals are connected with OR’s ($\lor$).
 
 :::{.note}
 @Cury2019 defined the **consistent boolean regulatory** functions and their respective **complete DNF forms (CDNF)**.
@@ -64,10 +143,11 @@ The link operator functions listed above are a subset of these functions, since 
 
 ## Threshold functions {-}
 
-The **boolean threshold functions** are formulated based on given *pseudo-Boolean* constrains for the regulators.
-Thus, the activators and inhibitors are combined in an *additive* manner and not a *combinatorial* one and the **majority rule** defines the value of the function [@Chaouiya2013; @crama2011boolean].
+**Boolean threshold functions** are formulated based on given *pseudo-Boolean* constraints for the regulators.
+Thus, the activators and inhibitors are combined in an *additive* manner and not a *combinatorial* one (i.e. using logical operators) and the **majority rule** defines the value of the function [@Chaouiya2013; @crama2011boolean].
 
-Two simple cases of **threshold** functions are given below ^[Both threshold functions output *TRUE* when the number of present activators is larger than the number of present inhibitors. They differ when equal number of activators and inhibitors are present: in the first, the activators 'win' and thus the output is *TRUE*, whereas in the second the inhibitors *win* and the output is *FALSE*]:
+We will use two simple boolean threshold functions, which both output $1$ when **the number of present activators is larger than the number of present inhibitors**.
+These functions differ with regards to their output when there is balance between the activities of the positive and negative regulators: the first outputs $1$ (the activators “win”) while the second outputs $0$ (the inhibitors “win”).
 
 - `Act-win`: $$f_{act-win}(x,y)=\begin{cases}
         1, & \text{for } \sum_{i=1}^{m} x_i \ge \sum_{j=1}^{k} y_j\\
@@ -81,17 +161,13 @@ Two simple cases of **threshold** functions are given below ^[Both threshold fun
 Note that: $f_{inh-win}(x,y) = \lnot f_{act-win}(y,x)$.
 
 :::{.blue-box}
-Note that every boolean function has an equivalent combinatorial expression (i.e. the variables are connected with logical operators) and I searched for an analytic formula for the two last threshold functions.
+Note that every boolean threshold function has an equivalent combinatorial expression and I searched for an analytic formula for the two last threshold functions.
 More more info, see this [math.stackexchange question](https://math.stackexchange.com/questions/3767774/identify-boolean-function-that-satisfies-some-constrains/).
 :::
 
 # Truth Density Data Analysis {-}
 
 ## Data {-}
-
-:::{.blue-box}
-*Truth Density (TD)* of a boolean equation/expression/function, given it's equivalent truth table, is the **number of rows that the function is active** divided by **the total number of rows** $(2^n)$.
-:::
 
 I created every possible truth table for up to $20$ variables (variables here means *regulators* for us) and calculated the `AND-NOT`, `OR-NOT`, `Pairs`, `Act-win`, `Inh-win` boolean function results for every possible configuration of the number of activators and inhibitors that added up to the number of regulators.
 Then, from the truth tables I calculated the **truth density** of each operator for each particular configuration.
