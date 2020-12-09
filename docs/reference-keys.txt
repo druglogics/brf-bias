@@ -1,5 +1,8 @@
+def:td-def
+def:complexity-def
 prp:and-not-proof
 prp:or-not-proof
+prp:pairs-proof
 fig:fig-and-or-not
 fig:and-not-reg-plot
 fig:or-not-reg-plot
@@ -15,8 +18,8 @@ fig:ss-lo-agreement-prop-grouped
 fig:ss-comp-agreement-props
 fig:ss-lo-prop-aggreement-cascade2
 fig:ss-lo-prop-aggreement-cascade2-grouped
-fig:unnamed-chunk-3
 fig:unnamed-chunk-4
-fig:unnamed-chunk-6
+fig:unnamed-chunk-5
+fig:unnamed-chunk-7
 fig:agree-stats-g2
 fig:agree-stats-g2-5
