@@ -195,7 +195,10 @@ DT::datatable(data = stats,
 
 ## Truth Density formulas {-}
 
-Here we prove the exact formulas for the truth densities in the case of the `AND-NOT`, `OR-NOT` and `Pairs` link operator boolean functions.
+In this section we prove the exact formulas for the truth densities in the case of the `AND-NOT`, `OR-NOT` and `Pairs` link operator boolean functions, show how the TD formula properties for large number of regulators and validate the proofs with the above truth density data.
+
+### TD Proofs {-}
+
 For all propositions presented, we assume that $f$ is a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with a total of $n$ regulators/input variables.
 We also assume that these regulators are uniquely separated to two distinct groups: $m$ **activators** (positive regulators) $x=\{x_i\}_{i=1}^{m}$ and $k$ **inhibitors** (negative regulators) $y=\{y_j\}_{j=1}^{k}$, with $n = m + k$ and $m,k \ge 1$.
 
@@ -266,24 +269,46 @@ Thus, $R_{act} = 2^n - 2^k$.
 
 $R_{inh}$ depends on the number of activators, since for each one of the total possible $2^m$ *TRUE/FALSE* assignments of the $m$ activators (ranging from all *FALSE* to all *TRUE*), there will be a row in the truth table with all inhibitors as *TRUE*.
 Note that we have to exclude one row from this result, exactly the row that has all activators as *FALSE* since it's not included in the $R_{act}$ rows.
-All in all, $R_{inh}=2^m-1$ and $TD_{Pairs}=\frac{R_{act}-R_{inh}}{2^n}=\frac{2^n-2^k-2^m+1}{2^n}$.
+Thus, $R_{inh}=2^m-1$ and $TD_{Pairs}=\frac{R_{act}-R_{inh}}{2^n}=\frac{2^n-2^k-2^m+1}{2^n}$.
 ```
 
 ### Asymptotic behavior {-}
 
-For a large number of regulators $n$, the truth densities of the `AND-NOT` and `OR-NOT` functions are as follows:
+For a large number of regulators $n$, the truth densities of the `AND-NOT`, `OR-NOT` and `Pairs` functions are as follows:
 
 - `AND-NOT`: $$TD_{AND-NOT} = \frac{1}{2^k}-\frac{1}{2^n} \xrightarrow{n \text{ large}} \frac{1}{2^k} \xrightarrow{k \text{ large}}0$$
 - `OR-NOT`:  $$TD_{OR-NOT} = 1 + \frac{1}{2^n} - \frac{1}{2^m} \xrightarrow{n \text{ large}} 1-\frac{1}{2^m} \xrightarrow{m \text{ large}} 1$$
+- `Pairs`: $$TD_{Pairs} = 1 - \frac{2^k+2^m-1}{2^n} = 1 - \frac{2^k+2^m}{2^n} + \frac{1}{2^n} \xrightarrow{n \text{ large}} 1 - \frac{2^k+2^m}{2^n}$$
 
 :::{.green-box}
-For large $n$, the $TD_{AND-NOT}$ depends only **on the number of inhibitors** and tends towards $0$ with increasing number of inhibitors.
-Similarly, the $TD_{OR-NOT}$ depends only **on the number of activators** for large $n$ and tends towards $1$ with increasing number of activators.
+So, for large number of regulators $n$:
 
-Thus, in these two cases of link operator functions, **the standardized boolean model parameterization plays a major role in the definition of the biological state of the link operator nodes** - the more regulators/inputs these functions have, the more biased the output result is (towards $0$ or $1$ respectively).
+1. $TD_{AND-NOT}$ depends only **on the number of inhibitors** and tends towards $0$ with increasing number of inhibitors
+2. $TD_{OR-NOT}$ depends only **on the number of activators** and tends towards $1$ with increasing number of activators
+3. $TD_{Pairs}$ depends **both on the number of activators and the number of inhibitors**
 :::
 
-Note that for large $n$, the extreme case of having a TD value equal to $1/2$ is a result of having **only one of the regulators being an inhibitor (resp. activator)** of the `AND-NOT` (resp. `OR-NOT`) equation.
+To see the effect of **the balance between number of activators and inhibitors** on the truth density values when the number of regulators is large, we consider the following three scenarios for each of the link operator functions:
+
+1. Balanced regulators (half of them activators, half inhibitors), i.e. $m \approx k \approx n/2$:
+  - $TD_{AND-NOT} = \frac{1}{2^{n/2}} \xrightarrow{n \text{ large}} 0$
+  - $TD_{OR-NOT} = 1 - \frac{1}{2^{n/2}} \xrightarrow{n \text{ large}} 1$
+  - $TD_{Pairs} = 1 - \frac{2^{n/2}+2^{n/2}-1}{2^n} = 1 - \frac{1}{2^{(n/2)-1}} - \frac{1}{2^n} \xrightarrow{n \text{ large}} 1$
+2. Unbalanced regulators (one activator, the rest inhibitors), i.e. $m = 1, k = n-1$:
+  - $TD_{AND-NOT} = \frac{1}{2^{n-1}} \xrightarrow{n \text{ large}} 0$
+  - $TD_{OR-NOT} = 1 - \frac{1}{2^{1}} = \frac{1}{2}$
+  - $TD_{Pairs} = 1 - \frac{2^{n-1}+2^{1}-1}{2^n} = 1 - \frac{1}{2} - \frac{1}{2^n} \xrightarrow{n \text{ large}} \frac{1}{2}$
+3. Unbalanced regulators (one inhibitor, the rest activators), i.e. $k = 1, m = n-1$:
+  - $TD_{AND-NOT} = \frac{1}{2^{1}} = \frac{1}{2}$
+  - $TD_{OR-NOT} = 1 - \frac{1}{2^{n-1}} \xrightarrow{n \text{ large}} 1$
+  - $TD_{Pairs} = 1 - \frac{2^{1}+2^{n-1}-1}{2^n} = 1 - \frac{1}{2} - \frac{1}{2^n} \xrightarrow{n \text{ large}} \frac{1}{2}$
+
+:::{.green-box}
+All in all, in the balanced regulators scenario (which statistically speaking may be the most probable scenario when $n$ is large), the `AND-NOT` and `OR-NOT` functions **are biased** towards $0$ and $1$ respectively, whereas the `Pairs` function behaves similarly to the `OR-NOT` function (so **also biased** towards $1$).
+
+In the two extreme unbalanced scenarios the `Pairs` function behaves the same, resulting in an unbiased truth density output ($1/2$).
+We observe that the formulas of the `AND-NOT` and `OR-NOT` TDs depend on the scenario, i.e. we have a more unbiased truth density for the `OR-NOT` truth density formula and a biased one for the `AND-NOT`, when the inhibitors are more than the activators (and the reverse for the case where the activators are more than the inhibitors).
+:::
 
 ### Validation {-}
 
@@ -306,7 +331,6 @@ all(stats %>% pull(td_or_not) == formula_td_or_not)
 # Validate Pairs Truth Density formula
 formula_td_pairs = stats %>%
   mutate(formula_td_pairs = (2^num_reg - 2^num_inh - 2^num_act + 1)/(2^num_reg)) %>%
-  #mutate(formula_td_pairs = (2^num_inh - 1)*(2^num_act - 1)/(2^num_reg)) %>% # same written differently
   pull(formula_td_pairs)
 
 all(stats %>% pull(td_pairs) == formula_td_pairs)
