@@ -134,7 +134,7 @@ Note that the operator used to connect the same type of regulators (e.g. the act
 :::{#pairs-fun}
 For example, another link operator function is the *Pairs* function:
 :::
-- `Pairs`: $$f_{pairs}(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)$$
+- `Pairs`: $$f_{Pairs}(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)$$
 
 The intuition behind the name is derived from the fact that the function will return *TRUE* if there is at least one pair of regulators consisting of a **present activator** and an **absent inhibitor**.
 The function is also written in conjunction normal form (CNF), which is the reverse of the DNF: two separate clauses are connected with AND’s ($\land$) and inside the clauses the literals are connected with OR’s ($\lor$).
@@ -195,15 +195,15 @@ DT::datatable(data = stats,
 
 ## Truth Density formulas {-}
 
-Here we prove the exact formulas for the truth densities in the case of the `AND-NOT` and `OR-NOT` link operator boolean functions.
-For both propositions presented, we assume that $f$ is a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with a total of $n$ regulators/input variables.
-We also assume that these regulators are uniquely separated to two distinct groups: $m$ **activators** (positive regulators) $x=\{x_i\}_{i=1}^{m}$ and $k$ **inhibitors** (negative regulators) $y=\{y_j\}_{j=1}^{k}$, with $n = m + k$.
+Here we prove the exact formulas for the truth densities in the case of the `AND-NOT`, `OR-NOT` and `Pairs` link operator boolean functions.
+For all propositions presented, we assume that $f$ is a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with a total of $n$ regulators/input variables.
+We also assume that these regulators are uniquely separated to two distinct groups: $m$ **activators** (positive regulators) $x=\{x_i\}_{i=1}^{m}$ and $k$ **inhibitors** (negative regulators) $y=\{y_j\}_{j=1}^{k}$, with $n = m + k$ and $m,k \ge 1$.
 
 ```{proposition, name="AND-NOT Truth Density Formula", label='and-not-proof'}
 When a boolean regulatory function $f$ has the form of an *AND-NOT* link operator boolean function:
 $f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{j=1}^{k} y_j\right)$ with $m \ge 1$ activators and $k \ge 1$ inhibitors, its truth density is $TD_{AND-NOT}=\frac{2^m-1}{2^n} = \frac{1}{2^k}-\frac{1}{2^n}$.
 ```
-
+<br>
 ```{proof}
 Using the distributivity property and De Morgan's law we can re-write $f_{AND-NOT}$ in a DNF form as:
 \begin{equation}
@@ -230,7 +230,7 @@ Thus $TD_{AND-NOT}=\frac{2^m-1}{2^n}$.
 When a boolean regulatory function $f$ has the form of an *OR-NOT* link operator boolean function:
 $f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{j=1}^{k} y_j\right)$ with $m \ge 1$ activators and $k \ge 1$ inhibitors, its truth density is $TD_{OR-NOT}=\frac{2^n-(2^k-1)}{2^n} = 1 + \frac{1}{2^n} - \frac{1}{2^m}$.
 ```
-
+<br>
 ```{proof}
 Using De Morgan’s law we can re-write $f_{OR-NOT}$ in a DNF form as:
 \begin{equation}
@@ -241,12 +241,32 @@ f_{OR-NOT}(x,y) & = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_
 \end{split}
 \end{equation}
 
-To calculate the $TD_{OR-NOT}$, it's easier to find the number of rows of the $f_{OR-NOT}$ truth table that result in a *FALSE* output result ($R_{false}$), subtract that number from the total number of rows ($2^n$) to get the rows that result in $f$ being *TRUE* and then divide by the total.
+To calculate the $TD_{OR-NOT}$, we find the number of rows of the $f_{OR-NOT}$ truth table that result in a *FALSE* output result ($R_{false}$), subtract that number from the total number of rows ($2^n$) to get the rows that result in $f$ being *TRUE* and then divide by the total number of rows.
 Thus $TD_{OR-NOT} = \frac{2^n-R_{false}}{2^n}$.
 Note that $f_{OR-NOT}$, written in it's equivalent DNF form, has exactly $m+1$ terms.
 To make $f_{OR-NOT}$ *FALSE*, we first need to assign the $m$ activators as *FALSE* and then it all depends on the logical assignments of the inhibitors $y_i$ that are part of the last DNF term.
-Out of all possible $2^k$ *TRUE/FALSE* logical assignments of the $k$ inhibitors (ranging from all *FALSE* to all *TRUE*) there is **only one that does not make** the last term of $f_{OR-NOT}$ *FALSE* and that happens when all $k$ inhibitors are *FALSE*.
+Out of all possible $2^k$ *TRUE/FALSE* logical assignments of the $k$ inhibitors (ranging from all *FALSE* to all *TRUE*) there is **only one that does not make** the last term of $f_{OR-NOT}$ *FALSE* (i.e. it makes the term *TRUE*) and that happens when all $k$ inhibitors are *FALSE*.
 Thus, $R_{false}=2^k-1$ and $TD_{OR-NOT}=\frac{2^n-(2^k-1)}{2^n}$.
+```
+
+<br>
+
+```{proposition, name="Pairs Truth Density Formula", label='pairs-proof'}
+When a boolean regulatory function $f$ has the form of a *Pairs* link operator boolean function:
+$f_{Pairs}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)$ with $m \ge 1$ activators and $k \ge 1$ inhibitors, its truth density is $TD_{Pairs}=\frac{2^n-2^k-2^m+1}{2^n} = 1 - \frac{2^k+2^m-1}{2^n}$.
+```
+<br>
+```{proof}
+To calculate the $TD_{Pairs}$ based on its given CNF, we find the number of rows in its truth table that have at least one present/*TRUE* activator ($R_{act}$) and substract from these the rows in which all inhibitors are present/*TRUE* ($R_{inh}$).
+Thus only the rows that have at least one inhibitor absent/*FALSE* will be left (and of course at least one activator present), which corresponds exactly to the `Pairs` formula's (biological) interpretation.
+
+$R_{act}$ can be found by substracting from the total number of rows ($2^n$) the rows that have all activators absent/*FALSE*.
+How many are these rows? Their number depends on the number of inhibitors, since for each one of the total possible $2^k$ *TRUE/FALSE* logical assignments of the $k$ inhibitors (ranging from all *FALSE* to all *TRUE*), there will be a row in the truth table with all activators as *FALSE*.
+Thus, $R_{act} = 2^n - 2^k$.
+
+$R_{inh}$ depends on the number of activators, since for each one of the total possible $2^m$ *TRUE/FALSE* assignments of the $m$ activators (ranging from all *FALSE* to all *TRUE*), there will be a row in the truth table with all inhibitors as *TRUE*.
+Note that we have to exclude one row from this result, exactly the row that has all activators as *FALSE* since it's not included in the $R_{act}$ rows.
+All in all, $R_{inh}=2^m-1$ and $TD_{Pairs}=\frac{R_{act}-R_{inh}}{2^n}=\frac{2^n-2^k-2^m+1}{2^n}$.
 ```
 
 ### Asymptotic behavior {-}
@@ -282,6 +302,14 @@ formula_td_or_not = stats %>%
   pull(formula_td_or_not)
 
 all(stats %>% pull(td_or_not) == formula_td_or_not)
+
+# Validate Pairs Truth Density formula
+formula_td_pairs = stats %>%
+  mutate(formula_td_pairs = (2^num_reg - 2^num_inh - 2^num_act + 1)/(2^num_reg)) %>%
+  #mutate(formula_td_pairs = (2^num_inh - 1)*(2^num_act - 1)/(2^num_reg)) %>% # same written differently
+  pull(formula_td_pairs)
+
+all(stats %>% pull(td_pairs) == formula_td_pairs)
 ```
 
 ## *AND-NOT* vs *OR-NOT* TD {-#stand-eq-bias}
