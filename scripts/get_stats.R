@@ -38,7 +38,7 @@ or_not = function(lv, num_act, num_inh) {
   apply_operator(lv[1:num_act], 'or') |! apply_operator(lv[(num_act+1):(num_act+num_inh)], 'or')
 }
 # (a OR b) AND (NOT c OR NOT d)
-balance_op = function(lv, num_act, num_inh) {
+pairs = function(lv, num_act, num_inh) {
   apply_operator(lv[1:num_act], 'or') & apply_operator(!lv[(num_act+1):(num_act+num_inh)], 'or')
 }
 # activators win on equality (more activators always win)
@@ -46,7 +46,8 @@ exp_act_win = function(lv, num_act, num_inh) {
   act_sum = sum(lv[1:num_act])
   #if (act_sum == 0) return(FALSE)
   inh_sum = sum(lv[(num_act+1):(num_act+num_inh)])
-  if (act_sum >= inh_sum) return(TRUE) else return(FALSE)
+  # at least one activator present, and equal or more activators than present inhibitors
+  if (act_sum > 0 & act_sum >= inh_sum) return(TRUE) else return(FALSE)
 }
 # inhibitors win on equality (more activators always win)
 exp_inh_win = function(lv, num_act, num_inh) {
@@ -63,32 +64,32 @@ get_data = function(num_reg) {
   inh = num_reg - act
 
   print(paste("Generating truth table for", num_reg, "variables"))
-  truth_table = permutations(v = bool_values, n = 2, r = num_reg, repeats.allowed = TRUE)
+  truth_table = gtools::permutations(v = bool_values, n = 2, r = num_reg, repeats.allowed = TRUE)
 
   #data = list()
   # get data for every (act, inh) pairing
   data = foreach(index = 1:length(act), .export = c("and_not", "or_not",
-    "balance_op", "exp_act_win", "exp_inh_win", "apply_operator")) %dopar% {
+    "pairs", "exp_act_win", "exp_inh_win", "apply_operator")) %dopar% {
     num_act = act[index]
     num_inh = inh[index]
     #print(paste("Case:", num_act, "+", num_inh)) # print does not work inside parallel loops like that!
 
     and_not_res  = as.integer(apply(truth_table, 1, and_not, num_act, num_inh))
     or_not_res   = as.integer(apply(truth_table, 1, or_not, num_act, num_inh))
-    balance_op_res = as.integer(apply(truth_table, 1, balance_op, num_act, num_inh))
+    pairs_res    = as.integer(apply(truth_table, 1, pairs, num_act, num_inh))
     exp_act_res  = as.integer(apply(truth_table, 1, exp_act_win, num_act, num_inh))
     exp_inh_res  = as.integer(apply(truth_table, 1, exp_inh_win, num_act, num_inh))
 
     # td = truth density
     td_and_not    = sum(and_not_res)/length(and_not_res)
     td_or_not     = sum(or_not_res)/length(or_not_res)
-    td_balance_op = sum(balance_op_res)/length(balance_op_res)
+    td_pairs      = sum(pairs_res)/length(pairs_res)
     td_exp_act    = sum(exp_act_res)/length(exp_act_res)
     td_exp_inh    = sum(exp_inh_res)/length(exp_inh_res)
 
     dplyr::bind_cols(num_reg = num_reg, num_act = num_act,
       num_inh = num_inh, td_and_not = td_and_not, td_or_not = td_or_not,
-      td_balance_op = td_balance_op, td_exp_act = td_exp_act, td_exp_inh = td_exp_inh)
+      td_pairs = td_pairs, td_act_win = td_exp_act, td_inh_win = td_exp_inh)
   }
 
   res = dplyr::bind_rows(data)
