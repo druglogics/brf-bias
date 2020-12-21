@@ -312,11 +312,11 @@ This explains the terms $min(i,k)$ and $min(i-1,k)$ in the two truth density for
 
 ### Asymptotic behavior {-}
 
-For a large number of regulators $n$, the truth densities of the `AND-NOT`, `OR-NOT` and `Pairs` functions are as follows:
+For a large number of regulators $n$, the truth densities of the `AND-NOT`, `OR-NOT` and `Pairs` functions can be simplified as follows:
 
-- `AND-NOT`: $$TD_{AND-NOT} = \frac{1}{2^k}-\frac{1}{2^n} \xrightarrow{n \text{ large}} \frac{1}{2^k} \xrightarrow{k \text{ large}}0$$
-- `OR-NOT`:  $$TD_{OR-NOT} = 1 + \frac{1}{2^n} - \frac{1}{2^m} \xrightarrow{n \text{ large}} 1-\frac{1}{2^m} \xrightarrow{m \text{ large}} 1$$
-- `Pairs`: $$TD_{Pairs} = 1 - \frac{2^k+2^m-1}{2^n} = 1 - \frac{2^k+2^m}{2^n} + \frac{1}{2^n} \xrightarrow{n \text{ large}} 1 - \frac{2^k+2^m}{2^n}$$
+- $TD_{AND-NOT} = \frac{1}{2^k}-\frac{1}{2^n} \xrightarrow{n \rightarrow \infty} \frac{1}{2^k} \xrightarrow{k \rightarrow \infty}0$
+- $TD_{OR-NOT} = 1 + \frac{1}{2^n} - \frac{1}{2^m} \xrightarrow{n \rightarrow \infty} 1-\frac{1}{2^m} \xrightarrow{m \rightarrow \infty} 1$
+- $TD_{Pairs} = 1 - \frac{2^k+2^m-1}{2^n} = 1 - \frac{2^k+2^m}{2^n} + \frac{1}{2^n} \xrightarrow{n \rightarrow \infty} 1 - \frac{2^k+2^m}{2^n}$
 
 :::{.green-box}
 So, for large number of regulators $n$:
@@ -324,28 +324,68 @@ So, for large number of regulators $n$:
 1. $TD_{AND-NOT}$ depends only **on the number of inhibitors** and tends towards $0$ with increasing number of inhibitors
 2. $TD_{OR-NOT}$ depends only **on the number of activators** and tends towards $1$ with increasing number of activators
 3. $TD_{Pairs}$ depends **both on the number of activators and the number of inhibitors**
+4. The two threshold functions also depend **both on the number of activators and the number of inhibitors** (there is no simpler formula for $n \rightarrow \infty$)
 :::
 
-To see the effect of **the balance between number of activators and inhibitors** on the truth density values when the number of regulators is large, we consider the following three scenarios for each of the link operator functions:
+To see the effect of **the balance between number of activators and inhibitors** on the truth density values when the number of regulators is large, we consider the following three scenarios for each of the boolean functions:
 
-1. Balanced regulators (half of them activators, half inhibitors), i.e. $m \approx k \approx n/2$ (consider $n$ without loss of generality):
-  - $TD_{AND-NOT} = \frac{1}{2^{n/2}} \xrightarrow{n \text{ large}} 0$
-  - $TD_{OR-NOT} = 1 - \frac{1}{2^{n/2}} \xrightarrow{n \text{ large}} 1$
-  - $TD_{Pairs} = 1 - \frac{2^{n/2}+2^{n/2}-1}{2^n} = 1 - \frac{1}{2^{(n/2)-1}} - \frac{1}{2^n} \xrightarrow{n \text{ large}} 1$
-2. Unbalanced regulators (one activator, the rest inhibitors), i.e. $m = 1, k = n-1$:
-  - $TD_{AND-NOT} = \frac{1}{2^{n-1}} \xrightarrow{n \text{ large}} 0$
+1. **Balanced regulators** (half of them activators, half inhibitors), i.e. $m \approx k \approx n/2$ (consider $n$ even without loss of generality):
+  - $TD_{AND-NOT} = \frac{1}{2^{n/2}} \xrightarrow{n \rightarrow \infty} 0$
+  - $TD_{OR-NOT} = 1 - \frac{1}{2^{n/2}} \xrightarrow{n \rightarrow \infty} 1$
+  - $TD_{Pairs} = 1 - \frac{2^{n/2}+2^{n/2}-1}{2^n} = 1 - \frac{1}{2^{(n/2)-1}} - \frac{1}{2^n} \xrightarrow{n \rightarrow \infty} 1$
+  - $TD_{Act-win} = \frac{\sum_{i=1}^{n/2} \left[ \binom{n/2}{i} \sum_{j=0}^{min(i,n/2)} \binom{n/2}{j} \right]}{2^n} = \frac{\sum_{i=1}^{n/2} \left[ \binom{n/2}{i} \sum_{j=0}^i \binom{n/2}{j} \right]}{2^n}=\frac{N}{2^n}$
+  
+  We simplify $N$, by using the notation $z=\frac{n}{2}$ and $\boldsymbol{x}$ as a meta-symbol for $\binom{z}{x}$.
+  For example, $\binom{n/2}{1}=\binom{z}{1}=\boldsymbol{1}$.
+  $N$ is thus expressed as:
+  
+  $$N=\boldsymbol{1}(\boldsymbol{0}+\boldsymbol{1})+\boldsymbol{2}(\boldsymbol{0}+\boldsymbol{1}+\boldsymbol{2})+...+\boldsymbol{z}(\boldsymbol{0}+\boldsymbol{1}...+\boldsymbol{z})$$
+  
+  Using the symmetry of binomial coefficients: $\binom{z}{x}=\binom{z}{z-x} \sim \boldsymbol{x} =\boldsymbol{z-x}$, we can re-write $N$ as:
+  
+  $$N=(\boldsymbol{z-1})[\boldsymbol{z}+(\boldsymbol{z-1})]+(\boldsymbol{z-2})[\boldsymbol{z}+(\boldsymbol{z-1})+(\boldsymbol{z-2})]+...+\boldsymbol{0}[\boldsymbol{z}+...+\boldsymbol{0}]$$
+  
+  Adding the two expressions for $N$ we have that:
+  
+  $$2N=[\boldsymbol{0}+\boldsymbol{1}...+\boldsymbol{z}]^2+\boldsymbol{1}^2+\boldsymbol{2}^2+...+(\boldsymbol{z-1})^2=2^{2z}+\sum_{x=1}^{z-1} \boldsymbol{x}^2$$
+  So, substituting back $\binom{z}{x}=\boldsymbol{x}$ and $i=x$, we have that: 
+  $$TD_{Act-win}=\frac{(1/2) \left[2^{2z}+\sum_{i=1}^{z-1} \binom{z}{i}^2 \right]}{2^{2z}}$$
+  
+  As $n \rightarrow \infty$ (and hence $z \rightarrow \infty$), the term $\sum_{i=1}^{z-1} \binom{z}{i}^2$ does not grow as fast as $2^{2z}$ - it is smaller by a factor of $\sqrt{\pi z}$ (see answer to Problem 9.18 in [@Graham1994]), and so it becomes negligible:
+  $$\lim_{z\to\infty}TD_{Act-win}=\lim_{z\to\infty}\frac{(1/2)2^{2z}}{2^{2z}}=\frac12$$
+  The calculation for the $TD_{Inh-win}$ follows the same logic as above and asymptotically reaches the same limit.
+
+2. **Unbalanced regulators with more inhibitors** (one activator, the rest inhibitors), i.e. $m = 1, k = n-1$:
+  - $TD_{AND-NOT} = \frac{1}{2^{n-1}} \xrightarrow{n \rightarrow \infty} 0$
   - $TD_{OR-NOT} = 1 - \frac{1}{2^{1}} = \frac{1}{2}$
-  - $TD_{Pairs} = 1 - \frac{2^{n-1}+2^{1}-1}{2^n} = 1 - \frac{1}{2} - \frac{1}{2^n} \xrightarrow{n \text{ large}} \frac{1}{2}$
-3. Unbalanced regulators (one inhibitor, the rest activators), i.e. $k = 1, m = n-1$:
+  - $TD_{Pairs} = 1 - \frac{2^{n-1}+2^{1}-1}{2^n} = 1 - \frac{1}{2} - \frac{1}{2^n} \xrightarrow{n \rightarrow \infty} \frac{1}{2}$
+  
+  The following two require some basic calculations which we omit:
+  
+  - $TD_{Act-win} = \frac{n}{2^n} \xrightarrow{n \rightarrow \infty} 0$
+  - $TD_{Inh-win} = \frac{1}{2^n} \xrightarrow{n \rightarrow \infty} 0$
+
+3. **Unbalanced regulators with more activators** (one inhibitor, the rest activators), i.e. $k = 1, m = n-1$:
   - $TD_{AND-NOT} = \frac{1}{2^{1}} = \frac{1}{2}$
-  - $TD_{OR-NOT} = 1 - \frac{1}{2^{n-1}} \xrightarrow{n \text{ large}} 1$
-  - $TD_{Pairs} = 1 - \frac{2^{1}+2^{n-1}-1}{2^n} = 1 - \frac{1}{2} - \frac{1}{2^n} \xrightarrow{n \text{ large}} \frac{1}{2}$
+  - $TD_{OR-NOT} = 1 - \frac{1}{2^{n-1}} \xrightarrow{n \rightarrow \infty} 1$
+  - $TD_{Pairs} = 1 - \frac{2^{1}+2^{n-1}-1}{2^n} = 1 - \frac{1}{2} - \frac{1}{2^n} \xrightarrow{n \rightarrow \infty} \frac{1}{2}$
+  
+  The following two require some basic calculations which we omit:
+  
+  - $TD_{Act-win} = \frac{2^n-2}{2^n} \xrightarrow{n \rightarrow \infty} 1$
+  - $TD_{Inh-win} = \frac{2^n-n-1}{2^n} \xrightarrow{n \rightarrow \infty} 1$
 
 :::{.green-box}
-All in all, in the balanced regulators scenario (which statistically speaking may be the most probable scenario when $n$ is large), the `AND-NOT` and `OR-NOT` functions **are biased** towards $0$ and $1$ respectively, whereas the `Pairs` function behaves similarly to the `OR-NOT` function (so **also biased** towards $1$).
+In the **balanced regulators scenario** (which statistically speaking may be the most plausible scenario when $n$ is large), the `AND-NOT` and `OR-NOT` functions **are biased** towards $0$ and $1$ respectively.
+The `Pairs` function behaves similarly to the `OR-NOT` function and thus is **also biased** towards $1$.
+Only the two threshold functions show balanced behaviour with their truth density value reaching asymptotically $1/2$.
 
-In the two extreme unbalanced scenarios the `Pairs` function behaves the same, resulting in an unbiased truth density output ($1/2$).
-We observe that the formulas of the `AND-NOT` and `OR-NOT` TDs depend on the scenario, i.e. we have a more unbiased truth density for the `OR-NOT` truth density formula and a biased one for the `AND-NOT`, when the inhibitors are more than the activators (and the reverse for the case where the activators are more than the inhibitors).
+In the **two extreme unbalanced scenarios**, where we would expect the truth density result to be fairly biased, the `Pairs` function results in an unbiased truth density output ($1/2$) for both of them, which raises questions to it's plausibility.
+We observe that the truth density formulas of the `AND-NOT` and `OR-NOT` functions depend on the scenario, i.e. we have a more unbiased truth density for the `OR-NOT` truth density formula and a biased one for the `AND-NOT`, when the inhibitors are more than the activators (and the reverse for the case where the activators are more than the inhibitors).
+In that sense, each function behaves properly only in one of the two scenarios.
+The two threshold functions show a more reasonable behaviour, being biased towards $0$ with significantly more inhibitors and towards $1$ with significantly more activators.
+
+All in all, the threshold functions exhibit asymptotic properties that make them significantly more attractive for boolean modeling than the other functions investigated, especially when looking through the lens of the truth density.
 :::
 
 ### Validation {-}
