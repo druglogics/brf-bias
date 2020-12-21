@@ -258,7 +258,7 @@ $f_{Pairs}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{
 <br>
 ```{proof}
 To calculate the $TD_{Pairs}$ based on its given CNF, we find the number of rows in its truth table that have at least one present/*TRUE* activator ($R_{act}$) and substract from these the rows in which all inhibitors are present/*TRUE* ($R_{inh}$).
-Thus only the rows that have at least one inhibitor absent/*FALSE* will be left (and of course at least one activator present), which corresponds exactly to the `Pairs` formula's (biological) interpretation.
+Thus only the rows that have at least one inhibitor absent/*FALSE* will be left (and of course at least one activator present), which corresponds exactly to the $f_{Pairs}$ formula's biological interpretation.
 
 $R_{act}$ can be found by substracting from the total number of rows ($2^n$) the rows that have all activators absent/*FALSE*.
 How many are these rows? Their number depends on the number of inhibitors, since for each one of the total possible $2^k$ *TRUE/FALSE* logical assignments of the $k$ inhibitors (ranging from all *FALSE* to all *TRUE*), there will be a row in the truth table with all activators as *FALSE*.
@@ -293,12 +293,22 @@ and
 $$TD_{Inh-win}=\frac{\sum_{i=1}^m \left[ \binom{m}{i} \sum_{j=0}^{min(i-1,k)} \binom{k}{j} \right]}{2^n}$$
 ```
 <br>
+```{proof}
+The above formulas are easily derived from the observation that we need to count the number of rows in the respective truth tables that have more present (assigned to *TRUE*) activators than present inhibitors (or equal in the case of $f_{act-win}$ but that's a detail as we will see).
 
+Firstly, we count all the subset input configurations that have up to $m$ activators present.
+These include the partial *TRUE*/*FALSE* assignments that have just a single activator present, a pair of activators present, a triplet, etc.
+This is exactly the term $\sum_{i=1}^m \binom{m}{i}$.
+Note that each of these activator input configurations is multiplied by a factor of $2^k$ in the truth table to make 'full' rows, where the activator values stay the same and the inhibitor values range from all *FALSE* to all *TRUE*.
+Thus, we need to specify exactly which inhibitor assignments are appropriate for each activator subset input configuration.
+To do that, we multiply the size of each activator subset $\binom{m}{i}$ with the number of configurations that have less inhibitors present, i.e. $\sum_{j=0}^{i-1} \binom{k}{j}$.
 
-
-
-
-
+For example, if we take the number of subsets with $i=2$ activators present $\binom{m}{2}$, we need to multiply by the number of configurations that have one or no present inhibitors $\sum_{j=0}^{1} \binom{k}{j}$ to find the number of rows of interest.
+That is of course the case of the $f_{inh-win}$ function.
+For the $f_{act-win}$, we would have to add up to the present inhibitor pairs: $\sum_{j=0}^{2} \binom{k}{j}$ - so the sum in this case would be $\sum_{j=0}^{i} \binom{k}{j}$.
+Lastly, note that the largest inhibitor configuration subset size that we can add up to, is the minimum value between the activator subset size ($i$ in the $f_{act-win}$ formula and $i-1$ in the $f_{inh-win}$ formula) and the total number of inhibitors $k$ (in the case where the number of inhibitors is less than the activator subset size).
+This explains the terms $min(i,k)$ and $min(i-1,k)$ in the two truth density formulas.
+```
 
 ### Asymptotic behavior {-}
 
