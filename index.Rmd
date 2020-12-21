@@ -183,10 +183,6 @@ See part of the data below:
 ```{r load-data}
 stats = readRDS(file = "data/td_stats.rds")
 
-# change names
-stats = stats %>% 
-  dplyr::rename(td_pairs = td_balance_op, td_act_win = td_exp_act, td_inh_win = td_exp_inh)
-
 DT::datatable(data = stats,
   caption = htmltools::tags$caption("Truth Density Data", style="color:#dd4814; font-size: 18px"),
   options = list(pageLength = 6, scrollX = TRUE, order = list(list(1, "asc")))) %>% 
@@ -195,7 +191,8 @@ DT::datatable(data = stats,
 
 ## Truth Density formulas {-}
 
-In this section we prove the exact formulas for the truth densities in the case of the `AND-NOT`, `OR-NOT` and `Pairs` link operator boolean functions, show how the TD formula properties for large number of regulators and validate the proofs with the above truth density data.
+In this section we prove the exact formulas for the truth densities in the case of the `AND-NOT`, `OR-NOT` and `Pairs` link operator boolean functions, as well as for the two threshold functions.
+We also show how each TD formula asymptotically behaves for a large number of regulators and validate the proofs with the above truth density data.
 
 ### TD Proofs {-}
 
@@ -272,6 +269,37 @@ Note that we have to exclude one row from this result, exactly the row that has 
 Thus, $R_{inh}=2^m-1$ and $TD_{Pairs}=\frac{R_{act}-R_{inh}}{2^n}=\frac{2^n-2^k-2^m+1}{2^n}$.
 ```
 
+<br>
+
+```{proposition, name='Threshold Functions Truth Density Formulas', label='thres-proof'}
+When a boolean regulatory function $f$ has the form of either a “Act-win” or a “Inh-win” threshold function:
+
+$$f_{act-win}(x,y)=\begin{cases}
+        1, & \text{for } \sum_{i=1}^{m} x_i \ge \sum_{j=1}^{k} y_j\\
+        0, & \text{otherwise}
+        \end{cases}$$
+
+$$f_{inh-win}(x,y)=\begin{cases}
+        1, & \text{for } \sum_{i=1}^{m} x_i \gt \sum_{j=1}^{k} y_j\\
+        0, & \text{otherwise}
+        \end{cases}$$
+  
+, its respective truth density is given by the formulas:
+
+$$TD_{Act-win}=\frac{\sum_{i=1}^m \left[ \binom{m}{i} \sum_{j=0}^{min(i,k)} \binom{k}{j} \right]}{2^n}$$
+
+and
+
+$$TD_{Inh-win}=\frac{\sum_{i=1}^m \left[ \binom{m}{i} \sum_{j=0}^{min(i-1,k)} \binom{k}{j} \right]}{2^n}$$
+```
+<br>
+
+
+
+
+
+
+
 ### Asymptotic behavior {-}
 
 For a large number of regulators $n$, the truth densities of the `AND-NOT`, `OR-NOT` and `Pairs` functions are as follows:
@@ -290,7 +318,7 @@ So, for large number of regulators $n$:
 
 To see the effect of **the balance between number of activators and inhibitors** on the truth density values when the number of regulators is large, we consider the following three scenarios for each of the link operator functions:
 
-1. Balanced regulators (half of them activators, half inhibitors), i.e. $m \approx k \approx n/2$:
+1. Balanced regulators (half of them activators, half inhibitors), i.e. $m \approx k \approx n/2$ (consider $n$ without loss of generality):
   - $TD_{AND-NOT} = \frac{1}{2^{n/2}} \xrightarrow{n \text{ large}} 0$
   - $TD_{OR-NOT} = 1 - \frac{1}{2^{n/2}} \xrightarrow{n \text{ large}} 1$
   - $TD_{Pairs} = 1 - \frac{2^{n/2}+2^{n/2}-1}{2^n} = 1 - \frac{1}{2^{(n/2)-1}} - \frac{1}{2^n} \xrightarrow{n \text{ large}} 1$
@@ -334,6 +362,52 @@ formula_td_pairs = stats %>%
   pull(formula_td_pairs)
 
 all(stats %>% pull(td_pairs) == formula_td_pairs)
+
+# Validate threshold function TD formulas
+
+inh_win_td = function(m,k) {
+  res = 0
+  for (i in 1:m) {
+    act_blocks = choose(m, i)
+    j_max = min(i-1, k)
+    # inhibitor rows that satisfy condition regarding sums of ones being less than i
+    inh_rows = 0
+    for (j in 0:j_max) {
+      inh_rows = inh_rows + choose(k, j)
+    }
+    res = res + act_blocks * inh_rows
+  }
+  return(res)
+}
+
+act_win_td = function(m,k) {
+  res = 0
+  for (i in 1:m) {
+    act_blocks = choose(m, i)
+    j_max = min(i, k)
+    # inhibitor rows that satisfy condition regarding sums of ones being less or equal than i
+    inh_rows = 0
+    for (j in 0:j_max) {
+      inh_rows = inh_rows + choose(k, j)
+    }
+    res = res + act_blocks * inh_rows
+  }
+  return(res)
+}
+
+formula_td_act_win = stats %>% 
+  rowwise() %>% 
+  mutate(formula_td_act_win = act_win_td(num_act, num_inh)/(2^num_reg)) %>%
+  pull(formula_td_act_win)
+
+all(stats %>% pull(td_act_win) == formula_td_act_win)
+
+formula_td_inh_win = stats %>% 
+  rowwise() %>% 
+  mutate(formula_td_inh_win = inh_win_td(num_act, num_inh)/(2^num_reg)) %>%
+  pull(formula_td_inh_win)
+
+all(stats %>% pull(td_inh_win) == formula_td_inh_win)
 ```
 
 ## *AND-NOT* vs *OR-NOT* TD {-#stand-eq-bias}
