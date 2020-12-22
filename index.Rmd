@@ -85,8 +85,9 @@ This brings us to the notion of a general form which could be used to define use
 This need does not come only from a representation point of view (a more compact function form enhances readability, e.g. compare $f_1$ with $f_1^{'}$), but is also a motivation for the design of optimal digital circuits, since the number of gates used (i.e. logical operators) is an indicator of computation time and affects the efficiency of a circuit [@wegener1987complexity].
 
 Every boolean function can be represented in a **disjunctive normal form or DNF**, requiring only AND ($\land$), OR ($\lor$) and NOT ($\lnot$) operators as building blocks.
-In such a representation, *literals*, which are variables (e.g. positive literal $x$) or their negations (e.g. negative literal $\text{NOT }x$), are connected by AND's producing terms, which are then in turn connected by OR's [@crama2011boolean].
+In such a representation, *literals*, which are variables (e.g. positive literal $x$) or their negations (e.g. negative literal $\text{NOT }x$), are connected by AND's producing **terms**, which are then in turn connected by OR's [@crama2011boolean].
 For example, every function in [Table 1](#table1) is written in DNF, while the boolean expressions $\lnot (x_1 \lor x_2)$ and $\lnot (x_1\land x_2)\lor x_3$ are not.
+Note that a boolean function can have multiple DNF forms.
 
 ## Complexity {-}
 
@@ -107,7 +108,7 @@ Note that *minimizing* the DNF form of a boolean function to get an equivalent e
 
 We consider the class of BRFs that partitions the input variables (regulators) to two sets: the set $x$ of positive regulators (also called *activators*) and the set of negative regulators (also called *inhibitors*).
 Let $f$ be such a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with $m \ge 1$ **activators** $x=\{x_i\}_{i=1}^{m}$ and $k \ge 1$ **inhibitors** $y=\{y_j\}_{j=1}^{k}$, that is a total of $n = m + k$ regulators.
-The **link operator BRFs** have an analytical non-DNF form, which distributes the two distinct types of regulators in two separate expressions, while connecting them with a special logical operator that we call a **link operator**.
+The **link operator BRFs** have an analytical non-DNF form, which places the two distinct types of regulators in two separate expressions, while connecting them with a special logical operator that we call a **link operator**.
 
 An example of such a function that has been used extensively in the logical modeling literature is the standardized BRF formula with the `AND-NOT` link operator [@Mendoza2006]:
 
@@ -142,7 +143,7 @@ The function is also written in conjunction normal form (CNF), which is the reve
 :::{.note}
 @Cury2019 defined the **consistent boolean regulatory** functions and their respective **complete DNF forms (CDNF)**.
 
-The link operator functions listed above are a subset of these functions, since they respect the regulatory structure in their respective DNF forms (for the *Pairs* function it's evident since it's written first in the DNF - for the *AND-NOT* and *OR-NOT* functions, see their respective DNF forms in the truth density proofs \@ref(prp:and-not-proof) and \@ref(prp:or-not-proof).
+The link operator functions listed above are a subset of these functions, since they respect the regulatory structure in their respective CDNF forms (for the *Pairs* function it's evident since it's written first in the CDNF - for the *AND-NOT* and *OR-NOT* functions, see their respective (complete) DNF forms in the truth density proofs \@ref(prp:and-not-proof) and \@ref(prp:or-not-proof).
 :::
 
 ## Threshold functions {-}
