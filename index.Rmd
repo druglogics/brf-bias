@@ -832,7 +832,7 @@ The models are stored in both `.gitsbe` and `.bnet` files in the Zenodo dataset 
 
 :::{.blue-box}
 The dataset includes models with $0,1$ or $2$ stable states.
-We used the [get_ss_data.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_ss_data.R) script to get the **1 stable state data** from the models (a total of $2820224$ models - see [stable state distribution](https://bblodfon.github.io/bool-param-maps/cascade-1-0-general.html#model-stable-state-statistics)) and it's this data we are going to analyze in the next section.
+We used the [get_ss_data.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_ss_data.R) script to get the **1 stable state data** from the models (a total of $2820224$ models - see [stable state distribution](https://druglogics.github.io/bool-param-maps/cascade-1-0-general.html#model-stable-state-statistics)) and it's this data we are going to analyze in the next section.
 :::
 
 ## Parameterization vs Activity {-}
@@ -966,7 +966,7 @@ CASCADE 2.0 represents a larger topology/network with nodes with more than $5$ r
 ## Data {-}
 
 :::{.note}
-The dataset used was generated for [another analysis](https://bblodfon.github.io/gitsbe-model-analysis/cascade/random-model-ss/main.html) and we are going to use part of it, i.e. the **models that had 1 stable state** (see [get_node_stats_cascade_2.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_node_stats_cascade_2.R) script).
+The dataset used was generated for [another analysis](https://druglogics.github.io/gitsbe-model-analysis/cascade/random-model-ss/main.html) and we are going to use part of it, i.e. the **models that had 1 stable state** (see [get_node_stats_cascade_2.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_node_stats_cascade_2.R) script).
 The dataset is stored in Zenodo [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3932382.svg)](https://doi.org/10.5281/zenodo.3932382)
 :::
 
