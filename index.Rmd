@@ -112,11 +112,11 @@ The **link operator BRFs** have an analytical non-DNF form, which places the two
 
 An example of such a function that has been used extensively in the logical modeling literature is the standardized BRF formula with the `AND-NOT` link operator [@Mendoza2006]:
 
-- `AND-NOT`: $$f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{j=1}^{k} y_j\right)$$
+$$f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{j=1}^{k} y_j\right)$$
 
 A **variation** of the above function is the `OR-NOT` link operator function:
 
-- `OR-NOT`: $$f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{j=1}^{k} y_j\right)$$
+$$f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{j=1}^{k} y_j\right)$$
 
 Note that the presence of the link operator is what forces the condition $m,k \ge 1$ (at least one regulator in each category).
 For the rest of this work, we will not consider BRFs with only one type of regulator, since these can be represented by simple logical functions without loss of interpretability or biological consistency.
@@ -135,7 +135,7 @@ Note that the operator used to connect the same type of regulators (e.g. the act
 :::{#pairs-fun}
 For example, another link operator function is the *Pairs* function:
 :::
-- `Pairs`: $$f_{Pairs}(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)$$
+$$f_{Pairs}(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)$$
 
 The intuition behind the name is derived from the fact that the function will return *TRUE* if there is at least one pair of regulators consisting of a **present activator** and an **absent inhibitor**.
 The function is also written in conjunction normal form (CNF), which is the reverse of the DNF: two separate clauses are connected with AND’s ($\land$) and inside the clauses the literals are connected with OR’s ($\lor$).
@@ -154,16 +154,16 @@ Thus, the activators and inhibitors are combined in an *additive* manner and not
 We will use two simple boolean threshold functions, which both output $1$ when **the number of present activators is larger than the number of present inhibitors**.
 These functions differ with regards to their output when there is balance between the activities of the positive and negative regulators: the first outputs $1$ (the activators “win”) while the second outputs $0$ (the inhibitors “win”).
 
-- `Act-win`: $$f_{act-win}(x,y)=\begin{cases}
-        1, & \text{for } \sum_{i=1}^{m} x_i \ge \sum_{j=1}^{k} y_j\\
-        0, & \text{otherwise}
-        \end{cases}$$
-- `Inh-win`: $$f_{inh-win}(x,y)=\begin{cases}
-        1, & \text{for } \sum_{i=1}^{m} x_i \gt \sum_{j=1}^{k} y_j\\
-        0, & \text{otherwise}
-        \end{cases}$$
+$$f_{Act-win}(x,y)=\begin{cases}
+    1, & \text{for } \sum_{i=1}^{m} x_i \ge \sum_{j=1}^{k} y_j\\
+    0, & \text{otherwise}
+  \end{cases}$$
+$$f_{Inh-win}(x,y)=\begin{cases}
+    1, & \text{for } \sum_{i=1}^{m} x_i \gt \sum_{j=1}^{k} y_j\\
+    0, & \text{otherwise}
+  \end{cases}$$
 
-Note that: $f_{inh-win}(x,y) = \lnot f_{act-win}(y,x)$.
+Note that: $f_{Inh-win}(x,y) = \lnot f_{Act-win}(y,x)$.
 
 :::{.blue-box}
 Note that every boolean threshold function has an equivalent combinatorial expression and I searched for an analytic formula for the two last threshold functions.
@@ -175,11 +175,11 @@ More more info, see this [math.stackexchange question](https://math.stackexchang
 ## Data {-}
 
 I created every possible truth table for up to $20$ variables (variables here means *regulators* for us) and calculated the `AND-NOT`, `OR-NOT`, `Pairs`, `Act-win`, `Inh-win` boolean function results for every possible configuration of the number of activators and inhibitors that added up to the number of regulators.
-Then, from the truth tables I calculated the **truth density** of each operator for each particular configuration.
+Then, from the truth tables I calculated the **truth density** of each function for each particular configuration.
 For more details see the script [get_stats.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_stats.R)
 
 :::{#tr-data}
-See part of the data below:
+See the data below:
 :::
 ```{r load-data}
 stats = readRDS(file = "data/td_stats.rds")
@@ -192,13 +192,14 @@ DT::datatable(data = stats,
 
 ## Truth Density formulas {-}
 
-In this section we prove the exact formulas for the truth densities in the case of the `AND-NOT`, `OR-NOT` and `Pairs` link operator boolean functions, as well as for the two threshold functions.
+In this section we prove the exact formulas for the truth densities in the case of the $f_{AND-NOT}$, $f_{OR-NOT}$, $f_{Pairs}$ link operator boolean functions, as well as for the two threshold functions $f_{Act-win}$ and $f_{Inh-win}$.
 We also show how each TD formula asymptotically behaves for a large number of regulators and validate the proofs with the above truth density data.
 
 ### TD Proofs {-}
 
-For all propositions presented, we assume that $f$ is a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with a total of $n$ regulators/input variables.
-We also assume that these regulators are uniquely separated to two distinct groups: $m$ **activators** (positive regulators) $x=\{x_i\}_{i=1}^{m}$ and $k$ **inhibitors** (negative regulators) $y=\{y_j\}_{j=1}^{k}$, with $n = m + k$ and $m,k \ge 1$.
+For all propositions presented, we assume that 
+1. $f$ is a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with a total of $n$ regulators/input variables
+2. The regulators are uniquely separated to two distinct groups: $m$ **activators** (positive regulators) $x=\{x_i\}_{i=1}^{m}$ and $k$ **inhibitors** (negative regulators) $y=\{y_j\}_{j=1}^{k}$, with $n = m + k$ and $m,k \ge 1$.
 
 ```{proposition, name="AND-NOT Truth Density Formula", label='and-not-proof'}
 When a boolean regulatory function $f$ has the form of an *AND-NOT* link operator boolean function:
@@ -275,12 +276,12 @@ Thus, $R_{inh}=2^m-1$ and $TD_{Pairs}=\frac{R_{act}-R_{inh}}{2^n}=\frac{2^n-2^k-
 ```{proposition, name='Threshold Functions Truth Density Formulas', label='thres-proof'}
 When a boolean regulatory function $f$ has the form of either a “Act-win” or a “Inh-win” threshold function:
 
-$$f_{act-win}(x,y)=\begin{cases}
+$$f_{Act-win}(x,y)=\begin{cases}
         1, & \text{for } \sum_{i=1}^{m} x_i \ge \sum_{j=1}^{k} y_j\\
         0, & \text{otherwise}
         \end{cases}$$
 
-$$f_{inh-win}(x,y)=\begin{cases}
+$$f_{Inh-win}(x,y)=\begin{cases}
         1, & \text{for } \sum_{i=1}^{m} x_i \gt \sum_{j=1}^{k} y_j\\
         0, & \text{otherwise}
         \end{cases}$$
@@ -295,7 +296,7 @@ $$TD_{Inh-win}=\frac{\sum_{i=1}^m \left[ \binom{m}{i} \sum_{j=0}^{min(i-1,k)} \b
 ```
 <br>
 ```{proof}
-The above formulas are easily derived from the observation that we need to count the number of rows in the respective truth tables that have more present (assigned to *TRUE*) activators than present inhibitors (or equal in the case of $f_{act-win}$ but that's a detail as we will see).
+The above formulas are easily derived from the observation that we need to count the number of rows in the respective truth tables that have more present (assigned to *TRUE*) activators than present inhibitors (or equal in the case of $f_{Act-win}$ but that's a detail as we will see).
 
 Firstly, we count all the subset input configurations that have up to $m$ activators present.
 These include the partial *TRUE*/*FALSE* assignments that have just a single activator present, a pair of activators present, a triplet, etc.
@@ -305,9 +306,9 @@ Thus, we need to specify exactly which inhibitor assignments are appropriate for
 To do that, we multiply the size of each activator subset $\binom{m}{i}$ with the number of configurations that have less inhibitors present, i.e. $\sum_{j=0}^{i-1} \binom{k}{j}$.
 
 For example, if we take the number of subsets with $i=2$ activators present $\binom{m}{2}$, we need to multiply by the number of configurations that have one or no present inhibitors $\sum_{j=0}^{1} \binom{k}{j}$ to find the number of rows of interest.
-That is of course the case of the $f_{inh-win}$ function.
-For the $f_{act-win}$, we would have to add up to the present inhibitor pairs: $\sum_{j=0}^{2} \binom{k}{j}$ - so the sum in this case would be $\sum_{j=0}^{i} \binom{k}{j}$.
-Lastly, note that the largest inhibitor configuration subset size that we can add up to, is the minimum value between the activator subset size ($i$ in the $f_{act-win}$ formula and $i-1$ in the $f_{inh-win}$ formula) and the total number of inhibitors $k$ (in the case where the number of inhibitors is less than the activator subset size).
+That is of course the case of the $f_{Inh-win}$ function.
+For the $f_{Act-win}$, we would have to add up to the present inhibitor pairs: $\sum_{j=0}^{2} \binom{k}{j}$ - so the sum in this case would be $\sum_{j=0}^{i} \binom{k}{j}$.
+Lastly, note that the largest inhibitor configuration subset size that we can add up to, is the minimum value between the activator subset size ($i$ in the $f_{Act-win}$ formula and $i-1$ in the $f_{Inh-win}$ formula) and the total number of inhibitors $k$ (in the case where the number of inhibitors is less than the activator subset size).
 This explains the terms $min(i,k)$ and $min(i-1,k)$ in the two truth density formulas.
 ```
 
@@ -564,7 +565,7 @@ ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_act",
 
 ## Threshold Functions TD {-}
 
-In contrast, if we check the truth density of the $f_{act-win}(x,y)$ and $f_{inh-win}(x,y)$ boolean functions we have:
+In contrast, if we check the truth density of the $f_{Act-win}(x,y)$ and $f_{Inh-win}(x,y)$ boolean functions we have:
 ```{r fig-two-bool-formulas, fig.align='center', dpi=300, cache=TRUE, fig.cap="Truth Desities of two robust boolean formulas across all possible activators and inhibitors combinations up to 20 regulators"}
 # tidy up data
 stats_functions = tidyr::pivot_longer(data = stats, cols = c(td_act_win, td_inh_win), 
@@ -576,7 +577,7 @@ stats_functions = tidyr::pivot_longer(data = stats, cols = c(td_act_win, td_inh_
 
 ggboxplot(data = stats_functions, x = "num_reg", y = "td",
   color = "Function", palette = "lancet",
-  title = latex2exp::TeX("Truth Densities of threshold functions $f_{act-win}(x,y)$ and $f_{inh-win}(x,y)$"),
+  title = latex2exp::TeX("Truth Densities of threshold functions $f_{Act-win}(x,y)$ and $f_{Inh-win}(x,y)$"),
   xlab = "Number of regulators", ylab = "Truth Density") +
   theme(plot.title = element_text(hjust = 0.5)) +
   geom_hline(yintercept = 0.5, linetype="dashed", color = "black")
@@ -585,7 +586,7 @@ ggboxplot(data = stats_functions, x = "num_reg", y = "td",
 :::{.green-box}
 - Both boolean functions show a **large variance of truth densities** irrespective of the number of regulators, since the values inside the boxplots represent the middle $50\%$ of the data and span across the $(0,1)$ range.
 - The median truth density values seem to converge to $1/2$ for both formulas and this is how a proper *balanced* boolean function behaves :) less bias to the truth density values for increasing number of regulators results in a more *fair or balanced* boolean formula.
-- The median value of truth density for the $f_{act-win}(x,y)$ is always larger than the $f_{inh-win}(x,y)$ (as expected).
+- The median value of truth density for the $f_{Act-win}(x,y)$ is always larger than the $f_{Inh-win}(x,y)$ (as expected).
 :::
 
 ## TD Data Distance {-}
