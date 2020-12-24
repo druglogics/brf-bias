@@ -1033,11 +1033,13 @@ knitr::include_graphics(path = "img/scale_free_methodology.png")
 ```
 :::
 
-- We generate the scale-free topology `.sif` files with the script [random_topo_gen.R](https://github.com/druglogics/brf-bias/blob/main/scripts/random_topo_gen.R) - implementation was based on the BoolNet R package [@Mussel2010].
+1. We generate the scale-free topology `.sif` files with the script [random_topo_gen.R](https://github.com/druglogics/brf-bias/blob/main/scripts/random_topo_gen.R) - implementation was based on the BoolNet R package [@Mussel2010].
 The input degree distribution of the scale-free networks follows Riemann's Zeta function [@Aldana2003].
-- We use the [abmlog](https://github.com/druglogics/abmlog/releases/tag/v1.6.0) software to produce every possible link operator parameterized boolean model out of every topology file created in the previous step.
+The `.sif` files for the different $\gamma$'s are stored in the respective [GitHub data directory](https://github.com/druglogics/brf-bias/tree/main/data/random_topology_files).
+2. We use the [abmlog](https://github.com/druglogics/abmlog) software (version `1.6.0`) to produce every possible link operator parameterized boolean model (`AND-NOT` vs `OR-NOT`) out of every topology file created in the previous step.
 The more link operator equations the network topology has (target nodes with both *activating* and *inhibiting* regulators) the more boolean models are generated (see script [run_abmlog_topology_files.sh](https://github.com/druglogics/brf-bias/blob/main/scripts/run_abmlog_topology_files.sh)).
-- We analyze the data from all the abmlog-produced models and **compare stable state and link operator assignment** and produce agreement statistics (see script [get_scale_free_model_stats.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_scale_free_model_stats.R))
+The boolean model dataset is available in Zenodo: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4392981.svg)](https://doi.org/10.5281/zenodo.4392981)
+3. We analyze the data from all the abmlog-produced models, **compare stable state and link operator assignment** and produce agreement statistics (see script [get_scale_free_model_stats.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_scale_free_model_stats.R))
 
 :::{.note}
 Most of the scale-free networks studied in literature have $\gamma\in[2,2.5]$ - see **Fig. 5** in [@Aldana2003].
