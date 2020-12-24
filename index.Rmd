@@ -192,12 +192,14 @@ DT::datatable(data = stats,
 
 ## Truth Density formulas {-}
 
-In this section we prove the exact formulas for the truth densities in the case of the $f_{AND-NOT}$, $f_{OR-NOT}$, $f_{Pairs}$ link operator boolean functions, as well as for the two threshold functions $f_{Act-win}$ and $f_{Inh-win}$.
-We also show how each TD formula asymptotically behaves for a large number of regulators and validate the proofs with the above truth density data.
+In this section we prove the exact formulas for the truth densities in the case of the $f_{AND-NOT}$, $f_{OR-NOT}$ and $f_{Pairs}$ link operator boolean functions, as well as for the two threshold functions $f_{Act-win}$ and $f_{Inh-win}$.
+We also show how each truth density formula asymptotically behaves for a large number of regulators and investigate the cases where there is either balance or imbalance between the number of activators and inhibitors.
+Lastly, we validate the proofs with the above [data](#tr-data).
 
 ### TD Proofs {-}
 
-For all propositions presented, we assume that 
+For all propositions presented, we assume that:
+
 1. $f$ is a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with a total of $n$ regulators/input variables
 2. The regulators are uniquely separated to two distinct groups: $m$ **activators** (positive regulators) $x=\{x_i\}_{i=1}^{m}$ and $k$ **inhibitors** (negative regulators) $y=\{y_j\}_{j=1}^{k}$, with $n = m + k$ and $m,k \ge 1$.
 
@@ -392,7 +394,7 @@ All in all, the threshold functions exhibit asymptotic properties that make them
 
 ### Validation {-}
 
-We can use the [data above](#tr-data) to validate the [TD formulas](#truth-density-formulas) (up to $n=20$):
+We can use the [data above](#tr-data) to validate the [TD formulas](#td-proofs) (up to $n=20$):
 ```{r validate-formulas, comment=""}
 # Validate AND-NOT Truth Density formula
 formula_td_and_not = stats %>% 
@@ -462,31 +464,45 @@ formula_td_inh_win = stats %>%
 all(stats %>% pull(td_inh_win) == formula_td_inh_win)
 ```
 
-## *AND-NOT* vs *OR-NOT* TD {-#stand-eq-bias}
+## Link operator functions TD comparison {-#lo-td-bias}
 
-Comparing the `AND-NOT` and `OR-NOT` truth densities across the number of regulators:
-```{r fig-and-or-not, fig.align='center', dpi=300, cache=TRUE, fig.cap="AND-NOT vs OR-NOT Truth Densities across all possible activators and inhibitors combinations up to 20 regulators"}
+Comparing the truth densities the $f_{AND-NOT}$, $f_{OR-NOT}$ and $f_{Pairs}$ link operator boolean functions across different number of regulators, we have:
+```{r lo-td-fig, fig.align='center', dpi=300, cache=TRUE, fig.cap="Comparing the truth densities of 3 link operator boolean regulatory functions: AND-NOT, OR-NOT and Pairs. For each specific number of regulators, every possible configuration of at least one activator and one inhibitor that add up to that number, results in a different function output and thus a different truth density value. All configurations up to 20 regulators are shown."}
 # tidy up data
-stats_and_or = tidyr::pivot_longer(data = stats, cols = c(td_and_not, td_or_not), 
+stats_and_or_pairs = tidyr::pivot_longer(data = stats, cols = c(td_and_not, td_or_not, td_pairs),
   names_to = "lo", values_to = "td") %>%
   select(num_reg, lo, td) %>%
   mutate(lo = replace(x = lo, list = lo == "td_and_not", values = "AND-NOT")) %>%
   mutate(lo = replace(x = lo, list = lo == "td_or_not", values = "OR-NOT")) %>%
-  rename(`Function` = lo)
+  mutate(lo = replace(x = lo, list = lo == "td_pairs", values = "Pairs")) %>%
+  rename(`Boolean Regulatory Function` = lo)
 
-ggboxplot(data = stats_and_or, x = "num_reg", y = "td", 
-  color = "Function", palette = "Set1",
-  title = "AND-NOT vs OR-NOT Truth Densities", 
+ggboxplot(data = stats_and_or_pairs, x = "num_reg", y = "td",
+  color = "Boolean Regulatory Function", palette = "Set1",
+  # outlier.shape = NA, # hide the "outliers"
   xlab = "Number of regulators", ylab = "Truth Density") +
-  theme(plot.title = element_text(hjust = 0.5))
+  theme(plot.title = element_text(hjust = 0.5)) +
+  annotate(
+    geom = "curve", x = 19, y = 0.55, xend = 19, yend = 0.70, size = 0.7,
+    curvature = 0, arrow = arrow(length = unit(1.5, "mm"))
+  ) +
+  annotate(
+    geom = "curve", x = 19, y = 0.45, xend = 19, yend = 0.30, size = 0.7,
+    curvature = 0, arrow = arrow(length = unit(1.5, "mm"))
+  ) +
+  annotate(geom = "text", x = 17.7, y = 0.6, angle = 0, label = "More bias") +
+  annotate(geom = "text", x = 17.7, y = 0.4, angle = 0, label = "More bias")
 ```
 
 :::{.green-box}
-- **The more regulators** there are, the more likely it is that the `AND-NOT` link operator in the boolean equation will result in an **inhibited** target and that the `OR-NOT` link operator in an **active** target.
-- For $n>6$ regulators, the points outside the boxplots (with a truth density of $\frac{1}{2}, \frac{1}{4}, 1-\frac{1}{4},\frac{1}{8},1-\frac{1}{8},...$) correspond to the **asymptotic behavior** of the truth density formulas shown [above](#asymptotic-behavior) where there is a large difference between the **number of activators and inhibitors** ($k \ll m$ for the `AND-NOT` case, e.g. $1,2,...$ inhibitors only or $m \ll k$ for the `OR-NOT` case, i.e. $1,2,...$ activators).
+- **The larger the number of regulators**, the more biased the link operator functions are towards $0$, i.e. target inhibition (`AND-NOT`) and $1$, i.e. target activation (`OR-NOT`, `Pairs`).
+The `Pairs` function seems to be less biased compared to the `OR-NOT`, but still for large $n$ (number of regulators) it practically **makes the target active**.
+- For $n>6$ regulators, the points outside the boxplots (outliers) correspond to the **asymptotic behavior** of the truth density formulas shown [above](#asymptotic-behavior) where there is **imbalance between the number of activators and inhibitors**.
+As such, when $k \ll m$, $TD_{AND-NOT} = \frac12$ and when $m \ll k$, $TD_{OR-NOT} = \frac12$, and otherwise both functions tend towards more biased outcomes.
+Interestingly, in both cases of imbalance, the `Pairs` function results in an unbiased truth density output and that is the reason the lower whisker of the corresponding boxplots touch the unbiased line.
 :::
 
-We can also check the relation between TD and number of activators and inhibitors in each case.
+We can also check the relation between truth density and number of activators and inhibitors respectively.
 The following figures demonstrate that the asymptotic behaviour of the truth density of the `AND-NOT` link operator function is largely dependent on the number of **inhibitors** and not on the number of **activators**:
 ```{r and-not-reg-plot, dpi=300, cache=TRUE, fig.show='hold', out.width='50%', fig.cap="AND-NOT TD vs Number of Activators and Inhibitors"}
 ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_inh", 
@@ -521,31 +537,6 @@ ggscatter(data = stats %>% rename(`#Regulators` = num_reg),
   ylim(c(0,1))
 ```
 
-## *Pairs* TD {-}
-
-If we add the `Pairs` TD results to the first plot we have:
-```{r fig-and-or-pairs-tds, fig.align='center', dpi=300, cache=TRUE, fig.cap="AND-NOT vs OR-NOT vs Pairs Truth Densities across all possible activators and inhibitors combinations up to 20 regulators"}
-# tidy up data
-stats_and_or_pairs = tidyr::pivot_longer(data = stats, cols = c(td_and_not, td_or_not, td_pairs), 
-  names_to = "lo", values_to = "td") %>%
-  select(num_reg, lo, td) %>%
-  mutate(lo = replace(x = lo, list = lo == "td_and_not", values = "AND-NOT")) %>%
-  mutate(lo = replace(x = lo, list = lo == "td_or_not", values = "OR-NOT")) %>%
-  mutate(lo = replace(x = lo, list = lo == "td_pairs", values = "Pairs")) %>%
-  rename(`Function` = lo)
-
-ggboxplot(data = stats_and_or_pairs, x = "num_reg", y = "td", 
-  color = "Function", palette = "Set1",
-  title = "Truth Densities of boolean functions AND-NOT, OR-NOT and Pairs", 
-  xlab = "Number of regulators", ylab = "Truth Density") +
-  theme(plot.title = element_text(hjust = 0.5))
-```
-
-:::{.green-box}
-- The `Pairs` TD values are closer to the TD values of the `OR-NOT` formula compared to the `AND-NOT` one.
-- The `Pairs` is less *biased* compared to the `OR-NOT` link operator, but still for large $n$ (regulators) it practically **makes the target active**.
-:::
-
 As we can see in the following two figures, the `Pairs` shows a more balanced dependency between the number of activators and inhibitors:
 ```{r pairs-reg-plot, dpi=300, cache=TRUE, fig.show='hold', out.width='50%', fig.cap="Pairs TD vs Number of Activators and Inhibitors"}
 ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_inh", 
@@ -563,30 +554,30 @@ ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_act",
   ylim(c(0,1))
 ```
 
-## Threshold Functions TD {-}
+## Threshold functions TD {-}
 
-In contrast, if we check the truth density of the $f_{Act-win}(x,y)$ and $f_{Inh-win}(x,y)$ boolean functions we have:
+In contrast, if we check the truth density of the $f_{Act-win}$ and $f_{Inh-win}$ boolean functions we have:
 ```{r fig-two-bool-formulas, fig.align='center', dpi=300, cache=TRUE, fig.cap="Truth Desities of two robust boolean formulas across all possible activators and inhibitors combinations up to 20 regulators"}
 # tidy up data
-stats_functions = tidyr::pivot_longer(data = stats, cols = c(td_act_win, td_inh_win), 
+stats_functions = tidyr::pivot_longer(data = stats, cols = c(td_act_win, td_inh_win),
   names_to = "fun", values_to = "td") %>%
   select(num_reg, fun, td) %>%
   mutate(fun = replace(x = fun, list = fun == "td_act_win", values = "Activators Win")) %>%
   mutate(fun = replace(x = fun, list = fun == "td_inh_win", values = "Inhibitors Win")) %>%
-  rename(`Function` = fun)
+  rename(`Threshold Function` = fun)
 
 ggboxplot(data = stats_functions, x = "num_reg", y = "td",
-  color = "Function", palette = "lancet",
-  title = latex2exp::TeX("Truth Densities of threshold functions $f_{Act-win}(x,y)$ and $f_{Inh-win}(x,y)$"),
+  color = "Threshold Function", palette = "lancet",
+  #title = latex2exp::TeX("Truth Densities of threshold functions $f_{Act-win}(x,y)$ and $f_{Inh-win}(x,y)$"),
   xlab = "Number of regulators", ylab = "Truth Density") +
   theme(plot.title = element_text(hjust = 0.5)) +
-  geom_hline(yintercept = 0.5, linetype="dashed", color = "black")
+  geom_hline(yintercept = 0.5, linetype = "dashed", color = "black")
 ```
 
 :::{.green-box}
 - Both boolean functions show a **large variance of truth densities** irrespective of the number of regulators, since the values inside the boxplots represent the middle $50\%$ of the data and span across the $(0,1)$ range.
 - The median truth density values seem to converge to $1/2$ for both formulas and this is how a proper *balanced* boolean function behaves :) less bias to the truth density values for increasing number of regulators results in a more *fair or balanced* boolean formula.
-- The median value of truth density for the $f_{Act-win}(x,y)$ is always larger than the $f_{Inh-win}(x,y)$ (as expected).
+- The median value of truth density for the $f_{Act-win}$ is always larger than the $f_{Inh-win}$ (as expected).
 :::
 
 ## TD Data Distance {-}
@@ -1029,7 +1020,7 @@ node_stats_cascade2 %>% mutate(reg_group =
 
 :::{.green-box}
 The nodes with number of regulators $>5$ have always a percent agreement $\geq 75\%$ between stable state activity and link operator parameterization and $\kappa_{median}>0.6$.
-The above results provide evidence that the statistics-based conclusion we reached in a [previous section](#stand-eq-bias) is correct, i.e. that the **standardized boolean formula is biased for larger number of regulators**.
+The above results provide evidence that the statistics-based conclusion we reached in a [previous section](#lo-td-bias) is correct, i.e. that the **standardized boolean formula is biased for larger number of regulators**.
 :::
 
 # Random scale-free Networks Analysis {-}
