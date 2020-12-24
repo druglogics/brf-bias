@@ -896,9 +896,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#asymptotic-behavior"><i class="fa fa-check"></i>Asymptotic behavior</a></li>
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#validation"><i class="fa fa-check"></i>Validation</a></li>
 </ul></li>
-<li><a href="truth-density-data-analysis.html#stand-eq-bias"><em>AND-NOT</em> vs <em>OR-NOT</em> TD</a></li>
-<li><a href="truth-density-data-analysis.html#pairs-td"><em>Pairs</em> TD</a></li>
-<li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#threshold-functions-td"><i class="fa fa-check"></i>Threshold Functions TD</a></li>
+<li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#lo-td-bias"><i class="fa fa-check"></i>Link operator functions TD comparison</a></li>
+<li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#threshold-functions-td"><i class="fa fa-check"></i>Threshold functions TD</a></li>
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#td-data-distance"><i class="fa fa-check"></i>TD Data Distance</a></li>
 <li class="chapter" data-level="" data-path="truth-density-data-analysis.html"><a href="truth-density-data-analysis.html#complexity-vs-truth-density"><i class="fa fa-check"></i>Complexity vs Truth Density</a></li>
 </ul></li>
@@ -1071,8 +1070,9 @@ Note that there can be multiple analytical forms that essentially compute the sa
 <p>This brings us to the notion of a general form which could be used to define useful metrics common to all boolean functions (e.g. complexity), as well as the need to provide minimal forms.
 This need does not come only from a representation point of view (a more compact function form enhances readability, e.g. compare <span class="math inline">\(f_1\)</span> with <span class="math inline">\(f_1^{&#39;}\)</span>), but is also a motivation for the design of optimal digital circuits, since the number of gates used (i.e. logical operators) is an indicator of computation time and affects the efficiency of a circuit <span class="citation">(Wegener <a href="references.html#ref-wegener1987complexity" role="doc-biblioref">1987</a>)</span>.</p>
 <p>Every boolean function can be represented in a <strong>disjunctive normal form or DNF</strong>, requiring only AND (<span class="math inline">\(\land\)</span>), OR (<span class="math inline">\(\lor\)</span>) and NOT (<span class="math inline">\(\lnot\)</span>) operators as building blocks.
-In such a representation, <em>literals</em>, which are variables (e.g. positive literal <span class="math inline">\(x\)</span>) or their negations (e.g. negative literal <span class="math inline">\(\text{NOT }x\)</span>), are connected by AND’s producing terms, which are then in turn connected by OR’s <span class="citation">(Crama and Hammer <a href="references.html#ref-crama2011boolean" role="doc-biblioref">2011</a>)</span>.
-For example, every function in <a href="background.html#table1">Table 1</a> is written in DNF, while the boolean expressions <span class="math inline">\(\lnot (x_1 \lor x_2)\)</span> and <span class="math inline">\(\lnot (x_1\land x_2)\lor x_3\)</span> are not.</p>
+In such a representation, <em>literals</em>, which are variables (e.g. positive literal <span class="math inline">\(x\)</span>) or their negations (e.g. negative literal <span class="math inline">\(\text{NOT }x\)</span>), are connected by AND’s producing <strong>terms</strong>, which are then in turn connected by OR’s <span class="citation">(Crama and Hammer <a href="references.html#ref-crama2011boolean" role="doc-biblioref">2011</a>)</span>.
+For example, every function in <a href="background.html#table1">Table 1</a> is written in DNF, while the boolean expressions <span class="math inline">\(\lnot (x_1 \lor x_2)\)</span> and <span class="math inline">\(\lnot (x_1\land x_2)\lor x_3\)</span> are not.
+Note that a boolean function can have multiple DNF forms.</p>
 </div>
 <div id="complexity" class="section level2 unnumbered" number="">
 <h2>Complexity</h2>
@@ -1092,15 +1092,11 @@ For example, using the functions from <a href="background.html#table1">Table 1</
 <h2>Link operator Boolean Regulatory Functions</h2>
 <p>We consider the class of BRFs that partitions the input variables (regulators) to two sets: the set <span class="math inline">\(x\)</span> of positive regulators (also called <em>activators</em>) and the set of negative regulators (also called <em>inhibitors</em>).
 Let <span class="math inline">\(f\)</span> be such a boolean function <span class="math inline">\(f(x,y):\{0,1\}^n \rightarrow \{0,1\}\)</span>, with <span class="math inline">\(m \ge 1\)</span> <strong>activators</strong> <span class="math inline">\(x=\{x_i\}_{i=1}^{m}\)</span> and <span class="math inline">\(k \ge 1\)</span> <strong>inhibitors</strong> <span class="math inline">\(y=\{y_j\}_{j=1}^{k}\)</span>, that is a total of <span class="math inline">\(n = m + k\)</span> regulators.
-The <strong>link operator BRFs</strong> have an analytical non-DNF form, which distributes the two distinct types of regulators in two separate expressions, while connecting them with a special logical operator that we call a <strong>link operator</strong>.</p>
+The <strong>link operator BRFs</strong> have an analytical non-DNF form, which places the two distinct types of regulators in two separate expressions, while connecting them with a special logical operator that we call a <strong>link operator</strong>.</p>
 <p>An example of such a function that has been used extensively in the logical modeling literature is the standardized BRF formula with the <code>AND-NOT</code> link operator <span class="citation">(Mendoza and Xenarios <a href="references.html#ref-Mendoza2006" role="doc-biblioref">2006</a>)</span>:</p>
-<ul>
-<li><code>AND-NOT</code>: <span class="math display">\[f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{j=1}^{k} y_j\right)\]</span></li>
-</ul>
+<p><span class="math display">\[f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{j=1}^{k} y_j\right)\]</span></p>
 <p>A <strong>variation</strong> of the above function is the <code>OR-NOT</code> link operator function:</p>
-<ul>
-<li><code>OR-NOT</code>: <span class="math display">\[f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{j=1}^{k} y_j\right)\]</span></li>
-</ul>
+<p><span class="math display">\[f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{j=1}^{k} y_j\right)\]</span></p>
 <p>Note that the presence of the link operator is what forces the condition <span class="math inline">\(m,k \ge 1\)</span> (at least one regulator in each category).
 For the rest of this work, we will not consider BRFs with only one type of regulator, since these can be represented by simple logical functions without loss of interpretability or biological consistency.
 Following the notation introduced in <span class="citation">(Mendoza and Xenarios <a href="references.html#ref-Mendoza2006" role="doc-biblioref">2006</a>)</span>, we have in the case of only activators:</p>
@@ -1114,14 +1110,12 @@ Note that the operator used to connect the same type of regulators (e.g. the ac
 <div id="pairs-fun">
 <p>For example, another link operator function is the <em>Pairs</em> function:</p>
 </div>
-<ul>
-<li><code>Pairs</code>: <span class="math display">\[f_{Pairs}(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)\]</span></li>
-</ul>
+<p><span class="math display">\[f_{Pairs}(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)\]</span></p>
 <p>The intuition behind the name is derived from the fact that the function will return <em>TRUE</em> if there is at least one pair of regulators consisting of a <strong>present activator</strong> and an <strong>absent inhibitor</strong>.
 The function is also written in conjunction normal form (CNF), which is the reverse of the DNF: two separate clauses are connected with AND’s (<span class="math inline">\(\land\)</span>) and inside the clauses the literals are connected with OR’s (<span class="math inline">\(\lor\)</span>).</p>
 <div class="note">
 <p><span class="citation">Cury, Monteiro, and Chaouiya (<a href="references.html#ref-Cury2019" role="doc-biblioref">2019</a>)</span> defined the <strong>consistent boolean regulatory</strong> functions and their respective <strong>complete DNF forms (CDNF)</strong>.</p>
-<p>The link operator functions listed above are a subset of these functions, since they respect the regulatory structure in their respective DNF forms (for the <em>Pairs</em> function it’s evident since it’s written first in the DNF - for the <em>AND-NOT</em> and <em>OR-NOT</em> functions, see their respective DNF forms in the truth density proofs <a href="truth-density-data-analysis.html#prp:and-not-proof">1</a> and <a href="truth-density-data-analysis.html#prp:or-not-proof">2</a>.</p>
+<p>The link operator functions listed above are a subset of these functions, since they respect the regulatory structure in their respective CDNF forms (for the <em>Pairs</em> function it’s evident since it’s written first in the CDNF - for the <em>AND-NOT</em> and <em>OR-NOT</em> functions, see their respective (complete) DNF forms in the truth density proofs <a href="truth-density-data-analysis.html#prp:and-not-proof">1</a> and <a href="truth-density-data-analysis.html#prp:or-not-proof">2</a>.</p>
 </div>
 </div>
 <div id="threshold-functions" class="section level2 unnumbered" number="">
@@ -1130,17 +1124,15 @@ The function is also written in conjunction normal form (CNF), which is the reve
 Thus, the activators and inhibitors are combined in an <em>additive</em> manner and not a <em>combinatorial</em> one (i.e. using logical operators) and the <strong>majority rule</strong> defines the value of the function <span class="citation">(Chaouiya, Ourrad, and Lima <a href="references.html#ref-Chaouiya2013" role="doc-biblioref">2013</a>; Crama and Hammer <a href="references.html#ref-crama2011boolean" role="doc-biblioref">2011</a>)</span>.</p>
 <p>We will use two simple boolean threshold functions, which both output <span class="math inline">\(1\)</span> when <strong>the number of present activators is larger than the number of present inhibitors</strong>.
 These functions differ with regards to their output when there is balance between the activities of the positive and negative regulators: the first outputs <span class="math inline">\(1\)</span> (the activators “win”) while the second outputs <span class="math inline">\(0\)</span> (the inhibitors “win”).</p>
-<ul>
-<li><code>Act-win</code>: <span class="math display">\[f_{act-win}(x,y)=\begin{cases}
-      1, &amp; \text{for } \sum_{i=1}^{m} x_i \ge \sum_{j=1}^{k} y_j\\
-      0, &amp; \text{otherwise}
-      \end{cases}\]</span></li>
-<li><code>Inh-win</code>: <span class="math display">\[f_{inh-win}(x,y)=\begin{cases}
-      1, &amp; \text{for } \sum_{i=1}^{m} x_i \gt \sum_{j=1}^{k} y_j\\
-      0, &amp; \text{otherwise}
-      \end{cases}\]</span></li>
-</ul>
-<p>Note that: <span class="math inline">\(f_{inh-win}(x,y) = \lnot f_{act-win}(y,x)\)</span>.</p>
+<p><span class="math display">\[f_{Act-win}(x,y)=\begin{cases}
+    1, &amp; \text{for } \sum_{i=1}^{m} x_i \ge \sum_{j=1}^{k} y_j\\
+    0, &amp; \text{otherwise}
+  \end{cases}\]</span>
+<span class="math display">\[f_{Inh-win}(x,y)=\begin{cases}
+    1, &amp; \text{for } \sum_{i=1}^{m} x_i \gt \sum_{j=1}^{k} y_j\\
+    0, &amp; \text{otherwise}
+  \end{cases}\]</span></p>
+<p>Note that: <span class="math inline">\(f_{Inh-win}(x,y) = \lnot f_{Act-win}(y,x)\)</span>.</p>
 <div class="blue-box">
 <p>Note that every boolean threshold function has an equivalent combinatorial expression and I searched for an analytic formula for the two last threshold functions.
 More more info, see this <a href="https://math.stackexchange.com/questions/3767774/identify-boolean-function-that-satisfies-some-constrains/">math.stackexchange question</a>.</p>
