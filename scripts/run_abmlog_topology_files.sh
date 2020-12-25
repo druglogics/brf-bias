@@ -6,6 +6,8 @@
 # the `scale_free_gamma2` and `scale_free_gamma2_5` directories
 # with the topology files (find them at `data/random_topology_files`)
 
+# results are available on Zenodo: https://doi.org/10.5281/zenodo.4392981
+
 # gamma = 2.5
 topology_files=`ls scale_free_gamma2_5`
 files_num=`ls scale_free_gamma2_5 | wc -l`

@@ -10,7 +10,8 @@ library(usefun)
 source('scripts/help.R')
 
 # directory with the `abmlog` results separated into 2 directories (per different gamma)
-# and the scale free topology .sif files. See Zenodo dataset [TODO]
+# and the scale free topology .sif files.
+# See Zenodo dataset: https://doi.org/10.5281/zenodo.4392981
 main_dir = "/media/disk/abmlog-scale-free/"
 
 for (sf_dir in c("scale_free_gamma2_5", "scale_free_gamma2")) {
