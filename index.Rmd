@@ -62,7 +62,7 @@ In our example with $3$ regulators and a total of $8$ rows in the truth table, t
 
 :::{#table1-caption}
 Table 1: Truth table of three boolean functions with three input variables.
-Functions $f_1$ and $f_2$ are written in disjunctive normal form (DNF) with the minimum possible terms.
+Functions $f_1$ and $f_2$ are expressed in disjunctive normal form (DNF) with the minimum possible number of terms.
 $f_3$ is a tautology.
 :::
 
@@ -86,7 +86,7 @@ This need does not come only from a representation point of view (a more compact
 
 Every boolean function can be represented in a **disjunctive normal form or DNF**, requiring only AND ($\land$), OR ($\lor$) and NOT ($\lnot$) operators as building blocks.
 In such a representation, *literals*, which are variables (e.g. positive literal $x$) or their negations (e.g. negative literal $\text{NOT }x$), are connected by AND's producing **terms**, which are then in turn connected by OR's [@crama2011boolean].
-For example, every function in [Table 1](#table1) is written in DNF, while the boolean expressions $\lnot (x_1 \lor x_2)$ and $\lnot (x_1\land x_2)\lor x_3$ are not.
+For example, every function in [Table 1](#table1) is expressed in DNF form, while the boolean expressions $\lnot (x_1 \lor x_2)$ and $\lnot (x_1\land x_2)\lor x_3$ are not.
 Note that a boolean function can have multiple DNF forms.
 
 ## Complexity {-}
@@ -110,11 +110,11 @@ We consider the class of BRFs that partitions the input variables (regulators) t
 Let $f$ be such a boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with $m \ge 1$ **activators** $x=\{x_i\}_{i=1}^{m}$ and $k \ge 1$ **inhibitors** $y=\{y_j\}_{j=1}^{k}$, that is a total of $n = m + k$ regulators.
 The **link operator BRFs** have an analytical non-DNF form, which places the two distinct types of regulators in two separate expressions, while connecting them with a special logical operator that we call a **link operator**.
 
-An example of such a function that has been used extensively in the logical modeling literature is the standardized BRF formula with the `AND-NOT` link operator [@Mendoza2006]:
+An example of such a function that has been used extensively in the logical modeling literature is the standardized BRF formula with the “AND-NOT” link operator [@Mendoza2006]:
 
 $$f_{AND-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \lnot \left(\bigvee_{j=1}^{k} y_j\right)$$
 
-A **variation** of the above function is the `OR-NOT` link operator function:
+A **variation** of the above function is the “OR-NOT” link operator function:
 
 $$f_{OR-NOT}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_{j=1}^{k} y_j\right)$$
 
@@ -133,17 +133,17 @@ Borrowing notation from circuit theory, we could use other link operators like t
 Note that the operator used to connect the same type of regulators (e.g. the activators) is usually the OR, but other operators could be used as well.
 
 :::{#pairs-fun}
-For example, another link operator function is the *Pairs* function:
+For example, another link operator function is the “Pairs” function:
 :::
 $$f_{Pairs}(x,y) = \bigvee_{\forall (i,j)}^{m,k}(x_i\land \lnot y_j) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{k} \lnot y_j\right)$$
 
 The intuition behind the name is derived from the fact that the function will return *TRUE* if there is at least one pair of regulators consisting of a **present activator** and an **absent inhibitor**.
-The function is also written in conjunction normal form (CNF), which is the reverse of the DNF: two separate clauses are connected with AND’s ($\land$) and inside the clauses the literals are connected with OR’s ($\lor$).
+The function is also expressed in conjunction normal form (CNF), which is the reverse of the DNF: two separate clauses are connected with AND’s ($\land$) and inside the clauses the literals are connected with OR’s ($\lor$).
 
 :::{.note}
 @Cury2019 defined the **consistent boolean regulatory** functions and their respective **complete DNF forms (CDNF)**.
 
-The link operator functions listed above are a subset of these functions, since they respect the regulatory structure in their respective CDNF forms (for the *Pairs* function it's evident since it's written first in the CDNF - for the *AND-NOT* and *OR-NOT* functions, see their respective (complete) DNF forms in the truth density proofs \@ref(prp:and-not-proof) and \@ref(prp:or-not-proof).
+The link operator functions listed above are a subset of these functions, since they respect the regulatory structure in their respective CDNF forms (for the *Pairs* function it's evident since it's expressed first in the CDNF form - for the *AND-NOT* and *OR-NOT* functions, see their respective (complete) DNF forms in the truth density proofs \@ref(prp:and-not-proof) and \@ref(prp:or-not-proof).
 :::
 
 ## Threshold functions {-}
