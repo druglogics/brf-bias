@@ -501,13 +501,13 @@ ggboxplot(data = stats_and_or_pairs, x = "num_reg", y = "td",
 :::{.green-box}
 - **The larger the number of regulators**, the more biased the link operator functions are towards $0$, i.e. target inhibition (“AND-NOT”) and $1$, i.e. target activation (“OR-NOT”, “Pairs”).
 The “Pairs” function seems to be less biased compared to the “OR-NOT”, but still for large $n$ (number of regulators) it practically **makes the target active**.
-- For $n>6$ regulators, the points outside the boxplots (outliers) correspond to the **asymptotic behavior** of the truth density formulas shown [above](#asymptotic-behavior) where there is **imbalance between the number of activators and inhibitors**.
-As such, when $k \ll m$, $TD_{AND-NOT} = \frac12$ and when $m \ll k$, $TD_{OR-NOT} = \frac12$, and otherwise both functions tend towards more biased outcomes.
-Interestingly, in both cases of imbalance, the “Pairs” function results in an unbiased truth density output and that is the reason the lower whisker of the corresponding boxplots touch the unbiased line.
+- For $n>6$ regulators, the points outside the boxplots (outliers) correspond to the **asymptotic behavior** of the truth density formulas shown [above](#asymptotic-behavior) where there is **imbalance between the number of activators and inhibitors** (situations close to the extreme ratio scenarios).
+As such, when $k \ll m$, $TD_{AND-NOT} = \frac12$ and when $m \ll k$, $TD_{OR-NOT} = \frac12$ - otherwise both functions tend towards more biased outcomes.
+Interestingly, in both cases of ratio imbalance, the “Pairs” function results in an unbiased truth density output and that is the reason the lower whisker of the corresponding green boxplots touch the unbiased line (with truth density equal to $0.5$).
 :::
 
-We can also check the relation between truth density and number of activators and inhibitors respectively.
-The following figures demonstrate that the asymptotic behaviour of the truth density of the “AND-NOT” link operator function is largely dependent on the number of **inhibitors** and not on the number of **activators**:
+We also check for the relation between truth density and number of activators and inhibitors independently.
+The following figures demonstrate that the asymptotic behaviour of the truth density of the “AND-NOT” link operator function is largely dependent on the number of **inhibitors**:
 ```{r and-not-reg-plot, dpi=300, cache=TRUE, fig.show='hold', out.width='50%', fig.cap="AND-NOT TD vs Number of Activators and Inhibitors"}
 ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_inh", 
   y = "td_and_not", color = "#Regulators",
@@ -524,7 +524,7 @@ ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_act",
   ylim(c(0,1))
 ```
 
-The reverse situation is true for the “OR-NOT” case: 
+The reverse situation is true for the “OR-NOT” function:
 ```{r or-not-reg-plot, dpi=300, cache=TRUE, fig.show='hold', out.width='50%', fig.cap="OR-NOT TD vs Number of Activators and Inhibitors"}
 ggscatter(data = stats %>% rename(`#Regulators` = num_reg), 
   x = "num_inh", y = "td_or_not", color = "#Regulators",
@@ -541,7 +541,7 @@ ggscatter(data = stats %>% rename(`#Regulators` = num_reg),
   ylim(c(0,1))
 ```
 
-As we can see in the following two figures, the “Pairs” shows a more balanced dependency between the number of activators and inhibitors:
+On the other hand, the “Pairs” function shows a **more balanced dependency between the number of activators and inhibitors**:
 ```{r pairs-reg-plot, dpi=300, cache=TRUE, fig.show='hold', out.width='50%', fig.cap="Pairs TD vs Number of Activators and Inhibitors"}
 ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_inh", 
   y = "td_pairs", color = "#Regulators",
@@ -560,8 +560,8 @@ ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_act",
 
 ## Threshold functions TD {-}
 
-In contrast, if we check the truth density of the $f_{Act-win}$ and $f_{Inh-win}$ boolean functions we have:
-```{r fig-two-bool-formulas, fig.align='center', dpi=300, cache=TRUE, fig.cap="Truth Desities of two robust boolean formulas across all possible activators and inhibitors combinations up to 20 regulators"}
+W check the truth density of the $f_{Act-win}$ and $f_{Inh-win}$ boolean functions:
+```{r fig-two-bool-formulas, fig.align='center', dpi=300, cache=TRUE, fig.cap="Comparing the truth densities of 2 threshold boolean regulatory functions: Act-win and Inh-win. For each specific number of regulators, every possible configuration of at least one activator and one inhibitor that add up to that number, results in a different function output and thus a different truth density value. All configurations up to 20 regulators are shown."}
 # tidy up data
 stats_functions = tidyr::pivot_longer(data = stats, cols = c(td_act_win, td_inh_win),
   names_to = "fun", values_to = "td") %>%
@@ -579,14 +579,53 @@ ggboxplot(data = stats_functions, x = "num_reg", y = "td",
 ```
 
 :::{.green-box}
-- Both boolean functions show a **large variance of truth densities** irrespective of the number of regulators, since the values inside the boxplots represent the middle $50\%$ of the data and span across the $(0,1)$ range.
-- The median truth density values seem to converge to $1/2$ for both formulas and this is how a proper *balanced* boolean function behaves :) less bias to the truth density values for increasing number of regulators results in a more *fair or balanced* boolean formula.
-- The median value of truth density for the $f_{Act-win}$ is always larger than the $f_{Inh-win}$ (as expected).
+- Both boolean functions show a **large variance of truth densities** irrespective of the number of regulators, since the values inside the boxplots represent the middle $50\%$ of the data and span across almost the whole $(0,1)$ range.
+- The median truth density values converge to $1/2$ for both formulas (as was shown in the 1:1 activators-to-inhibitors ratio scenario), which is evidence that these threshold functions behave in a more *balanced* manner than the other BRFs.
+- The median value of truth density for the $f_{Act-win}$ is always larger than the $f_{Inh-win}$ (as expected, since the corresponding truth tables have more rows resulting in $1$, when there are equal number of present activators and inhibitors).
+:::
+
+We show the relationship between the two threshold functions TD and the number of inhibitors and activators respectively:
+```{r act-win-reg-plot, dpi=300, cache=TRUE, fig.show='hold', out.width='50%', fig.cap="Act-win TD vs Number of Activators and Inhibitors"}
+ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_inh", 
+  y = "td_act_win", color = "#Regulators",
+  ylab = "Truth Density", xlab = "Number of Inhibitors", 
+  title = "Act-win TD vs Number of Inhibitors") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(c(0,1))
+
+ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_act", 
+  y = "td_act_win", color = "#Regulators",
+  ylab = "Truth Density", xlab = "Number of Activators", 
+  title = "Act-win TD vs Number of Activators") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(c(0,1))
+```
+
+```{r inh-win-reg-plot, dpi=300, cache=TRUE, fig.show='hold', out.width='50%', fig.cap="Inh-win TD vs Number of Activators and Inhibitors"}
+ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_inh", 
+  y = "td_inh_win", color = "#Regulators",
+  ylab = "Truth Density", xlab = "Number of Inhibitors", 
+  title = "Inh-win TD vs Number of Inhibitors") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(c(0,1))
+
+ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_act", 
+  y = "td_inh_win", color = "#Regulators",
+  ylab = "Truth Density", xlab = "Number of Activators", 
+  title = "Inh-win TD vs Number of Activators") + 
+  theme(plot.title = element_text(hjust = 0.5)) +
+  ylim(c(0,1))
+```
+
+:::{.green-box}
+Both function behave the same: the more inhibitors (resp. activators), the more biased is the truth density towards $0$ (resp. $1$).
+
+The *thickness* of the scatterplots is exactly what gives the larger variance/amplitude in the corresponding TD vs #regulators figure, compared to the link operator function results that are more biased.
 :::
 
 ## TD Data Distance {-}
 
-We check how close are the truth density values of the different proposed boolean regulatory functions, also compared to the **proportion of activators**, e.g. if a function has $1$ activator and $5$ inhibitors (resp. $5$ activators and $1$ inhibitor) I would expect the boolean regulatory function's output to be statistically more *inhibited* (resp. *activated*).
+We check how close the truth density values of the different proposed boolean regulatory functions are to the **proportion of activators**, e.g. if a function has $1$ activator and $5$ inhibitors (resp. $5$ activators and $1$ inhibitor) I would expect the boolean regulatory function's output to be statistically more *inhibited* (resp. *activated*).
 We find the *euclidean distance* between the different truth density values and show them in a data table:
 
 ```{r td-values-distance}
