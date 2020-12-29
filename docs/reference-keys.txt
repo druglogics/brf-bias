@@ -9,6 +9,8 @@ fig:and-not-reg-plot
 fig:or-not-reg-plot
 fig:pairs-reg-plot
 fig:fig-two-bool-formulas
+fig:act-win-reg-plot
+fig:inh-win-reg-plot
 fig:complexity-per-function-class
 fig:td-vs-complexity-1
 fig:td-vs-complexity-2
