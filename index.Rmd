@@ -69,11 +69,15 @@ $f_3$ is a tautology.
 ## Truth Density {-}
 
 ```{definition, label='td-def'}
-**Truth density (TD)** of a boolean function is the number of ones ($1$) in its truth table output, normalized by the total number of rows.
+**Truth density (TD)** of a boolean function is the fraction of all input configurations in its corresponding truth table that yield a TRUE outcome (i.e. the function outputs 1).
 ```
 <br>
 Note that the truth density of a boolean function rests in the $[0,1]$ interval.
 Using the example with the three functions from [Table 1](#table1), we have $TD_{f_1}=3/8=0.375$,  $TD_{f_2}=5/8=0.625$ and $TD_{f_3}=8/8=1$, where the last function is the *tautology*, with the maximum possible truth density.
+
+We will say that a boolean regulatory function is **biased**, when it’s truth density is close to $0$ or 1.
+Since the size of a truth table grows exponentially with the number of inputs a boolean function has ($n$ input regulators correspond to $2^n$ rows), the existence of bias conveys the information that most of the input regulatory configurations result in either an activated or an inhibited target (bias towards $0$ or $1$ respectively).
+On the other hand, we shall say that a boolean function is **balanced**, if it takes on the values $0$ and $1$ equally often, or equivalently, it’s truth density is close to $\frac12$ [@Benjamini2005].
 
 ## The DNF form {-}
 
@@ -174,7 +178,7 @@ More more info, see this [math.stackexchange question](https://math.stackexchang
 
 ## Data {-}
 
-I created every possible truth table for up to $20$ variables (variables here means *regulators* for us) and calculated the `AND-NOT`, `OR-NOT`, `Pairs`, `Act-win`, `Inh-win` boolean function results for every possible configuration of the number of activators and inhibitors that added up to the number of regulators.
+I created every possible truth table for up to $20$ variables (variables here means *regulators* for us) and calculated the “AND-NOT”, “OR-NOT”, “Pairs”, “Act-win”, “Inh-win” boolean function results for every possible configuration of the number of activators and inhibitors that added up to the number of regulators.
 Then, from the truth tables I calculated the **truth density** of each function for each particular configuration.
 For more details see the script [get_stats.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_stats.R)
 
@@ -316,7 +320,7 @@ This explains the terms $min(i,k)$ and $min(i-1,k)$ in the two truth density for
 
 ### Asymptotic behavior {-}
 
-For a large number of regulators $n$, the truth densities of the `AND-NOT`, `OR-NOT` and `Pairs` functions can be simplified as follows:
+For a large number of regulators $n$, the truth densities of the “AND-NOT”, “OR-NOT” and “Pairs” functions can be simplified as follows:
 
 - $TD_{AND-NOT} = \frac{1}{2^k}-\frac{1}{2^n} \xrightarrow{n \rightarrow \infty} \frac{1}{2^k} \xrightarrow{k \rightarrow \infty}0$
 - $TD_{OR-NOT} = 1 + \frac{1}{2^n} - \frac{1}{2^m} \xrightarrow{n \rightarrow \infty} 1-\frac{1}{2^m} \xrightarrow{m \rightarrow \infty} 1$
@@ -331,9 +335,9 @@ So, for large number of regulators $n$:
 4. The two threshold functions also depend **both on the number of activators and the number of inhibitors** (there is no simpler formula for $n \rightarrow \infty$)
 :::
 
-To see the effect of **the balance between number of activators and inhibitors** on the truth density values when the number of regulators is large, we consider the following three scenarios for each of the boolean functions:
+To see the effect of **the ratio between number of activators and inhibitors** on the truth density values when the number of regulators is large, we consider the following three scenarios for each of the boolean functions:
 
-1. **Balanced regulators** (half of them activators, half inhibitors), i.e. $m \approx k \approx n/2$ (consider $n$ even without loss of generality):
+1. **1:1 activator-to-inhibitor ratio** (approximately half of the regulators are activators and half are inhibitors, i.e. $m \approx k \approx n/2$, considering $n$ is even without loss of generality):
   - $TD_{AND-NOT} = \frac{1}{2^{n/2}} \xrightarrow{n \rightarrow \infty} 0$
   - $TD_{OR-NOT} = 1 - \frac{1}{2^{n/2}} \xrightarrow{n \rightarrow \infty} 1$
   - $TD_{Pairs} = 1 - \frac{2^{n/2}+2^{n/2}-1}{2^n} = 1 - \frac{1}{2^{(n/2)-1}} - \frac{1}{2^n} \xrightarrow{n \rightarrow \infty} 1$
@@ -359,7 +363,7 @@ To see the effect of **the balance between number of activators and inhibitors**
   $$\lim_{z\to\infty}TD_{Act-win}=\lim_{z\to\infty}\frac{(1/2)2^{2z}}{2^{2z}}=\frac12$$
   The calculation for the $TD_{Inh-win}$ follows the same logic as above and asymptotically reaches the same limit.
 
-2. **Unbalanced regulators with more inhibitors** (one activator, the rest inhibitors), i.e. $m = 1, k = n-1$:
+2. **Low activators-to-inhibitors ratio** ($1:n-1$ ratio, i.e. one activator and the rest regulators are inhibitors: $m = 1, k = n-1$):
   - $TD_{AND-NOT} = \frac{1}{2^{n-1}} \xrightarrow{n \rightarrow \infty} 0$
   - $TD_{OR-NOT} = 1 - \frac{1}{2^{1}} = \frac{1}{2}$
   - $TD_{Pairs} = 1 - \frac{2^{n-1}+2^{1}-1}{2^n} = 1 - \frac{1}{2} - \frac{1}{2^n} \xrightarrow{n \rightarrow \infty} \frac{1}{2}$
@@ -369,7 +373,7 @@ To see the effect of **the balance between number of activators and inhibitors**
   - $TD_{Act-win} = \frac{n}{2^n} \xrightarrow{n \rightarrow \infty} 0$
   - $TD_{Inh-win} = \frac{1}{2^n} \xrightarrow{n \rightarrow \infty} 0$
 
-3. **Unbalanced regulators with more activators** (one inhibitor, the rest activators), i.e. $k = 1, m = n-1$:
+3. **High activators-to-inhibitors ratio** ($n-1:1$ ratio, i.e. one inhibitor and the rest regulators are activators: $k = 1, m = n-1$):
   - $TD_{AND-NOT} = \frac{1}{2^{1}} = \frac{1}{2}$
   - $TD_{OR-NOT} = 1 - \frac{1}{2^{n-1}} \xrightarrow{n \rightarrow \infty} 1$
   - $TD_{Pairs} = 1 - \frac{2^{1}+2^{n-1}-1}{2^n} = 1 - \frac{1}{2} - \frac{1}{2^n} \xrightarrow{n \rightarrow \infty} \frac{1}{2}$
@@ -380,13 +384,13 @@ To see the effect of **the balance between number of activators and inhibitors**
   - $TD_{Inh-win} = \frac{2^n-n-1}{2^n} \xrightarrow{n \rightarrow \infty} 1$
 
 :::{.green-box}
-In the **balanced regulators scenario** (which statistically speaking may be the most plausible scenario when $n$ is large), the `AND-NOT` and `OR-NOT` functions **are biased** towards $0$ and $1$ respectively.
-The `Pairs` function behaves similarly to the `OR-NOT` function and thus is **also biased** towards $1$.
+In the **1:1 ratio scenario**, the “AND-NOT” and “OR-NOT” functions **are biased** towards $0$ and $1$ respectively.
+The “Pairs” function behaves similarly to the “OR-NOT” function and thus is **also biased** towards $1$.
 Only the two threshold functions show balanced behaviour with their truth density value reaching asymptotically $1/2$.
 
-In the **two extreme unbalanced scenarios**, where we would expect the truth density result to be fairly biased, the `Pairs` function results in an unbiased truth density output ($1/2$) for both of them, which raises questions to it's plausibility.
-We observe that the truth density formulas of the `AND-NOT` and `OR-NOT` functions depend on the scenario, i.e. we have a more unbiased truth density for the `OR-NOT` truth density formula and a biased one for the `AND-NOT`, when the inhibitors are more than the activators (and the reverse for the case where the activators are more than the inhibitors).
-In that sense, each function behaves properly only in one of the two scenarios.
+In the **two unbalanced ratio scenarios**, in which we would expect the truth density result to be fairly biased from a statistical point of view, the “Pairs” function behaves in a balanced manner (i.e. its truth density equals $1/2$ in both scenarios).
+We observe that the truth density formulas of the “AND-NOT” and “OR-NOT” functions depend on the scenario, i.e. we have a balanced truth density for the “OR-NOT” formula and a biased one for the “AND-NOT”, when the inhibitors are more than the activators (and the reverse for the case where the activators are more than the inhibitors).
+In that sense, each function behaves “properly” only in one of the two scenarios.
 The two threshold functions show a more reasonable behaviour, being biased towards $0$ with significantly more inhibitors and towards $1$ with significantly more activators.
 
 All in all, the threshold functions exhibit asymptotic properties that make them significantly more attractive for boolean modeling than the other functions investigated, especially when looking through the lens of the truth density.
@@ -466,7 +470,7 @@ all(stats %>% pull(td_inh_win) == formula_td_inh_win)
 
 ## Link operator functions TD comparison {-#lo-td-bias}
 
-Comparing the truth densities the $f_{AND-NOT}$, $f_{OR-NOT}$ and $f_{Pairs}$ link operator boolean functions across different number of regulators, we have:
+Comparing the truth densities of the $f_{AND-NOT}$, $f_{OR-NOT}$ and $f_{Pairs}$ link operator boolean functions across different number of regulators, we have:
 ```{r lo-td-fig, fig.align='center', dpi=300, cache=TRUE, fig.cap="Comparing the truth densities of 3 link operator boolean regulatory functions: AND-NOT, OR-NOT and Pairs. For each specific number of regulators, every possible configuration of at least one activator and one inhibitor that add up to that number, results in a different function output and thus a different truth density value. All configurations up to 20 regulators are shown."}
 # tidy up data
 stats_and_or_pairs = tidyr::pivot_longer(data = stats, cols = c(td_and_not, td_or_not, td_pairs),
@@ -495,15 +499,15 @@ ggboxplot(data = stats_and_or_pairs, x = "num_reg", y = "td",
 ```
 
 :::{.green-box}
-- **The larger the number of regulators**, the more biased the link operator functions are towards $0$, i.e. target inhibition (`AND-NOT`) and $1$, i.e. target activation (`OR-NOT`, `Pairs`).
-The `Pairs` function seems to be less biased compared to the `OR-NOT`, but still for large $n$ (number of regulators) it practically **makes the target active**.
+- **The larger the number of regulators**, the more biased the link operator functions are towards $0$, i.e. target inhibition (“AND-NOT”) and $1$, i.e. target activation (“OR-NOT”, “Pairs”).
+The “Pairs” function seems to be less biased compared to the “OR-NOT”, but still for large $n$ (number of regulators) it practically **makes the target active**.
 - For $n>6$ regulators, the points outside the boxplots (outliers) correspond to the **asymptotic behavior** of the truth density formulas shown [above](#asymptotic-behavior) where there is **imbalance between the number of activators and inhibitors**.
 As such, when $k \ll m$, $TD_{AND-NOT} = \frac12$ and when $m \ll k$, $TD_{OR-NOT} = \frac12$, and otherwise both functions tend towards more biased outcomes.
-Interestingly, in both cases of imbalance, the `Pairs` function results in an unbiased truth density output and that is the reason the lower whisker of the corresponding boxplots touch the unbiased line.
+Interestingly, in both cases of imbalance, the “Pairs” function results in an unbiased truth density output and that is the reason the lower whisker of the corresponding boxplots touch the unbiased line.
 :::
 
 We can also check the relation between truth density and number of activators and inhibitors respectively.
-The following figures demonstrate that the asymptotic behaviour of the truth density of the `AND-NOT` link operator function is largely dependent on the number of **inhibitors** and not on the number of **activators**:
+The following figures demonstrate that the asymptotic behaviour of the truth density of the “AND-NOT” link operator function is largely dependent on the number of **inhibitors** and not on the number of **activators**:
 ```{r and-not-reg-plot, dpi=300, cache=TRUE, fig.show='hold', out.width='50%', fig.cap="AND-NOT TD vs Number of Activators and Inhibitors"}
 ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_inh", 
   y = "td_and_not", color = "#Regulators",
@@ -520,7 +524,7 @@ ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_act",
   ylim(c(0,1))
 ```
 
-The reverse situation is true for the `OR-NOT` case: 
+The reverse situation is true for the “OR-NOT” case: 
 ```{r or-not-reg-plot, dpi=300, cache=TRUE, fig.show='hold', out.width='50%', fig.cap="OR-NOT TD vs Number of Activators and Inhibitors"}
 ggscatter(data = stats %>% rename(`#Regulators` = num_reg), 
   x = "num_inh", y = "td_or_not", color = "#Regulators",
@@ -537,7 +541,7 @@ ggscatter(data = stats %>% rename(`#Regulators` = num_reg),
   ylim(c(0,1))
 ```
 
-As we can see in the following two figures, the `Pairs` shows a more balanced dependency between the number of activators and inhibitors:
+As we can see in the following two figures, the “Pairs” shows a more balanced dependency between the number of activators and inhibitors:
 ```{r pairs-reg-plot, dpi=300, cache=TRUE, fig.show='hold', out.width='50%', fig.cap="Pairs TD vs Number of Activators and Inhibitors"}
 ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_inh", 
   y = "td_pairs", color = "#Regulators",
@@ -615,21 +619,21 @@ plot(hclust(dist(d)), main = "Dendogram of Truth Density Distances between vario
 ```
 
 :::{.green-box}
-- The **threshold functions** have truth densities values that are **closer to the proportion of activators** for a varying number of regulators, compared to the `AND-NOT` and `OR-NOT` formulas.
+- The **threshold functions** have truth densities values that are **closer to the proportion of activators** for a varying number of regulators, compared to the “AND-NOT” and “OR-NOT” formulas.
 As such they might represent better candidates for boolean regulatory functions from this (statistical) point of view.
-- The TD values of `OR-NOT` and `Pairs` are in general very close (as we've also seen in a previous figure)
+- The TD values of “OR-NOT” and “Pairs” are in general very close (as we've also seen in a previous figure)
 :::
 
 ## Complexity vs Truth Density {-}
 
 In [@Gherardi2016], the authors present figures measuring the **complexity** of boolean functions based on a formula that counts the number of conjunctions in the minimized DNF form (lets call this $con_{DNF_{min}}$) vs the **bias** (which is their terminology for our **truth density**!).
-Since we already have the calculated the TD values for the `AND-NOT`, `OR-NOT` and `Pairs` functions in our [test data](#tr-data) and their respective (minimum) DNFs (for the `AND-NOT` and `OR-NOT` DNFs see the proofs [above](#truth-density-formulas) and for the `Pairs` DNF, see [definition](#pairs-fun)), we can measure the $con_{DNF_{min}}$ as:
+Since we already have the calculated the TD values for the “AND-NOT”, “OR-NOT” and “Pairs” functions in our [test data](#tr-data) and their respective (minimum) DNFs (for the “AND-NOT” and “OR-NOT” DNFs see the proofs [above](#truth-density-formulas) and for the “Pairs” DNF, see [definition](#pairs-fun)), we can measure the $con_{DNF_{min}}$ as:
 
 - $con_{AND-NOT,DNF_{min}} = m$ (number of activators)
 - $con_{OR-NOT,DNF_{min}} = m + 1$ (number of activators + 1)
 - $con_{Pairs,DNF_{min}} = m \times k$ (number of activators x number of inhibitors)
 
-We notice that the `AND-NOT` and `OR-NOT` functions have similar $con_{DNF_{min}}$ and so we would expect them to have similar complexities, whereas the `Pairs` function should be more complex than both of them.
+We notice that the “AND-NOT” and “OR-NOT” functions have similar $con_{DNF_{min}}$ and so we would expect them to have similar complexities, whereas the “Pairs” function should be more complex than both of them.
 
 Dividing the number of conjunctions in the DNF with the number of rows of the corresponding truth table ($2^n$), we get the complexity score as defined in [@Gherardi2016].
 The complexity as it is defined, ranges between $[0,0.5]$, where the highest possible complexity ($0.5$) is due to the *parity* function, which outputs $1$ for half of the rows in the truth table, i.e. when the number of input $1$'s is odd.
@@ -642,7 +646,7 @@ stats = stats %>%
   mutate(complex_pairs = (num_act * num_inh)/(2^num_reg))
 ```
 
-Next, we subset the dataset to the boolean formulas with less than $10$ regulators and separately to the formulas with more than $10$ regulators, and group the complexity scores according to the three different functions they belong, namely the `AND-NOT`, `OR-NOT` and `Pairs`:
+Next, we subset the dataset to the boolean formulas with less than $10$ regulators and separately to the formulas with more than $10$ regulators, and group the complexity scores according to the three different functions they belong, namely the “AND-NOT”, “OR-NOT” and “Pairs”:
 ```{r complexity-per-function-class, warning=FALSE, fig.show='hold', out.width='50%', fig.align='center', fig.height=5, fig.width=7, dpi=300, cache=TRUE, fig.cap='Complexity scores for the AND-NOT, OR-NOT and Pairs boolean regulatory functions for every boolean formula with at least one activator and one inhibitor and either less (first figure) or more (second figure) than 10 regulators in total.'}
 my_comp = list(c("andnot","ornot"), c("andnot","pairs"), c("ornot","pairs"))
 
@@ -680,8 +684,8 @@ stats %>%
 ```
 
 :::{.green-box}
-- **All three functions show low complexities (especially for $n \gt 10$)**, with `Pairs` having the higher median complexity of the three with statistical significance from the other two in both figures.
-- The complexities between `AND-NOT` and `OR-NOT` do not differ significantly, as expected from their similar $con_{DNF_{min}}$ formula.
+- **All three functions show low complexities (especially for $n \gt 10$)**, with “Pairs” having the higher median complexity of the three with statistical significance from the other two in both figures.
+- The complexities between “AND-NOT” and “OR-NOT” do not differ significantly, as expected from their similar $con_{DNF_{min}}$ formula.
 :::
 
 We next present some Truth Density vs Complexity figures:
@@ -742,9 +746,9 @@ stats %>%
 ```
 
 :::{.green-box}
-- `Pairs` covers more TD spectrum than the other two functions, while the `AND-NOT` and `OR-NOT` dichotomize it.
+- “Pairs” covers more TD spectrum than the other two functions, while the “AND-NOT” and “OR-NOT” dichotomize it.
 - TD values are very discretized: points tend to cluster at points that denote either the truth density bias (e.g. $0,1$) or the cases where there is an unbalance between number of activators and inhibitors (e.g. $1/2^n$)
-- `Pairs` shows higher complexity than the other two functions when the number of regulators is higher (e.g. more than $10$ regulators) but the difference is not significant since the size of the truth table ($2^{10}$) becomes the dominating term in the complexity score.
+- “Pairs” shows higher complexity than the other two functions when the number of regulators is higher (e.g. more than $10$ regulators) but the difference is not significant since the size of the truth table ($2^{10}$) becomes the dominating term in the complexity score.
 So, in general, as observed in [@Gherardi2016], **these boolean regulatory functions have very low complexity, especially for larger number of regulators**.
 :::
 
@@ -820,7 +824,7 @@ stats %>%
 As observed in [@Gherardi2016] for empirical, experimentally-validated boolean functions, there seems to be a **monotonic relationship between Truth Density and Complexity** (when fixing the number of regulators to a particular value).
 
 The more regulators, arbitrarily chosen same-type functions (points here) with different TD values, results in smaller differences of complexity.
-Also the bias of the `AND-NOT` and `OR-NOT` functions can be visually shown from the large curvature of the red and blue functions for larger number of regulators.
+Also the bias of the “AND-NOT” and “OR-NOT” functions can be visually shown from the large curvature of the red and blue functions for larger number of regulators.
 :::
 
 # CASCADE 1.0 Data Analysis {-}
@@ -848,19 +852,19 @@ node_stats = readRDS(file = "data/node_stats.rds")
 :::{.note #percent-agreement-note}
 We are interested in two variables of interest:
 
-- **Parameterization** of a link operator node: `AND-NOT` (0) vs `OR-NOT` (1)
+- **Parameterization** of a link operator node: “AND-NOT” (0) vs “OR-NOT” (1)
 - **Stable State** of a node: *inhibited* (0) vs *active* (1)
 
 There exist are 4 different possibilities related to 2 cases:
 
-1. `0-0`, `1-1` => parameterization and stable state **match** (e.g. node was parameterized with `AND-NOT` and it's state was inhibited or it had `OR-NOT` and its state was active)
-2. `1-0`, `0-1` => parameterization and stable state **differ** (e.g. node had `OR-NOT` and its state was inhibited, or `AND-NOT` and it's state was active)
+1. `0-0`, `1-1` => parameterization and stable state **match** (e.g. node was parameterized with “AND-NOT” and it's state was inhibited or it had “OR-NOT” and its state was active)
+2. `1-0`, `0-1` => parameterization and stable state **differ** (e.g. node had “OR-NOT” and its state was inhibited, or “AND-NOT” and it's state was active)
 
 The **percent Agreement** (or total observed proportionate agreement score) is the number of total matches (case 1 above) divided by the total number of data observations/models.
 
 A more *robust* and *sophisticated* (compared to the percent agreement) statistic is the **Cohen's kappa coefficient** ($\kappa$). 
 This statistic is used to measure the extent to which data collectors (raters) assign the same score to the same variable (interrater reliability) and takes into account the possibility of agreement occurring by chance.
-In our case **one rater assigns link operator parameterization** (`AND-NOT` or $0$ vs `OR-NOT` or $1$) and **the other stable state activity** $0$ vs $1$).
+In our case **one rater assigns link operator parameterization** (“AND-NOT” or $0$ vs “OR-NOT” or $1$) and **the other stable state activity** $0$ vs $1$).
 
 In the figures showing Cohen's $\kappa$, we draw a horizontal line to indicate the value of $\kappa=0.6$ that corresponds to a *moderate* or *substantial* strength of agreement [@Landis1977; @McHugh2012a]
 :::
@@ -880,7 +884,7 @@ node_stats %>% mutate(node = forcats::fct_reorder(node, desc(num_reg))) %>%
 :::{.green-box}
 The total barplot area covered (i.e. the **total percent agreement score** so to speak) is **`r node_stats %>% summarise(100 * sum(obs_prop_agreement)/n()) %>% pull()`%**.
 
-The above score means that the is a higher probability than chance to assign a node the `AND-NOT` (resp. `OR-NOT`) link operator in its respective boolean equation and that node at the same time having an inhibited (resp. activated) stable state of $0$ (.resp $1$) in any CASCADE 1.0 link operator parameterized model.
+The above score means that the is a higher probability than chance to assign a node the “AND-NOT” (resp. “OR-NOT”) link operator in its respective boolean equation and that node at the same time having an inhibited (resp. activated) stable state of $0$ (.resp $1$) in any CASCADE 1.0 link operator parameterized model.
 **This suggests that the corresponding boolean formula used is biased**.
 :::
 
@@ -916,7 +920,7 @@ We observe that even for a small number of regulators, the **median percent agre
 Since Cohen's $\kappa$ is a more *strict* score to assess agreement between parameterization and stable state activity we conclude that the *truth density bias* of the standardized regulatory functions might not be quite evident from these data (**we need link operator nodes with more regulators**).
 :::
 
-Next, we calculate per node, the proportion of link operator assignments that retained their expected (i.e. keeping the same digit) stable state activity (e.g. the proportion of models corresponding to the cases `0-0`/(`0-0` + `0-1`) for the `AND-NOT` link operator - and `1-1`/(`1-1` + `1-0`) for `OR-NOT`):
+Next, we calculate per node, the proportion of link operator assignments that retained their expected (i.e. keeping the same digit) stable state activity (e.g. the proportion of models corresponding to the cases `0-0`/(`0-0` + `0-1`) for the “AND-NOT” link operator - and `1-1`/(`1-1` + `1-0`) for “OR-NOT”):
 ```{r ss-comp-agreement-props, fig.align='center', dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement 2"}
 node_stats %>% 
   mutate(and_not_0ss_prop = and_not_0ss_agreement/(and_not_0ss_agreement + and_not_1ss_disagreement)) %>% 
@@ -940,11 +944,11 @@ node_stats %>%
 ```
 
 :::{.green-box}
-- Higher proportional activity for a node correlates with higher `OR-NOT`-activated state agreement.
+- Higher proportional activity for a node correlates with higher “OR-NOT”-activated state agreement.
 - `LRP_f` has 4 activators and 1 inhibitor and from the previous [TD data table](#tr-data) we have that: $TD_{AND-NOT,4+1}=0.469$, $TD_{OR-NOT,4+1}=0.969$, numbers which correspond really well with the percent agreement scores found across all the CASCADE 1.0 models.
-- `TSC_f` and `mTORC2_c` are always found inhibited and thus the agreement with the `AND-NOT`-inhibited state is perfect and the `OR-NOT`-activated state agreement zero.
+- `TSC_f` and `mTORC2_c` are always found inhibited and thus the agreement with the “AND-NOT”-inhibited state is perfect and the “OR-NOT”-activated state agreement zero.
 - `TSC_f` has 1 activator and 4 inhibitors, which corresponds well to it's total inhibition profile in all the models (with significantly more inhibitors, there is a higher probability of the target node being inhibited).
-The TD values are $TD_{AND-NOT,1+4}=0.03$, $TD_{OR-NOT,1+4}=0.53$ and so the percent agreement between the `AND-NOT` parameterization and the resulting $0$ stable state activity is justified, but for the `OR-NOT` cases we would expect around half of them to be in agreement (have a value of $1$ in the stable state) - which was not the case (all of them had $0$).
+The TD values are $TD_{AND-NOT,1+4}=0.03$, $TD_{OR-NOT,1+4}=0.53$ and so the percent agreement between the “AND-NOT” parameterization and the resulting $0$ stable state activity is justified, but for the “OR-NOT” cases we would expect around half of them to be in agreement (have a value of $1$ in the stable state) - which was not the case (all of them had $0$).
 Probably the network dynamical configuration may have something to do with that.
 :::
 
@@ -1036,7 +1040,7 @@ knitr::include_graphics(path = "img/scale_free_methodology.png")
 1. We generate the scale-free topology `.sif` files with the script [random_topo_gen.R](https://github.com/druglogics/brf-bias/blob/main/scripts/random_topo_gen.R) - implementation was based on the BoolNet R package [@Mussel2010].
 The input degree distribution of the scale-free networks follows Riemann's Zeta function [@Aldana2003].
 The `.sif` files for the different $\gamma$'s are stored in the respective [GitHub data directory](https://github.com/druglogics/brf-bias/tree/main/data/random_topology_files).
-2. We use the [abmlog](https://github.com/druglogics/abmlog) software (version `1.6.0`) to produce every possible link operator parameterized boolean model (`AND-NOT` vs `OR-NOT`) out of every topology file created in the previous step.
+2. We use the [abmlog](https://github.com/druglogics/abmlog) software (version `1.6.0`) to produce every possible link operator parameterized boolean model (“AND-NOT” vs “OR-NOT”) out of every topology file created in the previous step.
 The more link operator equations the network topology has (target nodes with both *activating* and *inhibiting* regulators) the more boolean models are generated (see script [run_abmlog_topology_files.sh](https://github.com/druglogics/brf-bias/blob/main/scripts/run_abmlog_topology_files.sh)).
 The boolean model dataset is available in Zenodo: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4392981.svg)](https://doi.org/10.5281/zenodo.4392981)
 3. We analyze the data from all the abmlog-produced models, **compare stable state and link operator assignment** and produce agreement statistics (see script [get_scale_free_model_stats.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_scale_free_model_stats.R))
@@ -1153,7 +1157,7 @@ sf_stats_g2_5 %>%
 :::{.green-box}
 Results for both $\gamma$'s show the same thing: **the higher the number of regulators, the more biased the boolean link operator function result is**.
 
-Specifically, for both $\gamma$'s, we observe that for $n>7-10$ regulators, assigning a node the `AND-NOT` link operator in its corresponding equation, results in it having a stable state equal to $0$ and vice-versa for the `OR-NOT` case.
+Specifically, for both $\gamma$'s, we observe that for $n>7-10$ regulators, assigning a node the “AND-NOT” link operator in its corresponding equation, results in it having a stable state equal to $0$ and vice-versa for the “OR-NOT” case.
 :::
 
 ```{r, kmeans-cl-reg-group-g2, include=FALSE, eval=FALSE, warning=FALSE}
