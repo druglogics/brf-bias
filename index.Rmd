@@ -898,8 +898,8 @@ We are interested in two variables of interest:
 
 There exist are 4 different possibilities related to 2 cases:
 
-1. `0-0`, `1-1` => parameterization and stable state **match** (e.g. node was parameterized with “AND-NOT” and it's state was inhibited or it had “OR-NOT” and its state was active)
-2. `1-0`, `0-1` => parameterization and stable state **differ** (e.g. node had “OR-NOT” and its state was inhibited, or “AND-NOT” and it's state was active)
+1. `0-0`, `1-1` => parameterization and stable state **match** (e.g. node was parameterized with “AND-NOT” and its state was inhibited or it had “OR-NOT” and its state was active)
+2. `1-0`, `0-1` => parameterization and stable state **differ** (e.g. node had “OR-NOT” and its state was inhibited, or “AND-NOT” and its state was active)
 
 The **percent Agreement** (or total observed proportionate agreement score) is the number of total matches (case 1 above) divided by the total number of data observations/models.
 
