@@ -152,10 +152,10 @@ The link operator functions listed above are a subset of these functions, since 
 
 ## Threshold functions {-}
 
-**Boolean threshold functions** are formulated based on given *pseudo-Boolean* constraints for the regulators.
-Thus, the activators and inhibitors are combined in an *additive* manner and not a *combinatorial* one (i.e. using logical operators) and the **majority rule** defines the value of the function [@Chaouiya2013; @crama2011boolean].
+**Boolean threshold functions** are a special kind of boolean functions for which the output depends on the condition that the sum of (possibly weighted) activities of the input regulators surpass a given *threshold* value [@crama2011boolean].
 
-We will use two simple boolean threshold functions, which both output $1$ when **the number of present activators is larger than the number of present inhibitors**.
+In this work, we will use two simple threshold functions, which both output $1$ when **the number of present activators is larger than the number of present inhibitors**.
+As such, the activators and inhibitors are combined in an *additive* manner, with their respective assigned weights set to $\pm1$ and the threshold value to $0$, formulating thus a *majority rule* which defines the value of the function [@Bornholdt2008; @Chaouiya2013].
 These functions differ with regards to their output when there is balance between the activities of the positive and negative regulators: the first outputs $1$ (the activators “win”) while the second outputs $0$ (the inhibitors “win”).
 
 $$f_{Act-win}(x,y)=\begin{cases}
