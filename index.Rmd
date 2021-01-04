@@ -875,9 +875,13 @@ Also the bias of the “AND-NOT” and “OR-NOT” functions can be visually sh
 Using [abmlog](https://github.com/druglogics/abmlog) we generated all $2^{23} = 8388608$ possible link operator mutated models for the CASCADE 1.0 topology ($23$ nodes have at least one regulator from each category, i.e. an activator and an inhibitor).
 The models are stored in both `.gitsbe` and `.bnet` files in the Zenodo dataset [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4022783.svg)](https://doi.org/10.5281/zenodo.4022783) (the `gitsbe` files include also the fixpoint attractors).
 
+```{r ss-stats-dist-cascade1, fig.align='center', fig.cap='Stable states distribution across all possible link-operator parameterized models generated from the CASCADE 1.0 topology'}
+knitr::include_graphics(path = 'img/ss_dist_cascade1.png')
+```
+
 :::{.blue-box}
 The dataset includes models with $0,1$ or $2$ stable states.
-We used the [get_ss_data.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_ss_data.R) script to get the **1 stable state data** from the models (a total of $2820224$ models - see [stable state distribution](https://druglogics.github.io/bool-param-maps/cascade-1-0-general.html#model-stable-state-statistics)) and it's this data we are going to analyze in the next section.
+We used the [get_ss_data.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_ss_data.R) script to get the **1 stable state data** from the models (a total of $2820224$ models - see figure above) and it's this data we are going to analyze in the next section.
 :::
 
 ## Parameterization vs Activity {-}

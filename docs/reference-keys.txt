@@ -15,6 +15,7 @@ fig:complexity-per-function-class
 fig:td-vs-complexity-1
 fig:td-vs-complexity-2
 fig:td-vs-complexity-3
+fig:ss-stats-dist-cascade1
 fig:ss-lo-agreement-prop
 fig:ss-lo-agreement-prop-grouped
 fig:ss-comp-agreement-props
