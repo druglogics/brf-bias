@@ -881,7 +881,7 @@ knitr::include_graphics(path = 'img/ss_dist_cascade1.png')
 
 :::{.blue-box}
 The dataset includes models with $0,1$ or $2$ stable states.
-We used the [get_ss_data.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_ss_data.R) script to get the **1 stable state data** from the models (a total of $2820224$ models - see figure above) and it's this data we are going to analyze in the next section.
+We used the [get_ss_data.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_ss_data.R) script to get the **1 stable state data** from the models (a total of $2820224$ models - see figure above, created with the [get_ss_dist_stats_cascade1.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_ss_dist_stats_cascade1.R)) and it's this data we are going to analyze in the next section.
 :::
 
 ## Parameterization vs Activity {-}
@@ -915,21 +915,27 @@ In the figures showing Cohen's $\kappa$, we draw a horizontal line to indicate t
 :::
 
 In the next Figure we show the **percent agreement** for each node:
-```{r ss-lo-agreement-prop, fig.align='center', dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement"}
-node_stats %>% mutate(node = forcats::fct_reorder(node, desc(num_reg))) %>% 
+```{r ss-lo-agreement-prop, fig.align='center', dpi=300, cache=TRUE, fig.cap="Parameterization and stable state activity agreement for all the CASCADE 1.0 models with one stable state. Only nodes with both activating and inhibiting regulators are shown."}
+node_stats %>% mutate(node = forcats::fct_reorder(node, num_reg)) %>% 
   ggplot(aes(x = node, y = obs_prop_agreement, fill = as.factor(num_reg))) +
     geom_bar(stat = "identity") +
     scale_y_continuous(labels=scales::percent) +
-    labs(title = "Agreement between Link Operator Parameterization and Stable State Activity", x = "Target Nodes with both activating and inhibiting regulators", y = "Percent Agreement") +
-    theme_classic() + theme(axis.text.x = element_text(angle = 90)) +
-    scale_fill_brewer(guide = guide_legend(reverse=TRUE, title = "#Regulators"), palette = "Set1") +
-    geom_hline(yintercept = 0.5, linetype = 'dashed')
+    labs(title = "Parameterization and Stable State Agreement", 
+      x = "Link operator nodes", 
+      y = "Percent Agreement") +
+    scale_fill_brewer(guide = guide_legend(reverse = TRUE,
+      label.theme = element_text(size = 13),
+      title = "Number\nof regulators"), palette = "Set1") +
+    geom_hline(yintercept = 0.5, linetype = 'dashed') +
+    theme_classic2() + 
+    theme(axis.text.x = element_text(angle = 90), 
+      plot.title = element_text(hjust = 0.5), legend.position = 'right')
 ```
 
 :::{.green-box}
 The total barplot area covered (i.e. the **total percent agreement score** so to speak) is **`r node_stats %>% summarise(100 * sum(obs_prop_agreement)/n()) %>% pull()`%**.
 
-The above score means that the is a higher probability than chance to assign a node the “AND-NOT” (resp. “OR-NOT”) link operator in its respective boolean equation and that node at the same time having an inhibited (resp. activated) stable state of $0$ (.resp $1$) in any CASCADE 1.0 link operator parameterized model.
+The above score means that the is a higher probability than chance to assign a node the “AND-NOT” (resp. “OR-NOT”) link operator in its respective boolean equation and that node at the same time having an inhibited (resp. activated) stable state of $0$ (resp. $1$) in any CASCADE 1.0 link operator parameterized model.
 **This suggests that the corresponding boolean formula used is biased**.
 :::
 
@@ -939,24 +945,26 @@ node_stats %>%
   mutate(num_reg = as.factor(num_reg)) %>%
   ggplot(aes(x = num_reg, y = obs_prop_agreement, fill = num_reg)) + 
     geom_boxplot(show.legend = FALSE) +
+    scale_fill_brewer(palette = "Set1") +
     geom_jitter(shape = 19, position = position_jitter(0.2), show.legend = FALSE) +
     scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
-    labs(title = "Agreement (parameterization vs stable state activity)", x = "Number of Regulators", y = "Percent Agreement") +
+    labs(title = "Parameterization and Stable State Agreement", x = "Number of regulators", y = "Percent Agreement") +
     geom_hline(yintercept = 0.5, linetype = 'dashed', color = "red") +
     theme_classic(base_size = 14) +
-    theme(axis.text.x = element_text(size = 15))
+    theme(axis.text.x = element_text(size = 15), plot.title = element_text(hjust = 0.5))
 
 node_stats %>% 
   mutate(num_reg = as.factor(num_reg)) %>%
   ggplot(aes(x = num_reg, y = cohen_k, fill = num_reg)) + 
     geom_boxplot(show.legend = FALSE) +
+    scale_fill_brewer(palette = "Set1") +
     geom_jitter(shape = 19, position = position_jitter(0.2), show.legend = FALSE) +
     ylim(c(0,1)) +
-    labs(title = "Cohen's k (parameterization vs stable state activity)", x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
+    labs(title = "Parameterization and Stable State Agreement", x = "Number of regulators", y = latex2exp::TeX("Cohen's $\\kappa$")) +
     geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
     geom_text(aes(x = 3.4, y = 0.55, label="k = 0.6")) + 
     theme_classic(base_size = 14) +
-    theme(axis.text.x = element_text(size = 15))
+    theme(axis.text.x = element_text(size = 15), plot.title = element_text(hjust = 0.5))
 ```
 
 :::{.green-box}
@@ -966,27 +974,52 @@ Since Cohen's $\kappa$ is a more *strict* score to assess agreement between para
 :::
 
 Next, we calculate per node, the proportion of link operator assignments that retained their expected (i.e. keeping the same digit) stable state activity (e.g. the proportion of models corresponding to the cases `0-0`/(`0-0` + `0-1`) for the “AND-NOT” link operator - and `1-1`/(`1-1` + `1-0`) for “OR-NOT”):
-```{r ss-comp-agreement-props, fig.align='center', dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement 2"}
-node_stats %>% 
+```{r ss-comp-agreement-props, warning=FALSE, fig.align='center', dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement 2"}
+# the AGS steady state
+# see https://github.com/druglogics/ags-paper/blob/main/scripts/lo_mutated_models_heatmaps.R#L53
+steady_state = readRDS(file = url('https://raw.githubusercontent.com/druglogics/ags-paper/main/data/steady_state.rds'))
+
+# the link operator nodes
+# lo_nodes = node_stats %>% pull(node)
+
+# keep only the link operator nodes that belong to the literature-curated steady state
+# lo_nodes_in_ss = steady_state[names(steady_state) %in% lo_nodes]
+
+# create stats table
+stats_tbl = node_stats %>% 
   mutate(and_not_0ss_prop = and_not_0ss_agreement/(and_not_0ss_agreement + and_not_1ss_disagreement)) %>% 
   mutate(or_not_1ss_prop  = or_not_1ss_agreement/(or_not_1ss_agreement + or_not_0ss_disagreement)) %>%
   select(node, num_reg, and_not_0ss_prop, or_not_1ss_prop, active_prop) %>%
   rename(`AND-NOT` = and_not_0ss_prop, `OR-NOT` = or_not_1ss_prop) %>%
-  mutate(node = forcats::fct_reorder(node, desc(num_reg))) %>%
+  mutate(node_col = case_when(!node %in% names(steady_state) ~ 'black',
+    unname(steady_state[node]) == 0 ~ 'red', TRUE ~ 'green4')) %>%
+  mutate(node = forcats::fct_reorder(node, active_prop))
+
+stats_tbl %>% 
   pivot_longer(cols = c(`AND-NOT`, `OR-NOT`)) %>%
+  mutate(name = factor(name, levels = c('AND-NOT', 'OR-NOT'))) %>%
   ggplot(aes(x = node, y = value, fill = name)) +
-    geom_bar(position = "dodge", stat = "identity") +
-    scale_y_continuous(labels=scales::percent) +
-    labs(title = "Link Operator Parameterization Agreement with Stable State Activity", 
-      x = "Target Nodes with both activating and inhibiting regulators", 
-      y = "Percent Agreement") +
-    theme_classic() + theme(axis.text.x = element_text(angle = 90)) + 
-    scale_fill_brewer(guide = guide_legend(title = "Link Operator"), palette = "Set1") + 
-    geom_line(aes(y = active_prop, color = active_prop), group = 1, size = 1.2) +
-    scale_color_gradient(labels=scales::percent, low="grey", high="green", 
-      name = "%Models:active node", limits = c(0,1)) + 
-    theme(legend.title = element_text(size = 10))
+    geom_bar(stat = "identity", position = "dodge") +
+    geom_line(aes(x = node, y = active_prop, color = active_prop), group = 1, size = 1.5) + 
+    # color = 'Node Activity' trick also works for single line coloring
+    # scale_color_manual(name = "", values = c("Node Activity" = "green3"), ) + 
+    labs(title = "Parameterization and Stable State Agreement", 
+      x = "Link operator nodes", y = "Percent Agreement") +
+    scale_fill_brewer(guide = guide_legend(title = "Link Operator", 
+      title.theme = element_text(size = 14)), palette = "Set1") + 
+    scale_y_continuous(labels = scales::percent, sec.axis = dup_axis(name = 'Percentage of models')) + 
+    scale_colour_gradient2(breaks = c(0.2,0.8), labels = c('Inhibited', 'Active'), 
+      low = "red", mid = "grey", midpoint = 0.5, high = "green", 
+      name = "Node Activity", limits = c(0,1), 
+      guide = guide_colourbar(title.theme = element_text(size = 14), barheight = 3.5,
+        label.theme = element_text(colour = c('red', 'green4')))) +
+    theme_classic2() +
+    theme(axis.text.x = element_text(angle = 90, 
+      color = stats_tbl %>% arrange(active_prop, node) %>% pull(node_col)), 
+      legend.title = element_text(size = 10),
+      plot.title = element_text(hjust = 0.5))
 ```
+
 
 :::{.green-box}
 - Higher proportional activity for a node correlates with higher “OR-NOT”-activated state agreement.
