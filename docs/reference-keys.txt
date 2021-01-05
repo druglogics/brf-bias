@@ -19,6 +19,7 @@ fig:ss-stats-dist-cascade1
 fig:ss-lo-agreement-prop
 fig:ss-lo-agreement-prop-grouped
 fig:ss-comp-agreement-props
+fig:cor-figures
 fig:ss-lo-prop-aggreement-cascade2
 fig:ss-lo-prop-aggreement-cascade2-grouped
 fig:unnamed-chunk-5

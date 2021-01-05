@@ -1009,11 +1009,11 @@ stats_tbl %>%
     scale_fill_brewer(guide = guide_legend(title = "Link Operator", 
       title.theme = element_text(size = 14)), palette = "Set1") + 
     scale_y_continuous(labels = scales::percent, 
-      sec.axis = dup_axis(name = 'Node average activity', 
+      sec.axis = dup_axis(name = 'Average node activity', 
         breaks = c(0,1), labels = c(0,1))) + 
     scale_colour_gradient2(breaks = c(0.2,0.8), labels = c('Inhibited', 'Active'), 
       low = "red", mid = "grey", midpoint = 0.5, high = "green", 
-      name = "Node Activity", limits = c(0,1), 
+      name = "Activity state", limits = c(0,1), 
       guide = guide_colourbar(title.theme = element_text(size = 14), barheight = 3.5,
         label.theme = element_text(colour = c('red', 'green4')))) +
     theme_classic2() +
@@ -1032,6 +1032,7 @@ For example, the data shows that $90\%$ of the boolean models whose boolean equa
 Same for `CTNNB1`, with a $92\%$ and `ERK_f` with the smaller percentage among the active nodes, $74\%$.
 All these nodes have 2 regulators (1 activator and 1 inhibitor) and thus $TD_{AND-NOT,1+1}=0.25$, $TD_{OR-NOT,1+1}=0.75$ from our truth density analysis.
 As such, all these nodes behave according to the statistical table results, if not better!
+
 `MAPK14` and `JNK_f` are nodes for which every model that had in their equations the “AND-NOT” link operator,
 
 
@@ -1047,6 +1048,51 @@ caption.title = "Link Operator Statistics (CASCADE 1.0)"
 DT::datatable(data = node_stats %>% select(node, num_reg, num_act, num_inh), 
   caption = htmltools::tags$caption(caption.title, style="color:#dd4814; font-size: 18px"),
   options = list(order = list(list(2, "desc"))))
+```
+
+## Node state and percent agreement correlation {-}
+
+We also check for correlation between the average node activity in the CASCADE 1.0 models and the percent agreement per each link operator:
+
+```{r norm-check, comment=''}
+shapiro.test(x = stats_tbl$active_prop)
+shapiro.test(x = stats_tbl$`AND-NOT`)
+shapiro.test(x = stats_tbl$`OR-NOT`)
+```
+
+Data seems to be normally distributed since p-values aren't so much low (for my standards at least :)
+Use of Pearson's correlation coefficient is ok in this case.
+
+```{r cor-figures, message=FALSE, cache=TRUE, fig.cap = 'Correlation between parameterization-state agreement and average node activity in the CASCADE 1.0 models'}
+# individually with ggpubr and kendall coefficent
+# ggscatter(data = stats_tbl, x = "active_prop", y = "AND-NOT",
+#   xlab = "Average node activity",
+#   ylab = "AND-NOT percent agreement",
+#   title = "", add = "reg.line", conf.int = TRUE,
+#   add.params = list(color = "blue", fill = "lightgray"),
+#   cor.coef = TRUE, cor.coeff.args = list(method = "kendall", 
+#     label.y.npc = "bottom", size = 6, cor.coef.name = "tau")) +
+#   theme(plot.title = element_text(hjust = 0.5))
+# 
+# ggscatter(data = stats_tbl, y = "active_prop", x = "OR-NOT",
+#   xlab = "Average node activity",
+#   ylab = "OR-NOT percent agreement",
+#   title = "", add = "reg.line", conf.int = TRUE,
+#   add.params = list(color = "blue", fill = "lightgray"),
+#   cor.coef = TRUE, cor.coeff.args = list(method = "kendall", 
+#     label.y.npc = "top", size = 6, cor.coef.name = "tau")) +
+#   theme(plot.title = element_text(hjust = 0.5))
+
+stats_tbl %>%
+  pivot_longer(cols = c(`AND-NOT`, `OR-NOT`), names_to = 'param', values_to = 'score') %>%
+  ggplot(aes(x = active_prop, y = score, color = param)) + 
+  geom_point() +
+  scale_color_brewer(palette = 'Set1', guide = guide_legend(title = 'Link operator')) + 
+  geom_smooth(method = 'lm') +
+  theme_pubr() +
+  xlab('Average node activity') + ylab('Percent Agreement') +
+  ggpubr::stat_cor(method = "pearson", label.y.npc = 'bottom', label.x.npc = 0.4, 
+    show.legend = FALSE, size = 6)
 ```
 
 # CASCADE 2.0 Data Analysis {-}
