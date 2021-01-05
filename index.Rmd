@@ -1032,10 +1032,6 @@ For example, the data shows that $90\%$ of the boolean models whose boolean equa
 Same for `CTNNB1`, with a $92\%$ and `ERK_f` with the smaller percentage among the active nodes, $74\%$.
 All these nodes have 2 regulators (1 activator and 1 inhibitor) and thus $TD_{AND-NOT,1+1}=0.25$, $TD_{OR-NOT,1+1}=0.75$ from our truth density analysis.
 As such, all these nodes behave according to the statistical table results, if not better!
-
-`MAPK14` and `JNK_f` are nodes for which every model that had in their equations the “AND-NOT” link operator,
-
-
 - `LRP_f` has 4 activators and 1 inhibitor and from the previous [TD data table](#tr-data) we have that: $TD_{AND-NOT,4+1}=0.469$, $TD_{OR-NOT,4+1}=0.969$, numbers which correspond really well with the percent agreement scores found across all the CASCADE 1.0 models.
 - `TSC_f` and `mTORC2_c` are always found inhibited and thus the agreement with the “AND-NOT”-inhibited state is perfect and the “OR-NOT”-activated state agreement zero.
 - `TSC_f` has 1 activator and 4 inhibitors, which corresponds well to it's total inhibition profile in all the models (with significantly more inhibitors, there is a higher probability of the target node being inhibited).
