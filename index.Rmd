@@ -911,7 +911,7 @@ A more *robust* and *sophisticated* (compared to the percent agreement) statisti
 This statistic is used to measure the extent to which data collectors (raters) assign the same score to the same variable (interrater reliability) and takes into account the possibility of agreement occurring by chance.
 In our case **one rater assigns link operator parameterization** (“AND-NOT” or $0$ vs “OR-NOT” or $1$) and **the other stable state activity** $0$ vs $1$).
 
-In the figures showing Cohen's $\kappa$, we draw a horizontal line to indicate the value of $\kappa=0.6$ that corresponds to a *moderate* or *substantial* strength of agreement [@Landis1977; @McHugh2012a]
+In the figures showing Cohen's $\kappa$, we draw a horizontal line to indicate the value of $\kappa=0.6$, above which we have a *substantial* level of agreement [@Landis1977; @McHugh2012a]
 :::
 
 In the next Figure we show the **percent agreement** for each node:
@@ -962,7 +962,7 @@ node_stats %>%
     ylim(c(0,1)) +
     labs(title = "Parameterization and Stable State Agreement", x = "Number of regulators", y = latex2exp::TeX("Cohen's $\\kappa$")) +
     geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
-    geom_text(aes(x = 3.4, y = 0.55, label="k = 0.6")) + 
+    geom_text(aes(x = 3.4, y = 0.55, label = "κ = 0.6")) + 
     theme_classic(base_size = 14) +
     theme(axis.text.x = element_text(size = 15), plot.title = element_text(hjust = 0.5))
 ```
@@ -973,8 +973,9 @@ We observe that even for a small number of regulators, the **median percent agre
 Since Cohen's $\kappa$ is a more *strict* score to assess agreement between parameterization and stable state activity we conclude that the *truth density bias* of the standardized regulatory functions might not be quite evident from these data (**we need link operator nodes with more regulators**).
 :::
 
-Next, we calculate per node, the proportion of link operator assignments that retained their expected (i.e. keeping the same digit) stable state activity (e.g. the proportion of models corresponding to the cases `0-0`/(`0-0` + `0-1`) for the “AND-NOT” link operator - and `1-1`/(`1-1` + `1-0`) for “OR-NOT”):
-```{r ss-comp-agreement-props, warning=FALSE, fig.align='center', dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement 2"}
+Next, we calculate per node, the proportion of link operator assignments that retained their expected (i.e. keeping the same digit) stable state activity (e.g. the proportion of models corresponding to the cases `0-0`/(`0-0` + `0-1`) for the “AND-NOT” link operator - and `1-1`/(`1-1` + `1-0`) for “OR-NOT”).
+We also annotate in the next Figure the nodes experimental activity, which is a results of literature curation (see supplementary material of [@Flobak2015]).
+```{r ss-comp-agreement-props, warning=FALSE, fig.align='center', fig.height=5, fig.width=7, dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement for all the CASCADE 1.0 models with one stable state. Only nodes with both activating and inhibiting regulators are shown. The agreement is splitted per link operator. Nodes are sorted according to the average activity state across all the selected models. We have labeled information about the experimentally observed activity for some of the nodes with green and red, representing active and inhibited states respectively."}
 # the AGS steady state
 # see https://github.com/druglogics/ags-paper/blob/main/scripts/lo_mutated_models_heatmaps.R#L53
 steady_state = readRDS(file = url('https://raw.githubusercontent.com/druglogics/ags-paper/main/data/steady_state.rds'))
@@ -1007,7 +1008,9 @@ stats_tbl %>%
       x = "Link operator nodes", y = "Percent Agreement") +
     scale_fill_brewer(guide = guide_legend(title = "Link Operator", 
       title.theme = element_text(size = 14)), palette = "Set1") + 
-    scale_y_continuous(labels = scales::percent, sec.axis = dup_axis(name = 'Percentage of models')) + 
+    scale_y_continuous(labels = scales::percent, 
+      sec.axis = dup_axis(name = 'Node average activity', 
+        breaks = c(0,1), labels = c(0,1))) + 
     scale_colour_gradient2(breaks = c(0.2,0.8), labels = c('Inhibited', 'Active'), 
       low = "red", mid = "grey", midpoint = 0.5, high = "green", 
       name = "Node Activity", limits = c(0,1), 
@@ -1015,14 +1018,23 @@ stats_tbl %>%
         label.theme = element_text(colour = c('red', 'green4')))) +
     theme_classic2() +
     theme(axis.text.x = element_text(angle = 90, 
-      color = stats_tbl %>% arrange(active_prop, node) %>% pull(node_col)), 
+      color = stats_tbl %>% arrange(active_prop, node) %>% pull(node_col)),
+      axis.text.y.right = element_text(face = "bold", color = c('red', 'green4'), size = 16), 
       legend.title = element_text(size = 10),
       plot.title = element_text(hjust = 0.5))
 ```
 
+Interesting use cases:
 
 :::{.green-box}
-- Higher proportional activity for a node correlates with higher “OR-NOT”-activated state agreement.
+- For any of the nodes for which we had experimental evidence, a modeler could set the link operator to the appropriate value (in the case of the inhibited nodes `JNK_f`,`PTEN`,`TP53` and `MAPK14` to “AND-NOT” and in the case of the expressed nodes `ERK_f`, `CTNNB1`, `TCF7_f` to “OR-NOT”) and he would have a very high chance that the node would be in same state as denoted by the experimental data in any of the CASCADE 1.0 models with one stable attractor.
+For example, the data shows that $90\%$ of the boolean models whose boolean equation targeting the node `TCF7_f` had the “OR-NOT”, also had the node active in their respective stable state.
+Same for `CTNNB1`, with a $92\%$ and `ERK_f` with the smaller percentage among the active nodes, $74\%$.
+All these nodes have 2 regulators (1 activator and 1 inhibitor) and thus $TD_{AND-NOT,1+1}=0.25$, $TD_{OR-NOT,1+1}=0.75$ from our truth density analysis.
+As such, all these nodes behave according to the statistical table results, if not better!
+`MAPK14` and `JNK_f` are nodes for which every model that had in their equations the “AND-NOT” link operator,
+
+
 - `LRP_f` has 4 activators and 1 inhibitor and from the previous [TD data table](#tr-data) we have that: $TD_{AND-NOT,4+1}=0.469$, $TD_{OR-NOT,4+1}=0.969$, numbers which correspond really well with the percent agreement scores found across all the CASCADE 1.0 models.
 - `TSC_f` and `mTORC2_c` are always found inhibited and thus the agreement with the “AND-NOT”-inhibited state is perfect and the “OR-NOT”-activated state agreement zero.
 - `TSC_f` has 1 activator and 4 inhibitors, which corresponds well to it's total inhibition profile in all the models (with significantly more inhibitors, there is a higher probability of the target node being inhibited).
@@ -1095,7 +1107,7 @@ node_stats_cascade2 %>% mutate(reg_group =
     ylim(c(0,1)) +
     labs(title = "Cohen's k (parameterization vs stable state activity)", x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
     geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
-    geom_text(aes(x = 3.4, y = 0.55, label="k = 0.6")) + 
+    geom_text(aes(x = 3.4, y = 0.55, label="κ = 0.6")) + 
     theme_classic(base_size = 14) +
     theme(axis.text.x = element_text(size = 15))
 ```
@@ -1196,7 +1208,7 @@ sf_stats_g2 %>%
   scale_y_continuous(limits = c(0,1)) +
   labs(title = latex2exp::TeX("Cohen's k (parameterization vs stable state activity) - $\\gamma$ = 2"), x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
   geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
-  geom_text(aes(x = 6, y = 0.55, label="k = 0.6")) + 
+  geom_text(aes(x = 6, y = 0.55, label="κ = 0.6")) + 
   theme_classic(base_size = 14) +
   theme(axis.text.x = element_text(size = 15))
 ```
@@ -1227,7 +1239,7 @@ sf_stats_g2_5 %>%
   scale_y_continuous(limits = c(0,1)) +
   labs(title = latex2exp::TeX("Cohen's k (parameterization vs stable state activity) - $\\gamma$ = 2.5"), x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
   geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
-  geom_text(aes(x = 6, y = 0.55, label="k = 0.6")) + 
+  geom_text(aes(x = 6, y = 0.55, label="κ = 0.6")) + 
   theme_classic(base_size = 14) +
   theme(axis.text.x = element_text(size = 15), plot.title = element_text(size = 16))
 ```
@@ -1276,7 +1288,7 @@ sf_stats_g2_new %>%
   scale_x_continuous(labels = group_ranges, breaks = sort(cl$centers)) +
   labs(title = latex2exp::TeX("Cohen's k (parameterization vs stable state activity) - $\\gamma$ = 2"), x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
   geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
-  geom_text(aes(x = 39, y = 0.55, label="k = 0.6")) + 
+  geom_text(aes(x = 39, y = 0.55, label="κ = 0.6")) + 
   theme_classic(base_size = 14) +
   theme(axis.text.x = element_text(size = 15))
 ```
