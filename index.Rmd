@@ -877,7 +877,7 @@ In this section we demonstrate the **scale-free properties of the CASCADE 1.0 ne
 We show that both in- and out-degree distributions are asymptotically power-law.
 :::
 
-Use the script [get_degree_stats_cascade1.R](https://github.com/druglogics/brf-bas/blob/master/scripts/get_degree_stats_cascade1.R) to generate the degree distribution stats.
+Use the script [get_degree_stats_cascade1.R](https://github.com/druglogics/brf-bias/blob/master/scripts/get_degree_stats_cascade1.R) to generate the degree distribution stats.
 We load the results:
 
 ```{r load-degree-distribution-stats}
