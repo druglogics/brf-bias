@@ -1213,7 +1213,7 @@ Most of the scale-free networks studied in literature have $\gamma\in[2,2.5]$ - 
 
 ## Topology Stats {-}
 
-Some statistics on the scale-free network topologies produced:
+Some statistics on the scale-free network topologies produced (see [scale_free_figs.R](https://github.com/druglogics/brf-bias/blob/main/scripts/scale_free_figs.R)):
 ```{r, fig.cap="Scale-free networks Topology statistics", fig.show='hold', out.width='50%'}
 knitr::include_graphics(path = "img/lo_eq_density.png")
 knitr::include_graphics(path = "img/max_reg_density.png")
