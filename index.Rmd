@@ -1269,7 +1269,8 @@ sf_stats_g2 %>%
   ggplot(aes(x = reg_group, y = percent_agreement, fill = reg_group)) + 
   geom_boxplot(show.legend = FALSE) +
   scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
-  labs(title = latex2exp::TeX("Agreement (parameterization vs stable state activity) - $\\gamma$ = 2"), x = "Number of Regulators", y = "Percent Agreement") +
+  labs(title = latex2exp::TeX("Parameterization and Stable State Agreement ($\\gamma$ = 2)"), 
+    x = "Number of Regulators", y = "Percent Agreement") +
   geom_hline(yintercept = 0.5, linetype = 'dashed', color = "red") +
   theme_classic(base_size = 14) +
   theme(axis.text.x = element_text(size = 15))
@@ -1278,7 +1279,8 @@ sf_stats_g2 %>%
   ggplot(aes(x = reg_group, y = cohen_k, fill = reg_group)) + 
   geom_boxplot(show.legend = FALSE) +
   scale_y_continuous(limits = c(0,1)) +
-  labs(title = latex2exp::TeX("Cohen's k (parameterization vs stable state activity) - $\\gamma$ = 2"), x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
+  labs(title = latex2exp::TeX("Parameterization and Stable State Agreement ($\\gamma$ = 2)"), 
+    x = "Number of Regulators", y = latex2exp::TeX("Cohen's $\\kappa$")) +
   geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
   geom_text(aes(x = 6, y = 0.55, label="κ = 0.6")) + 
   theme_classic(base_size = 14) +
@@ -1300,7 +1302,8 @@ sf_stats_g2_5 %>%
   ggplot(aes(x = reg_group, y = percent_agreement, fill = reg_group)) + 
   geom_boxplot(show.legend = FALSE) +
   scale_y_continuous(labels = scales::percent, limits = c(0,1)) +
-  labs(title = latex2exp::TeX("Agreement (parameterization vs stable state activity) - $\\gamma$ = 2.5"), x = "Number of Regulators", y = "Percent Agreement") +
+  labs(title = latex2exp::TeX("Parameterization and Stable State Agreement ($\\gamma$ = 2.5)"), 
+    x = "Number of Regulators", y = "Percent Agreement") +
   geom_hline(yintercept = 0.5, linetype = 'dashed', color = "red") +
   theme_classic(base_size = 14) +
   theme(axis.text.x = element_text(size = 15), plot.title = element_text(size = 16))
@@ -1309,7 +1312,7 @@ sf_stats_g2_5 %>%
   ggplot(aes(x = reg_group, y = cohen_k, fill = reg_group)) + 
   geom_boxplot(show.legend = FALSE) +
   scale_y_continuous(limits = c(0,1)) +
-  labs(title = latex2exp::TeX("Cohen's k (parameterization vs stable state activity) - $\\gamma$ = 2.5"), x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
+  labs(title = latex2exp::TeX("Parameterization and Stable State Agreement ($\\gamma$ = 2.5)"), x = "Number of Regulators", y = latex2exp::TeX("Cohen's $\\kappa$")) +
   geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
   geom_text(aes(x = 6, y = 0.55, label="κ = 0.6")) + 
   theme_classic(base_size = 14) +
