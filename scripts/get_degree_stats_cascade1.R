@@ -1,6 +1,6 @@
 library(dplyr)
 library(tibble)
-library(emba)
+library(readr)
 
 # CASCADE 1.0
 edge_tbl = readr::read_delim(file = 'https://raw.githubusercontent.com/druglogics/cascade/master/cascade_1.0.sif', delim = "\t", col_names = c('source', 'effect', 'target'), col_types = "ccc")
