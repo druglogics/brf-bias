@@ -5,20 +5,20 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <title>Random scale-free Networks Analysis | Standaridized Boolean Regulatory Function Bias</title>
-  <meta name="description" content="Data analyses related to Truth Density bias in standardized boolean regulatory functions" />
+  <meta name="description" content="Data analyses related to Truth Density bias in standardized Boolean regulatory functions" />
   <meta name="generator" content="bookdown 0.21 and GitBook 2.6.7" />
 
   <meta property="og:title" content="Random scale-free Networks Analysis | Standaridized Boolean Regulatory Function Bias" />
   <meta property="og:type" content="book" />
   <meta property="og:url" content="https://druglogics.github.io/brf-bias/" />
   
-  <meta property="og:description" content="Data analyses related to Truth Density bias in standardized boolean regulatory functions" />
+  <meta property="og:description" content="Data analyses related to Truth Density bias in standardized Boolean regulatory functions" />
   <meta name="github-repo" content="druglogics/brf-bias" />
 
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Random scale-free Networks Analysis | Standaridized Boolean Regulatory Function Bias" />
   
-  <meta name="twitter:description" content="Data analyses related to Truth Density bias in standardized boolean regulatory functions" />
+  <meta name="twitter:description" content="Data analyses related to Truth Density bias in standardized Boolean regulatory functions" />
   
 
 <meta name="author" content="John Zobolas" />
@@ -963,9 +963,9 @@ Figure 20: Methodology Overview
 <li>We generate the scale-free topology <code>.sif</code> files with the script <a href="https://github.com/druglogics/brf-bias/blob/main/scripts/random_topo_gen.R">random_topo_gen.R</a> - implementation was based on the BoolNet R package <span class="citation">(Müssel, Hopfensitz, and Kestler <a href="references.html#ref-Mussel2010" role="doc-biblioref">2010</a>)</span>.
 The input degree distribution of the scale-free networks follows Riemann’s Zeta function <span class="citation">(Aldana and Goldstein <a href="references.html#ref-Aldana2003" role="doc-biblioref">2003</a>)</span>.
 The <code>.sif</code> files for the different <span class="math inline">\(\gamma\)</span>’s are stored in the respective <a href="https://github.com/druglogics/brf-bias/tree/main/data/random_topology_files">GitHub data directory</a>.</li>
-<li>We use the <a href="https://github.com/druglogics/abmlog">abmlog</a> software (version <code>1.6.0</code>) to produce every possible link operator parameterized boolean model (“AND-NOT” vs “OR-NOT”) out of every topology file created in the previous step.
-The more link operator equations the network topology has (target nodes with both <em>activating</em> and <em>inhibiting</em> regulators) the more boolean models are generated (see script <a href="https://github.com/druglogics/brf-bias/blob/main/scripts/run_abmlog_topology_files.sh">run_abmlog_topology_files.sh</a>).
-The boolean model dataset is available in Zenodo: <a href="https://doi.org/10.5281/zenodo.4392981"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4392981.svg" alt="DOI" /></a></li>
+<li>We use the <a href="https://github.com/druglogics/abmlog">abmlog</a> software (version <code>1.6.0</code>) to produce every possible link operator parameterized Boolean model (“AND-NOT” vs “OR-NOT”) out of every topology file created in the previous step.
+The more link operator equations the network topology has (target nodes with both <em>activating</em> and <em>inhibiting</em> regulators) the more Boolean models are generated (see script <a href="https://github.com/druglogics/brf-bias/blob/main/scripts/run_abmlog_topology_files.sh">run_abmlog_topology_files.sh</a>).
+The Boolean model dataset is available in Zenodo: <a href="https://doi.org/10.5281/zenodo.4392981"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4392981.svg" alt="DOI" /></a></li>
 <li>We analyze the data from all the abmlog-produced models, <strong>compare stable state and link operator assignment</strong> and produce agreement statistics (see script <a href="https://github.com/druglogics/brf-bias/blob/main/scripts/get_scale_free_model_stats.R">get_scale_free_model_stats.R</a>)</li>
 </ol>
 <div class="note">
@@ -985,15 +985,15 @@ Figure 21: Scale-free networks Topology statistics
 </div>
 <div class="green-box">
 <ul>
-<li><span class="math inline">\(\gamma=2\)</span> provides networks with statistically <strong>more link operator nodes (targeted by both positive and negative regulators)</strong> and thus these topologies will produce more boolean models via <code>abmlog</code>, so <strong>more stable state data</strong> to compare with the respective parameterization.</li>
+<li><span class="math inline">\(\gamma=2\)</span> provides networks with statistically <strong>more link operator nodes (targeted by both positive and negative regulators)</strong> and thus these topologies will produce more Boolean models via <code>abmlog</code>, so <strong>more stable state data</strong> to compare with the respective parameterization.</li>
 <li>We also observe for both <span class="math inline">\(\gamma\)</span>’s the presence of <strong>link operator nodes with high numbers of regulators</strong> which is exactly what we needed from the dataset to test if the standardized regulatory functions are biased or not.</li>
-<li><span class="math inline">\(\gamma=2\)</span> also provides networks with statistically <strong>higher in-degree for the largest hub-nodes</strong> and thus present <strong>better candidates</strong> for testing the truth density bias of the standardized boolean regulatory functions, which manifests especially for nodes with high input-degree (e.g. <span class="math inline">\(\ge 8\)</span>)</li>
+<li><span class="math inline">\(\gamma=2\)</span> also provides networks with statistically <strong>higher in-degree for the largest hub-nodes</strong> and thus present <strong>better candidates</strong> for testing the truth density bias of the standardized Boolean regulatory functions, which manifests especially for nodes with high input-degree (e.g. <span class="math inline">\(\ge 8\)</span>)</li>
 </ul>
 </div>
 </div>
 <div id="boolean-model-stats" class="section level2 unnumbered" number="">
 <h2>Boolean Model Stats</h2>
-<p>Some statistics regarding the abmlog-produced boolean models and their respective stable states:</p>
+<p>Some statistics regarding the abmlog-produced Boolean models and their respective stable states:</p>
 <div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="random-scale-free-networks-analysis.html#cb48-1"></a>knitr<span class="op">::</span><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;img/ss_dist.png&quot;</span>)</span>
 <span id="cb48-2"><a href="random-scale-free-networks-analysis.html#cb48-2"></a>knitr<span class="op">::</span><span class="kw">include_graphics</span>(<span class="dt">path =</span> <span class="st">&quot;img/ss_dist_total_sum.png&quot;</span>)</span></code></pre></div>
 <p><img src="img/ss_dist.png" width="50%" /><img src="img/ss_dist_total_sum.png" width="50%" /></p>
@@ -1007,7 +1007,7 @@ Figure 22: Stable state statistics
 <div class="green-box">
 <ul>
 <li><strong>More stable state data</strong> for <span class="math inline">\(\gamma=2\)</span>, even though we had <span class="math inline">\(\times10\)</span> more scale-free networks produced with <span class="math inline">\(\gamma=2.5\)</span>.</li>
-<li><span class="math inline">\(\approx 50\%\)</span> of the scale-free topologies that pass through <code>abmlog</code> and produce all possible link operator parameterized boolean models, <strong>do not have any model with a stable state</strong>.</li>
+<li><span class="math inline">\(\approx 50\%\)</span> of the scale-free topologies that pass through <code>abmlog</code> and produce all possible link operator parameterized Boolean models, <strong>do not have any model with a stable state</strong>.</li>
 </ul>
 </div>
 </div>
@@ -1091,7 +1091,7 @@ Figure 24: Link operator Parameterization vs Stable State Activity for scale-fre
 </p>
 </div>
 <div class="green-box">
-<p>Results for both <span class="math inline">\(\gamma\)</span>’s show the same thing: <strong>the higher the number of regulators, the more biased the boolean link operator function result is</strong>.</p>
+<p>Results for both <span class="math inline">\(\gamma\)</span>’s show the same thing: <strong>the higher the number of regulators, the more biased the Boolean link operator function result is</strong>.</p>
 <p>Specifically, for both <span class="math inline">\(\gamma\)</span>’s, we observe that for <span class="math inline">\(n&gt;7-10\)</span> regulators, assigning a node the “AND-NOT” link operator in its corresponding equation, results in it having a stable state equal to <span class="math inline">\(0\)</span> and vice-versa for the “OR-NOT” case.</p>
 </div>
 </div>
