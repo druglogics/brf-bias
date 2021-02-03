@@ -655,7 +655,7 @@ DT::datatable(data = d %>% as.matrix(), options = list(dom = "t", scrollX = TRUE
 ```
 
 ```{r dist-dendogram, fig.height=7, fig.align='center'}
-plot(hclust(dist(d)), main = "Dendogram of Truth Density Distances between various BRFs",
+plot(hclust(d), main = "Dendogram of Truth Density Distances between various BRFs",
   ylab = "Euclidean Distance", sub = "Boolean Regulatory Functions (BRFs)", xlab = "")
 ```
 
