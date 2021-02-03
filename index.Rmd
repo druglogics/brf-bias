@@ -110,7 +110,7 @@ Note that *minimizing* the DNF form of a Boolean function to get an equivalent e
 
 ## Link operator Boolean Regulatory Functions {-}
 
-We consider the class of BRFs that partitions the input variables (regulators) to two sets: the set $x$ of positive regulators (also called *activators*) and the set of negative regulators (also called *inhibitors*).
+We consider the class of BRFs that partitions the input variables (regulators) to two sets: the set of positive regulators (also called *activators*) and the set of negative regulators (also called *inhibitors*).
 Let $f$ be such a Boolean function $f(x,y):\{0,1\}^n \rightarrow \{0,1\}$, with $m \ge 1$ **activators** $x=\{x_i\}_{i=1}^{m}$ and $k \ge 1$ **inhibitors** $y=\{y_j\}_{j=1}^{k}$, that is a total of $n = m + k$ regulators.
 The **link operator BRFs** have an analytical non-DNF form, which places the two distinct types of regulators in two separate expressions, while connecting them with a special logical operator that we call a **link operator**.
 
@@ -562,7 +562,7 @@ ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_act",
 
 ## Threshold functions TD {-}
 
-W check the truth density of the $f_{Act-win}$ and $f_{Inh-win}$ Boolean functions:
+We check the truth density of the $f_{Act-win}$ and $f_{Inh-win}$ Boolean functions:
 ```{r fig-two-bool-formulas, fig.align='center', dpi=300, cache=TRUE, fig.cap="Comparing the truth densities of 2 threshold Boolean regulatory functions: Act-win and Inh-win. For each specific number of regulators, every possible configuration of at least one activator and one inhibitor that add up to that number, results in a different truth table output with its corresponding truth density value. All configurations up to 20 regulators are shown."}
 # tidy up data
 stats_functions = tidyr::pivot_longer(data = stats, cols = c(td_act_win, td_inh_win),
