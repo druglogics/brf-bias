@@ -265,10 +265,10 @@ $f_{Pairs}(x,y) = \left(\bigvee_{i=1}^{m} x_i\right) \land \left(\bigvee_{j=1}^{
 ```
 <br>
 ```{proof}
-To calculate the $TD_{Pairs}$ based on its given CNF, we find the number of rows in its truth table that have at least one present/*TRUE* activator ($R_{act}$) and substract from these the rows in which all inhibitors are present/*TRUE* ($R_{inh}$).
+To calculate the $TD_{Pairs}$ based on its given CNF, we find the number of rows in its truth table that have at least one present/*TRUE* activator ($R_{act}$) and subtract from these the rows in which all inhibitors are present/*TRUE* ($R_{inh}$).
 Thus only the rows that have at least one inhibitor absent/*FALSE* will be left (and of course at least one activator present), which corresponds exactly to the $f_{Pairs}$ formula's biological interpretation.
 
-$R_{act}$ can be found by substracting from the total number of rows ($2^n$) the rows that have all activators absent/*FALSE*.
+$R_{act}$ can be found by subtracting from the total number of rows ($2^n$) the rows that have all activators absent/*FALSE*.
 How many are these rows? Their number depends on the number of inhibitors, since for each one of the total possible $2^k$ *TRUE/FALSE* logical assignments of the $k$ inhibitors (ranging from all *FALSE* to all *TRUE*), there will be a row in the truth table with all activators as *FALSE*.
 Thus, $R_{act} = 2^n - 2^k$.
 
