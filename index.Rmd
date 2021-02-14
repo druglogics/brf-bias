@@ -252,7 +252,7 @@ f_{OR-NOT}(x,y) & = \left(\bigvee_{i=1}^{m} x_i\right) \lor \lnot \left(\bigvee_
 To calculate the $TD_{OR-NOT}$, we find the number of rows of the $f_{OR-NOT}$ truth table that result in a *FALSE* output result ($R_{false}$), subtract that number from the total number of rows ($2^n$) to get the rows that result in $f$ being *TRUE* and then divide by the total number of rows.
 Thus $TD_{OR-NOT} = \frac{2^n-R_{false}}{2^n}$.
 Note that $f_{OR-NOT}$, written in it's equivalent DNF form, has exactly $m+1$ terms.
-To make $f_{OR-NOT}$ *FALSE*, we first need to assign the $m$ activators as *FALSE* and then it all depends on the logical assignments of the inhibitors $y_i$ that are part of the last DNF term.
+To make $f_{OR-NOT}$ *FALSE*, we first need to assign the $m$ activators as *FALSE* and then it all depends on the logical assignments of the inhibitors $y_j$ that are part of the last DNF term.
 Out of all possible $2^k$ *TRUE/FALSE* logical assignments of the $k$ inhibitors (ranging from all *FALSE* to all *TRUE*) there is **only one that does not make** the last term of $f_{OR-NOT}$ *FALSE* (i.e. it makes the term *TRUE*) and that happens when all $k$ inhibitors are *FALSE*.
 Thus, $R_{false}=2^k-1$ and $TD_{OR-NOT}=\frac{2^n-(2^k-1)}{2^n}$.
 ```
