@@ -324,7 +324,7 @@ For a large number of regulators $n$, the truth densities of the “AND-NOT”, 
 
 - $TD_{AND-NOT} = \frac{1}{2^k}-\frac{1}{2^n} \xrightarrow{n \rightarrow \infty} \frac{1}{2^k} \xrightarrow{k \rightarrow \infty}0$
 - $TD_{OR-NOT} = 1 + \frac{1}{2^n} - \frac{1}{2^m} \xrightarrow{n \rightarrow \infty} 1-\frac{1}{2^m} \xrightarrow{m \rightarrow \infty} 1$
-- $TD_{Pairs} = 1 - \frac{2^k+2^m-1}{2^n} = 1 - \frac{2^k+2^m}{2^n} + \frac{1}{2^n} \xrightarrow{n \rightarrow \infty} 1 - \frac{2^k+2^m}{2^n}$
+- $TD_{Pairs} = 1 - \frac{2^k+2^m-1}{2^n} = 1 - \frac{2^k+2^m}{2^n} + \frac{1}{2^n} \xrightarrow{n \rightarrow \infty} 1 - \frac{2^k+2^m}{2^n} = 1 - \left(\frac{1}{2^k}+\frac{1}{2^m}\right)$
 
 :::{.green-box}
 So, for large number of regulators $n$:
