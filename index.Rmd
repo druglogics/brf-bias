@@ -28,6 +28,8 @@ library(ggplot2)
 library(ggpubr)
 library(latex2exp)
 library(BoolNet)
+library(igraph)
+library(scales)
 ```
 
 # Background {-}
@@ -875,29 +877,77 @@ Also the bias of the “AND-NOT” and “OR-NOT” functions can be visually sh
 :::{.blue-box}
 In this section we demonstrate the **scale-free properties of the CASCADE 1.0 network**.
 We show that both in- and out-degree distributions are asymptotically power-law.
+
+Also, we show that CASCADE 1.0 possesses partial hierarchical modularity.
 :::
 
-Use the script [get_degree_stats_cascade1.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_degree_stats_cascade1.R) to generate the degree distribution stats.
+Use the script [get_graph_stats_cascade1.R](https://github.com/druglogics/brf-bias/blob/main/scripts/get_graph_stats_cascade1.R) to generate the degree distribution stats and clustering coefficient scores per node in CASCADE 1.0.
 We load the results:
 
 ```{r load-degree-distribution-stats}
-dd_stats = readRDS(file = "data/dd_stats.rds")
+graph_stats = readRDS(file = "data/cascade1_graph_stats.rds")
 ```
 
-```{r in-degree-fig, warning=FALSE, message=FALSE, fig.show='hold', out.width='50%', cache=TRUE, dpi=300, fig.cap='Degree Distribution (CASCADE 1.0)'}
-dd_stats %>% group_by(in_degree) %>% tally() %>%
+```{r degree-dist-fig, warning=FALSE, message=FALSE, fig.show='hold', out.width='50%', cache=TRUE, dpi=300, fig.cap='Degree Distribution (CASCADE 1.0)'}
+in_stats = graph_stats %>% group_by(in_degree) %>% tally()
+# exclude the output nodes with 0 (Antisurvival and Prosurvival)
+out_stats = graph_stats %>% group_by(out_degree) %>% tally() %>% slice(-1)
+
+in_stats %>%
   ggplot(aes(x = in_degree, y = n)) +
   geom_bar(stat = "identity", fill = "steelblue", width = 0.7) + 
   geom_smooth(aes(color = "red"), se = FALSE, show.legend = FALSE) + 
   theme_classic() +
   labs(title = "In-Degree Distribution (CASCADE 1.0)", x = "In Degree", y = "Number of Nodes")
 
-dd_stats %>% group_by(out_degree) %>% tally() %>%
+out_stats %>%
   ggplot(aes(x = out_degree, y = n)) +
   geom_bar(stat = "identity", fill = "steelblue") + 
   geom_smooth(aes(color = "red"), se = FALSE, span = 0.58, show.legend = FALSE) + 
   theme_classic() +
   labs(title = "Out-Degree Distribution (CASCADE 1.0)", x = "Out Degree", y = "Number of Nodes")
+```
+
+Degree distributions in a log-log plot are almost straight lines (evidence in favor of the existence of the scale-free property in the CASCADE 1.0 network):
+```{r degree-dist-log, warning=FALSE, message=FALSE, cache=TRUE, dpi=300, fig.align='center', fig.cap='Degree Distribution in a log-log scale (CASCADE 1.0)'}
+degree_data = dplyr::bind_rows(
+  in_stats %>% add_column(degree = 'In') %>% rename(k = in_degree, p_k = n), 
+  out_stats %>% add_column(degree = 'Out') %>% rename(k = out_degree, p_k = n)
+)
+
+degree_data %>%
+  ggplot(aes(x = k, y = p_k, color = degree)) +
+  geom_point() + 
+  geom_line() +
+  labs(x = 'Degree k', y = 'Degree Distribution P(k)') +
+  scale_x_log10() +
+  scale_y_log10() +
+  scale_color_brewer(palette = 'Set1') +
+  annotation_logticks(sides = 'bl', outside = FALSE) +
+  ggpubr::theme_pubr() +
+  theme(legend.position = 'right')
+```
+
+**Overall, the CASCADE 1.0 network is not hierarchical**, since a large fraction of the nodes ($57/77=74\%$) has a local clustering coefficient $C(k)$ equal to $0$.
+Most of these nodes have total degrees (sum of in and out degrees) $2-6$.
+So, **the lower degree nodes are not densely clustered**.
+Also, the network average clustering $\overline{C}(k)$ is `r graph_stats %>% summarise(mean(cluster_coef)) %>% pull()`.
+
+In the figure below we show in a log-log plot the clustering coefficient values (excluding the nodes with $C(k)=0$).
+We observe that the $C(k)$ values decrease linearly with the degree, approximating a straight line with a slope of $-1$. 
+This suggests hierarchical modularity at least for the higher degree nodes [@Ravasz2003].
+
+```{r cluster-coef-dist, warning=FALSE, message=FALSE, cache=TRUE, dpi=300, fig.align='center', fig.cap='Clustering Coefficient Distribution in a log-log scale (CASCADE 1.0)'}
+graph_stats %>% 
+  filter(cluster_coef != 0) %>%
+  ggplot(aes(x = all_degree, y = cluster_coef)) +
+  geom_point() +
+  geom_smooth(method = 'lm', formula = y~x, se = FALSE, ) + 
+  scale_x_log10() +
+  scale_y_log10() + 
+  stat_regline_equation() + 
+  labs(x = 'Degree k', y = 'Clustering Coefficient C(k)') +
+  ggpubr::theme_pubr()
 ```
 
 ## Data {-}
