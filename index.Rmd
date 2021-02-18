@@ -942,7 +942,7 @@ graph_stats %>%
   filter(cluster_coef != 0) %>%
   ggplot(aes(x = all_degree, y = cluster_coef)) +
   geom_point() +
-  geom_smooth(method = 'lm', formula = y~x, se = FALSE, ) + 
+  geom_smooth(method = 'lm', formula = y~x, se = FALSE) + 
   scale_x_log10() +
   scale_y_log10() + 
   stat_regline_equation() + 
