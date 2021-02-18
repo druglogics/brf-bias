@@ -15,7 +15,9 @@ fig:complexity-per-function-class
 fig:td-vs-complexity-1
 fig:td-vs-complexity-2
 fig:td-vs-complexity-3
-fig:in-degree-fig
+fig:degree-dist-fig
+fig:degree-dist-log
+fig:cluster-coef-dist
 fig:ss-stats-dist-cascade1
 fig:ss-lo-agreement-prop
 fig:ss-lo-agreement-prop-grouped
