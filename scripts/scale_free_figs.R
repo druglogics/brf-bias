@@ -18,6 +18,7 @@ sf_topo_stats %>%
     title = "") +
   theme_classic(base_size = 14)
 ggsave(filename = "img/lo_eq_density.png", dpi = "print", width = 7, height = 5)
+#ggsave(filename = "img/lo_eq_density.pdf")
 
 sf_topo_stats %>%
   ggplot(aes(x = gamma, y = max_num_reg, fill = as.factor(gamma))) +
@@ -29,6 +30,7 @@ sf_topo_stats %>%
     title = "") +
   theme_classic(base_size = 14)
 ggsave(filename = "img/max_reg_density.png", dpi = "print", width = 7, height = 5)
+#ggsave(filename = "img/max_reg_density.pdf")
 
 sf_topo_stats %>%
   filter(ss_total < 200000) %>% # exclude 2 'outlier' points

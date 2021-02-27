@@ -18,3 +18,4 @@ models_ss_stats %>% group_by(ss_num) %>% tally() %>%
   theme(axis.text.x = element_text(size = 18), plot.title = element_text(hjust = 0.5)) +
   labs(title = "Stable states distribution for CASCADE 1.0 models", x = "Number of stable states", y = "Number of models")
 ggsave(filename = 'img/ss_dist_cascade1.png',  dpi = "print", width = 7, height = 5)
+#ggsave(filename = 'img/ss_dist_cascade1.pdf')

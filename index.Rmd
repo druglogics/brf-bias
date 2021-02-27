@@ -475,7 +475,7 @@ all(stats %>% pull(td_inh_win) == formula_td_inh_win)
 ## Link operator functions TD comparison {-#lo-td-bias}
 
 Comparing the truth densities of the $f_{AND-NOT}$, $f_{OR-NOT}$ and $f_{Pairs}$ link operator Boolean functions across different number of regulators, we have:
-```{r lo-td-fig, fig.align='center', dpi=300, cache=TRUE, fig.cap="Comparing the truth densities of 3 link operator Boolean regulatory functions: AND-NOT, OR-NOT and Pairs. For each specific number of regulators, every possible configuration of at least one activator and one inhibitor that add up to that number, results in a different truth table output with its corresponding truth density value. All configurations up to 20 regulators are shown."}
+```{r lo-td-fig, fig.align='center', dpi=300, cache=TRUE, dev = c('png', 'pdf'), fig.cap="Comparing the truth densities of 3 link operator Boolean regulatory functions: AND-NOT, OR-NOT and Pairs. For each specific number of regulators, every possible configuration of at least one activator and one inhibitor that add up to that number, results in a different truth table output with its corresponding truth density value. All configurations up to 20 regulators are shown."}
 # tidy up data
 stats_and_or_pairs = tidyr::pivot_longer(data = stats, cols = c(td_and_not, td_or_not, td_pairs),
   names_to = "lo", values_to = "td") %>%
@@ -565,7 +565,7 @@ ggscatter(data = stats %>% rename(`#Regulators` = num_reg), x = "num_act",
 ## Threshold functions TD {-}
 
 We check the truth density of the $f_{Act-win}$ and $f_{Inh-win}$ Boolean functions:
-```{r fig-two-bool-formulas, fig.align='center', dpi=300, cache=TRUE, fig.cap="Comparing the truth densities of 2 threshold Boolean regulatory functions: Act-win and Inh-win. For each specific number of regulators, every possible configuration of at least one activator and one inhibitor that add up to that number, results in a different truth table output with its corresponding truth density value. All configurations up to 20 regulators are shown."}
+```{r fig-two-bool-formulas, fig.align='center', dpi=300, cache=TRUE, dev = c('png', 'pdf'), fig.cap="Comparing the truth densities of 2 threshold Boolean regulatory functions: Act-win and Inh-win. For each specific number of regulators, every possible configuration of at least one activator and one inhibitor that add up to that number, results in a different truth table output with its corresponding truth density value. All configurations up to 20 regulators are shown."}
 # tidy up data
 stats_functions = tidyr::pivot_longer(data = stats, cols = c(td_act_win, td_inh_win),
   names_to = "fun", values_to = "td") %>%
@@ -995,7 +995,7 @@ In the figures showing Cohen's $\kappa$, we draw a horizontal line to indicate t
 :::
 
 In the next Figure we show the **percent agreement** for each node:
-```{r ss-lo-agreement-prop, fig.align='center', dpi=300, cache=TRUE, fig.cap="Parameterization and stable state activity agreement for all the CASCADE 1.0 models with one stable state. Only nodes with both activating and inhibiting regulators are shown."}
+```{r ss-lo-agreement-prop, fig.align='center', dev = c('png', 'pdf'), dpi=300, cache=TRUE, fig.cap="Parameterization and stable state activity agreement for all the CASCADE 1.0 models with one stable state. Only nodes with both activating and inhibiting regulators are shown."}
 node_stats %>% mutate(node = forcats::fct_reorder(node, num_reg)) %>% 
   ggplot(aes(x = node, y = obs_prop_agreement, fill = as.factor(num_reg))) +
     geom_bar(stat = "identity") +
@@ -1020,7 +1020,7 @@ The above score means that the is a higher probability than chance to assign a n
 :::
 
 In the next figures, we have **separated the nodes to groups based on the number of regulators** and show both percent agreement and Cohen's $\kappa$:
-```{r ss-lo-agreement-prop-grouped, warning='FALSE', fig.show='hold', out.width='50%', warning=FALSE, dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement. CASCADE 1.0 link operator nodes are grouped based on their respective number of regulators. Both percent agreement and Cohen's k are presented"}
+```{r ss-lo-agreement-prop-grouped, warning='FALSE', fig.show='hold', out.width='50%', warning=FALSE, dev = c('png', 'pdf'), dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement. CASCADE 1.0 link operator nodes are grouped based on their respective number of regulators. Both percent agreement and Cohen's k are presented"}
 node_stats %>% 
   mutate(num_reg = as.factor(num_reg)) %>%
   ggplot(aes(x = num_reg, y = obs_prop_agreement, fill = num_reg)) + 
@@ -1042,7 +1042,7 @@ node_stats %>%
     ylim(c(0,1)) +
     labs(title = "Parameterization and Stable State Agreement", x = "Number of regulators", y = latex2exp::TeX("Cohen's $\\kappa$")) +
     geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
-    geom_text(aes(x = 3.4, y = 0.55, label = "κ = 0.6")) + 
+    geom_text(aes(x = 3.4, y = 0.55), label=latex2exp::TeX("$\\kappa$ = 0.6")) + 
     theme_classic(base_size = 14) +
     theme(axis.text.x = element_text(size = 15), plot.title = element_text(hjust = 0.5))
 ```
@@ -1055,7 +1055,7 @@ Since Cohen's $\kappa$ is a more *strict* score to assess agreement between para
 
 Next, we calculate per node, the proportion of link operator assignments that retained their expected (i.e. keeping the same digit) stable state activity (e.g. the proportion of models corresponding to the cases `0-0`/(`0-0` + `0-1`) for the “AND-NOT” link operator - and `1-1`/(`1-1` + `1-0`) for “OR-NOT”).
 We also annotate in the next Figure the nodes experimental activity, which is a results of literature curation (see supplementary material of [@Flobak2015]).
-```{r ss-comp-agreement-props, warning=FALSE, fig.align='center', fig.height=5, fig.width=7, dpi=300, cache=TRUE, fig.cap="Parameterization and Stable State activity agreement for all the CASCADE 1.0 models with one stable state. Only nodes with both activating and inhibiting regulators are shown. The agreement is splitted per link operator. Nodes are sorted according to the average activity state across all the selected models. We have labeled information about the experimentally observed activity for some of the nodes with green and red, representing active and inhibited states respectively."}
+```{r ss-comp-agreement-props, warning=FALSE, fig.align='center', fig.height=5, fig.width=7, dpi=300, cache=TRUE, dev = c('png', 'pdf'), fig.cap="Parameterization and Stable State activity agreement for all the CASCADE 1.0 models with one stable state. Only nodes with both activating and inhibiting regulators are shown. The agreement is splitted per link operator. Nodes are sorted according to the average activity state across all the selected models. We have labeled information about the experimentally observed activity for some of the nodes with green and red, representing active and inhibited states respectively."}
 # the AGS steady state
 # see https://github.com/druglogics/ags-paper/blob/main/scripts/lo_mutated_models_heatmaps.R#L53
 steady_state = readRDS(file = url('https://raw.githubusercontent.com/druglogics/ags-paper/main/data/steady_state.rds'))
@@ -1229,7 +1229,7 @@ node_stats_cascade2 %>% mutate(reg_group =
     ylim(c(0,1)) +
     labs(title = "Cohen's k (parameterization vs stable state activity)", x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
     geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
-    geom_text(aes(x = 3.4, y = 0.55, label="κ = 0.6")) + 
+    geom_text(aes(x = 3.4, y = 0.55), label=latex2exp::TeX("$\\kappa$ = 0.6")) + 
     theme_classic(base_size = 14) +
     theme(axis.text.x = element_text(size = 15))
 ```
@@ -1305,7 +1305,7 @@ For the agreement statistics we will use the **percent agreement** and Cohen's $
 
 ### Results for networks with $\gamma = 2$ {-}
 
-```{r agree-stats-g2, warning=FALSE, cache=TRUE, dpi=300, fig.show='hold', out.width='50%', fig.cap='Link operator Parameterization vs Stable State Activity for scale-free topologies with $\\gamma$ = 2'}
+```{r agree-stats-g2, warning=FALSE, cache=TRUE, dpi=300, fig.show='hold', out.width='50%', dev = c('png', 'pdf'), fig.cap='Link operator Parameterization vs Stable State Activity for scale-free topologies with $\\gamma$ = 2'}
 sf_stats_g2 = 
   sf_stats_g2 %>% mutate(reg_group = factor(case_when(
   num_reg %in% 2:3 ~ "2-3", 
@@ -1332,7 +1332,7 @@ sf_stats_g2 %>%
   labs(title = latex2exp::TeX("Parameterization and Stable State Agreement ($\\gamma$ = 2)"), 
     x = "Number of Regulators", y = latex2exp::TeX("Cohen's $\\kappa$")) +
   geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
-  geom_text(aes(x = 6, y = 0.55, label="κ = 0.6")) + 
+  geom_text(aes(x = 6, y = 0.55), label=latex2exp::TeX("$\\kappa$ = 0.6")) + 
   theme_classic(base_size = 14) +
   theme(axis.text.x = element_text(size = 15))
 ```
@@ -1364,7 +1364,7 @@ sf_stats_g2_5 %>%
   scale_y_continuous(limits = c(0,1)) +
   labs(title = latex2exp::TeX("Parameterization and Stable State Agreement ($\\gamma$ = 2.5)"), x = "Number of Regulators", y = latex2exp::TeX("Cohen's $\\kappa$")) +
   geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
-  geom_text(aes(x = 6, y = 0.55, label="κ = 0.6")) + 
+  geom_text(aes(x = 6, y = 0.55), label=latex2exp::TeX("$\\kappa$ = 0.6")) + 
   theme_classic(base_size = 14) +
   theme(axis.text.x = element_text(size = 15), plot.title = element_text(size = 16))
 ```
@@ -1413,7 +1413,7 @@ sf_stats_g2_new %>%
   scale_x_continuous(labels = group_ranges, breaks = sort(cl$centers)) +
   labs(title = latex2exp::TeX("Cohen's k (parameterization vs stable state activity) - $\\gamma$ = 2"), x = "Number of Regulators", y = latex2exp::TeX("$\\kappa$")) +
   geom_hline(yintercept = 0.6, linetype = 'dashed', color = "red") +
-  geom_text(aes(x = 39, y = 0.55, label="κ = 0.6")) + 
+  geom_text(aes(x = 39, y = 0.55), label=latex2exp::TeX("$\\kappa$ = 0.6")) + 
   theme_classic(base_size = 14) +
   theme(axis.text.x = element_text(size = 15))
 ```
