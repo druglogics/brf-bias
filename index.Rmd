@@ -872,6 +872,7 @@ Also the bias of the “AND-NOT” and “OR-NOT” functions can be visually sh
 
 # CASCADE 1.0 Data Analysis {-}
 
+<!-- NEVER CHANGE THE BELOW TITLE -->
 ## Network Properties {-}
 
 :::{.blue-box}
@@ -1126,6 +1127,7 @@ DT::datatable(data = node_stats %>% select(node, num_reg, num_act, num_inh),
   options = list(order = list(list(2, "desc"))))
 ```
 
+<!-- NEVER CHANGE THE BELOW TITLE -->
 ## Node state and percent agreement correlation {-}
 
 We also check for correlation between the average node activity in the CASCADE 1.0 models and the percent agreement per each link operator:
