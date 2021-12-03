@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# run abmlog@1.6.0 on the scale-free topology .sif files
+# run abmlog v1.6.1 on the scale-free topology .sif files
 
 # Put this script on the root of the `abmlog` repo, as well as
 # the `scale_free_gamma2` and `scale_free_gamma2_5` directories
@@ -19,7 +19,7 @@ for file in ${topology_files}; do
   echo Using topology file No. $count/$files_num: $file
 
   start=`date +%s`
-  java -cp target/abmlog-1.6.0-jar-with-dependencies.jar eu.druglogics.abmlog.BooleanModelGenerator --file=scale_free_gamma2_5/$file --attractors=fixpoints --parallel --max-dir-size=10000 > /dev/null 2>&1
+  java -cp target/abmlog-1.6.1-jar-with-dependencies.jar eu.druglogics.abmlog.BooleanModelGenerator --file=scale_free_gamma2_5/$file --attractors=fixpoints --parallel --max-dir-size=10000 > /dev/null 2>&1
   runtime=$(($(date +%s)-$start))
   echo Execution Time: "$(($runtime / 60)) minutes"
 done
@@ -35,7 +35,7 @@ for file in ${topology_files}; do
   echo Using topology file No. $count/$files_num: $file
 
   start=`date +%s`
-  java -cp target/abmlog-1.6.0-jar-with-dependencies.jar eu.druglogics.abmlog.BooleanModelGenerator --file=scale_free_gamma2/$file --attractors=fixpoints --parallel --max-dir-size=10000 > /dev/null 2>&1
+  java -cp target/abmlog-1.6.1-jar-with-dependencies.jar eu.druglogics.abmlog.BooleanModelGenerator --file=scale_free_gamma2/$file --attractors=fixpoints --parallel --max-dir-size=10000 > /dev/null 2>&1
   runtime=$(($(date +%s)-$start))
   echo Execution Time: "$(($runtime / 60)) minutes"
 done
