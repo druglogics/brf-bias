@@ -4,9 +4,7 @@
 
 Data analyses related to the paper:
 
-```
 Zobolas, J., Monteiro, P. T., Kuiper, M., & Flobak, Å. (2022). Boolean function metrics can assist modelers to check and choose logical rules. Journal of Theoretical Biology, 538, 111025. https://doi.org/10.1016/J.JTBI.2022.111025
-```
 
 See the full report [here](https://druglogics.github.io/brf-bias/).
 
